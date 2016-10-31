@@ -1,7 +1,7 @@
 # ember-lifeline
 
 Ember applications have long life-cycles. A user may navigate to several pages
-and use many different features before they leave the Twitch website. This
+and use many different features before they leave the application. This
 makes JavaScript and Ember development unlike Rails development, where the
 lifecycle of a request is short and the environment disposed of after
 each request. It makes Ember development much more like iOS or video game
@@ -16,12 +16,11 @@ There is a fantastic Ember addon, [ember-concurrency](http://ember-concurrency.c
 that solves these problems in a very exciting and simple way. It is largely
 inspired by [RxJS](http://reactivex.io/) and the Observable pattern, both of
 which concern themsevles with creating life-cycle-free
-async that, in practice, tend to be hard for developers to learn. In the future
-Twitch will likely adopt ember-concurrency.
+async that, in practice, tend to be hard for developers to learn.
 
 However in the immediate term, the web-client codebase has introduces several
 utility methods to help manage async, object lifecycles, and the Ember runloop.
-These tools should provide a simple developer experience that allows Twitch
+These tools should provide a simple developer experience that allows
 engineers to focus on the business domain, and think less about the weird parts
 of working in a long-lived app.
 
@@ -442,4 +441,6 @@ these APIs on the event object will raise an exception.
 
 ## Credit
 
-This addon is an extraction of work in a client application, written originally by [@mixonic](https://github.com/mixonic) and [@rwjblue](https://github.com/rwjblue).
+This addon was developed internally at Twitch, written originally by [@mixonic](https://github.com/mixonic) and [@rwjblue](https://github.com/rwjblue).
+
+The name `ember-lifeline` was suggested by [@nathanhammod](https://github.com/nathanhammond).
