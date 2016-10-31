@@ -35,7 +35,7 @@ Use `runTask` where you might use `setTimeout`, `setInterval`, or
 
 First, *`setTimeout` and `setInterval` do not use the runloop*. Ember uses
 a [work queuing mechanism called the runloop ](https://guides.emberjs.com/v2.5.0/applications/run-loop/).
-In order for the queues to fush without autoruns (a feature that helps devs
+In order for the queues to flush without autoruns (a feature that helps devs
 be lazy in development but is disabled in tests and harms performance), a
 runloop must be added around a callstack. For example:
 
