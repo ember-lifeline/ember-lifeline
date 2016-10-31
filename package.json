@@ -1,6 +1,6 @@
 {
   "name": "ember-lifeline",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
