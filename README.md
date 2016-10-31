@@ -18,11 +18,10 @@ inspired by [RxJS](http://reactivex.io/) and the Observable pattern, both of
 which concern themsevles with creating life-cycle-free
 async that, in practice, tend to be hard for developers to learn.
 
-However in the immediate term, the web-client codebase has introduces several
-utility methods to help manage async, object lifecycles, and the Ember runloop.
-These tools should provide a simple developer experience that allows
-engineers to focus on the business domain, and think less about the weird parts
-of working in a long-lived app.
+This addon introduces several utility methods to help manage async, object
+lifecycles, and the Ember runloop. These tools should provide a simple developer
+experience that allows engineers to focus on the business domain, and think less
+about the weird parts of working in a long-lived app.
 
 ### `runTask`
 
