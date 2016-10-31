@@ -6,12 +6,14 @@
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Robert Jackson <me@rwjblue.com>",
   "directories": {
-    "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rwjblue/ember-lifeline.git"
+  },
   "scripts": {
     "build": "ember build",
     "start": "ember server",
@@ -49,5 +51,10 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
-  }
+  },
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/rwjblue/ember-lifeline/issues"
+  },
+  "homepage": "https://github.com/rwjblue/ember-lifeline#readme"
 }
