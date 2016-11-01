@@ -15,7 +15,7 @@ tasks can be bounded by a lifecycle.
 There is a fantastic Ember addon, [ember-concurrency](http://ember-concurrency.com/)
 that solves these problems in a very exciting and simple way. It is largely
 inspired by [RxJS](http://reactivex.io/) and the Observable pattern, both of
-which concern themsevles with creating life-cycle-free
+which concern themselves with creating life-cycle-free
 async that, in practice, tend to be hard for developers to learn.
 
 This addon introduces several utility methods to help manage async, object
@@ -103,7 +103,7 @@ export default Component.extend({
 });
 ```
 
-The code above is correct, but again, less that simple to write.
+The code above is correct, but again, less than simple to write.
 Instead, always use `runTask`. `runTask` entangles a timer with the
 lifecycle of the object scheduling the work. When the object is destroyed,
 the task is also cancelled.
@@ -304,7 +304,7 @@ calls are properly canceled (as usual with those methods).
 
 In testing, the `updateTime` method would execute initially during the components instantiation (just like
 in development and production environments), but would not automatically start polling. This allows
-tests that are not related to the polling behavior to continue uninterupted. To test the actual polling
+tests that are not related to the polling behavior to continue uninterrupted. To test the actual polling
 functionality, use the provided `pollTaskFor` helper:
 
 ```js
