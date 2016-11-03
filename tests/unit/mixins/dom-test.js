@@ -1,18 +1,26 @@
 /* global Event */
 import Ember from 'ember';
-import { skip } from 'qunit';
+import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
-import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+import ContextBoundEventListenersMixin, { setShouldAssertPassive } from 'ember-lifeline/mixins/dom';
 
-const { run, $, getOwner, setOwner, Component } = Ember;
+const { run, $, getOwner, Component } = Ember;
 
 moduleForComponent('ember-lifeline/mixins/dom', {
   integration: true,
 
   beforeEach() {
     let owner = getOwner(this);
-    owner.register('component:under-test', Component.extend(ContextBoundEventListenersMixin));
+    let testContext = this;
+    owner.register('component:under-test', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.componentInstance = this;
+      }
+    }));
+
     this.Component = owner._lookupFactory('component:under-test');
+    setShouldAssertPassive(true);
   }
 });
 
@@ -26,12 +34,10 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
   test(`${testName} adds event listener to child element`, function(assert) {
     assert.expect(4);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    subject.element.innerHTML = '<span class="foo"></span>';
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
 
     let calls = 0;
     let hadRunloop = null;
@@ -60,12 +66,10 @@ moduleForComponent('ember-lifeline/mixins/dom', {
    */
   test(`${testName} adds jquery event listener to child element with multiple handler args`, function(assert) {
     assert.expect(4);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    subject.element.innerHTML = '<span class="foo"></span>';
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
 
     let calls = 0;
     let hadRunloop = null;
@@ -87,12 +91,10 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
   test(`${testName} adds multiple listeners to child element`, function(assert) {
     assert.expect(2);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    subject.element.innerHTML = '<span class="foo"></span>';
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
 
     let calls = 0;
     subject.addEventListener('.foo', 'click change', () => {
@@ -108,14 +110,12 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 2, 'callback was called again');
   });
 
-  skip(`${testName} adds event listener to non-child element w/ jQuery`, function(assert) {
+  test(`${testName} adds event listener to non-child element w/ jQuery`, function(assert) {
     assert.expect(5);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    $('#qunit-fixture').append('<span class="foo"></span>');
+    this.set('show', true);
+    this.render(hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`);
+    let subject = this.componentInstance;
 
     let ranCallback = 0;
     let hadRunloop = null;
@@ -126,16 +126,14 @@ moduleForComponent('ember-lifeline/mixins/dom', {
       handledEvent = event;
     }, testedOptions);
 
-    $('.foo')[0].dispatchEvent(new Event('click'));
+    this.$('.foo')[0].dispatchEvent(new Event('click'));
 
     assert.equal(ranCallback, 1, 'callback was called once');
     assert.ok(hadRunloop, 'callback was called in runloop');
     assert.ok(!!handledEvent.target, 'callback passed a target');
     assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
 
-    run(() => {
-      subject.remove();
-    });
+    this.set('show', false);
 
     // Trigger the event on the non-child element again, after the component
     // is removed from DOM. The listener should not fire this time.
@@ -144,14 +142,12 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(ranCallback, 1, 'callback was not called a second tim');
   });
 
-  skip(`${testName} adds event listener to non-child element`, function(assert) {
+  test(`${testName} adds event listener to non-child element`, function(assert) {
     assert.expect(5);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    $('#qunit-fixture').append('<span class="foo"></span>');
+    this.set('show', true);
+    this.render(hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`);
+    let subject = this.componentInstance;
 
     let calls = 0;
     let hadRunloop = null;
@@ -169,9 +165,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.ok(!!handledEvent.target, 'callback passed a target');
     assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
 
-    run(() => {
-      subject.remove();
-    });
+    this.set('show', false);
 
     // Trigger the event on the non-child element again, after the component
     // is removed from DOM. The listener should not fire this time.
@@ -182,11 +176,9 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
   test(`${testName} throws when there is no element to attach to`, function(assert) {
     assert.expect(1);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
 
     assert.throws(() => {
       subject.addEventListener('.foo', 'click', () => {}, testedOptions);
@@ -195,6 +187,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
   test(`${testName} throws when attached before rendering`, function(assert) {
     assert.expect(1);
+
     let subject = this.Component.create();
 
     assert.throws(() => {
@@ -202,19 +195,12 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }, /Called \w+ before the component was rendered/);
   });
 
-  skip(`${testName} adds event listener to non-child element in tagless component`, function(assert) {
+  test(`${testName} adds event listener to non-child element in tagless component`, function(assert) {
     assert.expect(5);
-    let options = { tagName: '' };
-    // this is used when creating a tagless component to provide a nice
-    // warning when using "event" methods, but since this test harness
-    // does not provide an owner/container we just mock it here
-    setOwner(options, { lookup() { } });
-    let subject = this.Component.create(options);
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    $('#qunit-fixture').append('<span class="foo"></span>');
+    this.set('show', true);
+    this.render(hbs`{{#if show}}{{under-test tagName=""}}{{/if}}<span class="foo"></span>`);
+    let subject = this.componentInstance;
 
     let calls = 0;
     let hadRunloop = null;
@@ -232,9 +218,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.ok(!!handledEvent.target, 'callback passed a target');
     assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
 
-    run(() => {
-      subject.remove();
-    });
+    this.set('show', false);
 
     // Trigger the event on the non-child element again, after the component
     // is removed from DOM. The listener should not fire this time.
@@ -243,74 +227,65 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 1, 'callback was not called again');
   });
 
-  skip(`${testName} throws when using a string selector in a tagless component`, function(assert) {
+  test(`${testName} throws when using a string selector in a tagless component`, function(assert) {
     assert.expect(1);
-    let options = { tagName: '' };
-    // this is used when creating a tagless component to provide a nice
-    // warning when using "event" methods, but since this test harness
-    // does not provide an owner/container we just mock it here
-    setOwner(options, { lookup() { } });
-    let subject = this.Component.create(options);
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    $('#qunit-fixture').append('<span class="foo"></span>');
+    this.render(hbs`{{under-test tagName=""}}<span class="foo"></span>`);
+    let subject = this.componentInstance;
 
     assert.throws(() => {
       subject.addEventListener('.foo', 'click', () => {}, testedOptions);
     }, /Must provide an element/);
   });
 
-  skip(`${testName} listeners on different contexts can be torn down without impacting other contexts`, function(assert) {
+  test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, function(assert) {
     assert.expect(2);
-    let subjectA = this.BaseObject.create();
-    let subjectB = this.BaseObject.create();
 
-    try {
-      run(() => {
-        subjectA.appendTo('#qunit-fixture');
-        subjectB.appendTo('#qunit-fixture');
-      });
-      let target = $('<span class="foo"></span>');
-      target.appendTo('#qunit-fixture');
+    let testContext = this;
+    this.register('component:under-test-a', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.subjectA = this;
+      }
+    }));
+    this.register('component:under-test-b', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.subjectB = this;
+      }
+    }));
 
-      let calls = 0;
-      let callback = () => {
-        calls++;
-      };
-      subjectA.addEventListener(target, 'click', callback, testedOptions);
-      subjectB.addEventListener(target, 'click', callback, testedOptions);
+    this.set('showA', true);
+    this.render(hbs`{{#if showA}}{{under-test-a}}{{/if}}{{under-test-b}}<span class="foo"></span>`);
 
-      target.click();
-      assert.equal(calls, 2, 'two callbacks called');
+    let { subjectA, subjectB } = this;
 
-      run(() => {
-        subjectA.destroy();
-      });
+    let target = this.$('.foo');
 
-      target.click();
-      assert.equal(calls, 3, 'one more callback called for remaining context');
-    } finally {
-      run(() => {
-        if (!subjectA.isDestroyed) {
-          subjectA.destroy();
-        }
-        subjectB.destroy();
-      });
-    }
+    let calls = 0;
+    let callback = () => {
+      calls++;
+    };
+    subjectA.addEventListener(target, 'click', callback, testedOptions);
+    subjectB.addEventListener(target, 'click', callback, testedOptions);
+
+    target.click();
+    assert.equal(calls, 2, 'two callbacks called');
+
+    this.set('showA', false);
+
+    target.click();
+    assert.equal(calls, 3, 'one more callback called for remaining context');
   });
 
 });
 
 test('addEventListener(_,_) coalesces multiple listeners on same event', function(assert) {
   assert.expect(1);
-  let subject = this.Component.create();
 
-  run(() => {
-    subject.appendTo('#qunit-fixture');
-  });
-  subject.element.innerHTML = '<span class="foo"></span>';
+  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+  this.render(hbs`{{under-test}}`);
+  let subject = this.componentInstance;
 
   let calls = 0;
   let callback = () => calls++;
@@ -329,14 +304,12 @@ test('addEventListener(_,_) coalesces multiple listeners on same event', functio
 /* These features are based on ES2015 Proxies */
 if (window.Proxy) {
 
-  skip('addEventListener(_,_) raises on preventDefault', function(assert) {
+  test('addEventListener(_,_) raises on preventDefault', function(assert) {
     assert.expect(1);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    subject.element.innerHTML = '<span class="foo"></span>';
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
 
     subject.addEventListener('.foo', 'click', (e) => {
       assert.throws(() => {
@@ -347,14 +320,12 @@ if (window.Proxy) {
     subject.element.firstChild.dispatchEvent(new Event('click'));
   });
 
-  skip('addEventListener(_,_) raises on stopPropogation', function(assert) {
+  test('addEventListener(_,_) raises on stopPropogation', function(assert) {
     assert.expect(1);
-    let subject = this.Component.create();
 
-    run(() => {
-      subject.appendTo('#qunit-fixture');
-    });
-    subject.element.innerHTML = '<span class="foo"></span>';
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
 
     subject.addEventListener('.foo', 'click', (e) => {
       assert.throws(() => {
@@ -369,12 +340,10 @@ if (window.Proxy) {
 
 test('addEventListener(_,_,{passive: false}) does not coalesce multiple listeners on same event', function(assert) {
   assert.expect(1);
-  let subject = this.Component.create();
 
-  run(() => {
-    subject.appendTo('#qunit-fixture');
-  });
-  subject.element.innerHTML = '<span class="foo"></span>';
+  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+  this.render(hbs`{{under-test}}`);
+  let subject = this.componentInstance;
 
   let calls = 0;
   let callback = () => calls++;
@@ -392,12 +361,10 @@ test('addEventListener(_,_,{passive: false}) does not coalesce multiple listener
 
 test('addEventListener(_,_,{passive: false}) permits stopPropogation', function(assert) {
   assert.expect(2);
-  let subject = this.Component.create();
 
-  run(() => {
-    subject.appendTo('#qunit-fixture');
-  });
-  subject.element.innerHTML = '<span class="outer"><span class="inner"></span></span>';
+  this.register('template:components/under-test', hbs`<span class="outer"><span class="inner"></span></span>`);
+  this.render(hbs`{{under-test}}`);
+  let subject = this.componentInstance;
 
   let outerCalls = 0;
   subject.addEventListener('.outer', 'click', () => outerCalls++);
