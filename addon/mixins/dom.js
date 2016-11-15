@@ -7,7 +7,7 @@ const {
   assert
 } = Ember;
 
-const assign = Ember.assign || Ember.merge;
+const assign = Ember.assign || Ember.merge; // eslint-disable-line
 
 const DEFAULT_LISTENER_OPTIONS = {
   passive: true
