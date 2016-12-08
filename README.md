@@ -23,6 +23,16 @@ lifecycles, and the Ember runloop. These tools should provide a simple developer
 experience that allows engineers to focus on the business domain, and think less
 about the weird parts of working in a long-lived app.
 
+## Installation
+
+    ember install ember-lifeline
+  
+To use any of the below mentioned methods in your component, view or service, you will have to import and apply one or both of these mixins to your class:
+* `ember-lifeline/mixins/run` for using any of the *Task methods
+* `ember-lifeline/mixins/dom` for using `addEventListener`
+
+## Usage
+
 ### `runTask`
 
 **tl;dr Call `this.runTask(fn, timeout)` on any component, view, or service to
@@ -112,10 +122,11 @@ Using `runTask`, the above can be written as:
 
 ```js
 import Ember from 'ember';
+import RunMixin from 'ember-lifeline/mixins/run';
 
 const { Component } = Ember;
 
-export default Component.extend({
+export default Component.extend(RunMixin, {
   init() {
     this._super();
     this.runTask(() => {
@@ -154,10 +165,11 @@ for 500ms:
 
 ```js
 import Ember from 'ember';
+import RunMixin from 'ember-lifeline/mixins/run';
 
 const { Component } = Ember;
 
-export default Component.extend({
+export default Component.extend(RunMixin, {
   click() {
     this.debounceTask('reportTime', 500);
   },
@@ -183,10 +195,11 @@ consistency the API of `throttleTask` is presented:
 
 ```js
 import Ember from 'ember';
+import RunMixin from 'ember-lifeline/mixins/run';
 
 const { Component } = Ember;
 
-export default Component.extend({
+export default Component.extend(RunMixin, {
   click() {
     this.throttleTask('reportTime', 500);
   },
@@ -220,10 +233,10 @@ and performance problems. Instead, you should be scheduling new work
 *after* the previous work was done. For example:
 
 ```js
-import run from 'ember-runloop';
 import Component from 'ember-component';
+import RunMixin from 'ember-lifeline/mixins/run';
 
-export default Component.extend({
+export default Component.extend(RunMixin, {
   init() {
     this._super(...arguments);
     this.updateTime();
@@ -247,10 +260,10 @@ production. Typically, this is done something like:
 
 ```js
 import Ember from 'ember';
-import run from 'ember-runloop';
 import Component from 'ember-component';
+import RunMixin from 'ember-lifeline/mixins/run';
 
-export default Component.extend({
+export default Component.extend(RunMixin, {
   init() {
     this._super(...arguments);
     this.updateTime();
@@ -275,11 +288,11 @@ This is where `pollTask` really shines. You could rewrite the above example to u
 like this:
 
 ```js
-import run from 'ember-runloop';
 import Component from 'ember-component';
 import injectService from 'ember-service/inject';
+import RunMixin from 'ember-lifeline/mixins/run';
 
-export default Component.extend({
+export default Component.extend(RunMixin, {
   time: injectService(),
 
   init() {
@@ -393,10 +406,11 @@ unfortunate. With `addEventListener` the above example can be re-written as:
 
 ```js
 import Ember from 'ember';
+import DomMixin from 'ember-lifeline/mixins/dom';
 
 const { Component } = Ember;
 
-export default Component.extend({
+export default Component.extend(DomMixin, {
   didInsertElement() {
     this._super();
     this.addEventListener(window, 'scroll', (e) => {
