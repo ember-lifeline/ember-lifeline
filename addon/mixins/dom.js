@@ -53,6 +53,26 @@ function listenerDataFor(element, eventName) {
   return passiveListenersForEvent;
 }
 
+function removeHandlerFromListenerData(handler) {
+  let listenerData = listenerDataFor(handler.element, handler.eventName);
+
+  /*
+   * Splice the handler out of the handlers list
+   */
+  let index = listenerData.handlers.indexOf(handler.callback);
+  listenerData.handlers.splice(index, 1);
+
+  /*
+   * If no more handlers remain, detach the passive listener from the
+   * element and reset the listenerData cache.
+   */
+  if (listenerData.handlers.length === 0) {
+    handler.element.off(handler.eventName, listenerData.listener);
+    listenerData.listener = null;
+    listenerData.handlers = [];
+  }
+}
+
 /**
  ContextBoundEventListenersMixin provides a mechanism to attach event listeners
  with runloops and automatic removal when the host object is removed from DOM.
@@ -111,6 +131,26 @@ export default Mixin.create({
     }
   },
 
+  /**
+
+   @param { String } selector the jQuery selector or element
+   @param { String } _eventName the event name to listen for
+   @param { Function } _callback the callback to run for that event
+   @public
+   */
+  removeEventListener(selector, eventName, callback, _options) {
+    assert('Must provide an element (not a jQuery selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
+
+    let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
+    let element = findElement(this.element, selector);
+
+    if (options.passive) {
+      this._removeCoalescedEventListener(element, eventName, callback);
+    } else {
+      this._removeEventListener(element, eventName, callback);
+    }
+  },
+
   _addCoalescedEventListener(element, eventName, callback) {
     /*
      * listenerData caches the handler list and listener callback on the
@@ -160,11 +200,44 @@ export default Mixin.create({
   _addEventListener(element, eventName, _callback) {
     let callback = run.bind(this, _callback);
     element.on(eventName, callback);
-    this._listeners.push({ element, eventName, callback });
+    this._listeners.push({ element, eventName, callback, _callback });
+  },
+
+  _removeCoalescedEventListener(element, eventName, callback) {
+    for (let i = 0; i < this._coalescedHandlers.length; i++) {
+      let handler = this._coalescedHandlers[i];
+      if (
+        handler.element.get(0) === element.get(0)
+        && handler.eventName === eventName
+        && handler.callback === callback
+      ) {
+        removeHandlerFromListenerData(handler);
+        break;
+      }
+    }
+  },
+
+  _removeEventListener(element, eventName, _callback) {
+    // We cannot use Array.findIndex as we cannot rely on babel/polyfill being present
+    for (let i = 0; i < this._listeners.length; i++) {
+      let listener = this._listeners[i];
+      if (
+        listener.element.get(0) === element.get(0)
+        && listener.eventName === eventName
+        && listener._callback === _callback
+      ) {
+        /*
+         * Drop the event listener and remove the listener object
+         */
+        element.off(eventName, listener.callback);
+        this._listeners.splice(i, 1);
+        break;
+      }
+    }
   },
 
   willDestroyElement() {
-    this._super();
+    this._super(...arguments);
 
     /* Drop non-passive event listeners */
     for (let i = 0; i < this._listeners.length; i++) {
@@ -175,24 +248,8 @@ export default Mixin.create({
 
     /* Drop passive event listeners */
     for (let i = 0; i < this._coalescedHandlers.length; i++) {
-      let { element, eventName, callback } = this._coalescedHandlers[i];
-      let listenerData = listenerDataFor(element, eventName);
-
-      /*
-       * Splice the handler out of the handlers list
-       */
-      let index = listenerData.handlers.indexOf(callback);
-      listenerData.handlers.splice(index, 1);
-
-      /*
-       * If no more handlers remain, detach the passive listener from the
-       * element and reset the listenerData cache.
-       */
-      if (listenerData.handlers.length === 0) {
-        element.off(eventName, listenerData.listener);
-        listenerData.listener = null;
-        listenerData.handlers = [];
-      }
+      let handler = this._coalescedHandlers[i];
+      removeHandlerFromListenerData(handler);
     }
     this._coalescedHandlers.length = 0;
   }

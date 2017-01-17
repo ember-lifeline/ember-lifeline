@@ -278,6 +278,26 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 3, 'one more callback called for remaining context');
   });
 
+  test(`${testName.replace('add', 'remove')} removes event listener from child element`, function(assert) {
+    assert.expect(1);
+
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
+
+    let calls = 0;
+    let listener = () => {
+      calls++;
+    };
+    subject.addEventListener('.foo', 'click', listener, testedOptions);
+
+    subject.removeEventListener('.foo', 'click', listener, testedOptions);
+
+    subject.element.firstChild.dispatchEvent(new Event('click'));
+
+    assert.equal(calls, 0, 'callback was not called');
+  });
+
 });
 
 test('addEventListener(_,_) coalesces multiple listeners on same event', function(assert) {

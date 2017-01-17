@@ -452,6 +452,17 @@ Passivity refers to the ability for a handler to either `preventDefault` or,
 in our implementation, `stopPropagation`. In dev mode and testing, use of
 these APIs on the event object will raise an exception.
 
+### `removeEventListener`
+
+**tl;dr call `this.removeEventListener(element, eventName, fn, options)` on a component or
+view to actively remove a jQuery event listener previously added by a call to `addEventListener`.**
+
+Although any listener added by a call to `addEventListener` will be teared down when the view or component is being
+destroyed, there might be cases where you want to actively remove an existing event listener even during the active
+lifecycle, for example when temporarily dealing with high volume events like `scroll` or `mousemove`.
+
+Be sure to pass the identical arguments used when calling `addEventListener`!
+
 ## Credit
 
 This addon was developed internally at Twitch, written originally by [@mixonic](https://github.com/mixonic) and [@rwjblue](https://github.com/rwjblue).
