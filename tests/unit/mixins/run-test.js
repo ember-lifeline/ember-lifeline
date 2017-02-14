@@ -134,6 +134,86 @@ test('runTask tasks can be canceled', function(assert) {
   }, 10);
 });
 
+test('scheduleTask invokes async tasks', function(assert) {
+  assert.expect(2);
+
+  let subject = this.subject();
+  let done = assert.async();
+  let hasRun = false;
+
+  run(() => {
+    subject.scheduleTask('actions', () => {
+      hasRun = true;
+      assert.ok(true, 'callback was called');
+      done();
+    });
+
+    assert.notOk(hasRun, 'callback should not have run yet');
+  });
+});
+
+test('scheduleTask invokes named functions as async tasks', function(assert) {
+  assert.expect(4);
+  let done = assert.async();
+  let subject = this.subject({
+    run(name) {
+      hasRun = true;
+      assert.equal(this, subject, 'context is correct');
+      assert.equal(name, 'foo', 'passed arguments are correct');
+      assert.ok(true, 'callback was called');
+      done();
+    }
+  });
+  let hasRun = false;
+
+  run(() => {
+    subject.scheduleTask('sync', 'run', 'foo');
+    assert.notOk(hasRun, 'callback should not have run yet');
+  });
+});
+
+test('cancels tasks added with `scheduleTask`', function(assert) {
+  assert.expect(2);
+  let subject = this.subject();
+  let done = assert.async();
+  let hasRun = false;
+
+  run(() => {
+    subject.scheduleTask('actions', () => {
+      hasRun = true;
+      assert.ok(false, 'callback was called');
+    });
+
+    assert.notOk(hasRun, 'callback should not have run yet');
+    run(subject, 'destroy');
+  });
+
+  window.setTimeout(() => {
+    assert.notOk(hasRun, 'callback should not have run yet');
+    done();
+  }, 10);
+});
+
+test('scheduleTask tasks can be canceled', function(assert) {
+  assert.expect(1);
+  let subject = this.subject();
+  let done = assert.async();
+  let hasRun = false;
+
+  run(() => {
+    let timer = subject.scheduleTask('afterRender', () => {
+      hasRun = true;
+    });
+
+    run.cancel(timer);
+  });
+
+  window.setTimeout(() => {
+    assert.notOk(hasRun, 'callback should have been canceled previously');
+    done();
+  }, 10);
+});
+
 test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
   let subject = this.subject({
     doStuff() {}
