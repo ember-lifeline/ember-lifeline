@@ -92,6 +92,54 @@ export default Mixin.create({
   },
 
   /**
+   Adds the provided function to the named queue to be executed at the end of the RunLoop.
+   The timer is properly canceled if the object is destroyed before it is invoked.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     init() {
+       this._super(...arguments);
+       this.scheduleTask('afterRender', () => {
+         console.log('This runs at the end of the run loop (via the afterRender queue) if this component is still displayed');
+       })
+     }
+   });
+   ```
+
+   @method scheduleTask
+   @param { Function } callback the callback to run at the provided time
+   @param { ...* } args arguments to pass to the callback
+   @param { Number } [timeout=0] the time in the future to run the callback
+   @public
+   */
+  scheduleTask(queue, callbackOrName, ...args) {
+    assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queue === 'string');
+    assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    let type = typeof callbackOrName;
+
+    let cancelId = run.schedule(queue, this, () => {
+      let cancelIndex = this._pendingTimers.indexOf(cancelId);
+      this._pendingTimers.splice(cancelIndex, 1);
+
+      if (type === 'function') {
+        callbackOrName.call(this, ...args);
+      } else if (type === 'string' && this[callbackOrName]) {
+        this[callbackOrName](...args);
+      } else {
+        throw new Error('You must pass a callback function or method name to `scheduleTask`.');
+      }
+    });
+
+    this._pendingTimers.push(cancelId);
+    return cancelId;
+  },
+
+  /**
    Runs the function with the provided name after the timeout has expired on the last
    invocation. The timer is properly canceled if the object is destroyed before it is
    invoked.
