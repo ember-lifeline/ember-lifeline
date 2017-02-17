@@ -125,33 +125,32 @@ test('runTask tasks can be canceled', function(assert) {
 });
 
 test('scheduleTask invokes async tasks', function(assert) {
-  assert.expect(2);
+  assert.expect(3);
 
   let subject = this.subject();
-  let done = assert.async();
   let hasRun = false;
 
   run(() => {
     subject.scheduleTask('actions', () => {
       hasRun = true;
       assert.ok(true, 'callback was called');
-      done();
     });
 
     assert.notOk(hasRun, 'callback should not have run yet');
   });
+
+  assert.ok(hasRun, 'callback was called');
 });
 
 test('scheduleTask invokes named functions as async tasks', function(assert) {
-  assert.expect(4);
-  let done = assert.async();
+  assert.expect(5);
+
   let subject = this.subject({
     run(name) {
       hasRun = true;
       assert.equal(this, subject, 'context is correct');
       assert.equal(name, 'foo', 'passed arguments are correct');
       assert.ok(true, 'callback was called');
-      done();
     }
   });
   let hasRun = false;
@@ -160,12 +159,13 @@ test('scheduleTask invokes named functions as async tasks', function(assert) {
     subject.scheduleTask('sync', 'run', 'foo');
     assert.notOk(hasRun, 'callback should not have run yet');
   });
+
+  assert.ok(hasRun, 'callback was called');
 });
 
 test('cancels tasks added with `scheduleTask`', function(assert) {
   assert.expect(2);
   let subject = this.subject();
-  let done = assert.async();
   let hasRun = false;
 
   run(() => {
@@ -178,16 +178,12 @@ test('cancels tasks added with `scheduleTask`', function(assert) {
     run(subject, 'destroy');
   });
 
-  window.setTimeout(() => {
-    assert.notOk(hasRun, 'callback should not have run yet');
-    done();
-  }, 10);
+  assert.notOk(hasRun, 'callback should not have run yet');
 });
 
 test('scheduleTask tasks can be canceled', function(assert) {
   assert.expect(1);
   let subject = this.subject();
-  let done = assert.async();
   let hasRun = false;
 
   run(() => {
@@ -198,10 +194,7 @@ test('scheduleTask tasks can be canceled', function(assert) {
     run.cancel(timer);
   });
 
-  window.setTimeout(() => {
-    assert.notOk(hasRun, 'callback should have been canceled previously');
-    done();
-  }, 10);
+  assert.notOk(hasRun, 'callback should have been canceled previously');
 });
 
 test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
