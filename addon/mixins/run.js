@@ -1,7 +1,10 @@
 import Ember from 'ember';
-import Mixin from 'ember-metal/mixin';
-import run from 'ember-runloop';
-import { assert } from 'ember-metal/utils';
+
+const {
+  Mixin,
+  run,
+  assert
+} = Ember;
 
 let _shouldPollOverride;
 function shouldPoll() {
