@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 const {
   Mixin,
+  RSVP,
   $,
   run,
   merge,
@@ -32,7 +33,7 @@ function assertOnlyPassiveEventUsageProxy(event) {
   });
 }
 
-function listenerDataFor(element, eventName) {
+export function listenerDataFor(element, eventName) {
   let passiveListeners = element.prop('_passiveListeners');
   /* Set an object to cache passive listener data */
   if (!passiveListeners) {
@@ -53,6 +54,23 @@ function listenerDataFor(element, eventName) {
   return passiveListenersForEvent;
 }
 
+export function popListenerDataFor(element, eventName) {
+  let passiveListeners = element.prop('_passiveListeners');
+  /* Set an object to cache passive listener data */
+  if (!passiveListeners) {
+    passiveListeners = {};
+    element.prop('_passiveListeners', passiveListeners);
+  }
+
+  let passiveListenersForEvent = passiveListeners[eventName];
+  passiveListeners[eventName] = {
+    handlers: [],
+    listener: null
+  };
+  element.off(eventName);
+  return passiveListenersForEvent || passiveListeners[eventName];
+}
+
 function removeHandlerFromListenerData(handler) {
   let listenerData = listenerDataFor(handler.element, handler.eventName);
 
@@ -70,6 +88,53 @@ function removeHandlerFromListenerData(handler) {
     handler.element.off(handler.eventName, listenerData.listener);
     listenerData.listener = null;
     listenerData.handlers = [];
+  }
+}
+
+export function addCoalescedEventListener(element, eventName, callback) {
+  let listenerData = listenerDataFor(element, eventName);
+
+  /*
+   * If listenerData has no handlers, we must setup the listener.
+   */
+  if (listenerData.handlers.length === 0) {
+    let promise = new RSVP.Promise((resolve) => {
+
+      /*
+       * Create a callback that walks over all handlers and calls them in
+       * order. In dev mode, wrap the event in a proxy to ensure active
+       * steps like stopPropogation or preventDefault are not called.
+       */
+      let coalescedCallback = (event, ...callbackArgs) => {
+        let eventForHandlers = event;
+        if (shouldAssertPassive) {
+          eventForHandlers = assertOnlyPassiveEventUsageProxy(event);
+        }
+
+        run(() => {
+          listenerData.handlers.forEach((h) => {
+            h.apply(this, [eventForHandlers, ...callbackArgs]);
+          });
+          resolve();
+        });
+      };
+
+      /*
+       * Attach the listener and cache the listener for teardown
+       */
+      element.on(eventName, coalescedCallback);
+      listenerData.listener = coalescedCallback;
+    });
+
+    listenerData.handlers.push(callback);
+    return promise;
+  } else {
+    /*
+     * Finally, push the handler onto the list of handlers. Do this on the
+     * listenerData for execution of the hooks, and on the context for
+     * teardown.
+     */
+    listenerData.handlers.push(callback);
   }
 }
 
@@ -156,44 +221,7 @@ export default Mixin.create({
      * listenerData caches the handler list and listener callback on the
      * element as a property.
      */
-    let listenerData = listenerDataFor(element, eventName);
-
-    /*
-     * If listenerData has no handlers, we must setup the listener.
-     */
-    if (listenerData.handlers.length === 0) {
-
-      /*
-       * Create a callback that walks over all handlers and calls them in
-       * order. In dev mode, wrap the event in a proxy to ensure active
-       * steps like stopPropogation or preventDefault are not called.
-       */
-      let coalescedCallback = (event, ...callbackArgs) => {
-        let eventForHandlers = event;
-        if (shouldAssertPassive) {
-          eventForHandlers = assertOnlyPassiveEventUsageProxy(event);
-        }
-
-        run(() => {
-          listenerData.handlers.forEach((h) => {
-            h.apply(this, [eventForHandlers, ...callbackArgs]);
-          });
-        });
-      };
-
-      /*
-       * Attach the listener and cache the listener for teardown
-       */
-      element.on(eventName, coalescedCallback);
-      listenerData.listener = coalescedCallback;
-    }
-
-    /*
-     * Finally, push the handler onto the list of handlers. Do this on the
-     * listenerData for execution of the hooks, and on the context for
-     * teardown.
-     */
-    listenerData.handlers.push(callback);
+    addCoalescedEventListener(element, eventName, callback);
     this._coalescedHandlers.push({ element, eventName, callback });
   },
 

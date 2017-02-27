@@ -2,7 +2,11 @@
 import Ember from 'ember';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
-import ContextBoundEventListenersMixin, { setShouldAssertPassive } from 'ember-lifeline/mixins/dom';
+import ContextBoundEventListenersMixin, {
+  addCoalescedEventListener,
+  popListenerDataFor,
+  setShouldAssertPassive
+} from 'ember-lifeline/mixins/dom';
 
 const { run, $, getOwner, Component } = Ember;
 
@@ -321,6 +325,35 @@ test('addEventListener(_,_) coalesces multiple listeners on same event', functio
   assert.equal(calls, 1, 'callback only called once');
 });
 
+test('Can wrap the callbacks added with addEventListener(_,_), and wait for them to be called', function(assert) {
+  let done = assert.async();
+  assert.expect(1);
+
+  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+  this.render(hbs`{{under-test}}`);
+  let subject = this.componentInstance;
+
+  let calls = 0;
+  let callback = () => calls++;
+  subject.addEventListener('.foo', 'click', () => {
+    run.scheduleOnce('afterRender', callback);
+  });
+  subject.addEventListener('.foo', 'click', () => {
+    run.scheduleOnce('afterRender', callback);
+  });
+
+  let elem = this.$('.foo');
+  let listener = popListenerDataFor(elem, 'click');
+  let promises = listener.handlers.map((h) => addCoalescedEventListener(elem, 'click', h));
+
+  subject.element.firstChild.dispatchEvent(new Event('click'));
+  promises[0].then(() => {
+    assert.equal(calls, 1, 'callback only called once');
+    done();
+  });
+
+  return done;
+});
 /* These features are based on ES2015 Proxies */
 if (window.Proxy) {
 
