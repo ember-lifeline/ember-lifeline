@@ -57,7 +57,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
 
    export default Component.extend(ContextBoundTasksMixin, {
      didInsertElement() {
@@ -103,7 +103,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
 
    export default Component.extend(ContextBoundTasksMixin, {
      logMe() {
@@ -153,7 +153,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
 
    export default Component.extend(ContextBoundTasksMixin, {
      logMe() {
@@ -210,7 +210,7 @@ export default Mixin.create({
 
    ```js
    import wait from 'ember-test-helpers/wait';
-   import { pollTaskFor } from 'web-client/mixins/context-bound-tasks';
+   import { pollTaskFor } from 'ember-lifeline/mixins/run';
 
    //...snip...
 

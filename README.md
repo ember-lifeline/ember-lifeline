@@ -321,9 +321,9 @@ tests that are not related to the polling behavior to continue uninterrupted. To
 functionality, use the provided `pollTaskFor` helper:
 
 ```js
-import moduleForComponent from 'web-client/tests/helpers/module-for-component';
+import moduleForComponent from 'ember-lifeline/tests/helpers/module-for-component';
 import wait from 'ember-test-helpers/wait';
-import { pollTaskFor } from 'web-client/mixins/context-bound-tasks';
+import { pollTaskFor } from 'ember-lifeline/mixins/run';
 import Service from 'ember-service';
 
 let fakeNow;
