@@ -21,7 +21,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
       }
     }));
 
-    this.Component = this.owner.factoryFor ? this.container.factoryFor(name) : this.owner._lookupFactory(name);
+    this.Component = this.owner.factoryFor ? this.owner.factoryFor(name) : this.owner._lookupFactory(name);
     setShouldAssertPassive(true);
   }
 });
