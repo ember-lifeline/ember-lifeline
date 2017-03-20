@@ -75,6 +75,8 @@ export default Mixin.create({
    */
   runTask(callbackOrName, timeout = 0) {
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    assert(`Called \`runTask\` without init being called in ${this}. Please ensure init is calling \`_super\`.`, typeof this._pendingTimers !== 'undefined');
+
     let type = typeof callbackOrName;
 
     let cancelId = run.later(() => {
@@ -271,6 +273,8 @@ export default Mixin.create({
 
   willDestroy() {
     this._super(...arguments);
+
+    assert(`Called \`willDestroy\` without \`init\` being called in ${this}. Please ensure init is calling \`_super\`.`, typeof this._pendingTimers !== 'undefined');
 
     cancelTimers(this._pendingTimers);
     cancelDebounces(this._pendingDebounces);
