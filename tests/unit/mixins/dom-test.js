@@ -10,16 +10,18 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   integration: true,
 
   beforeEach() {
-    let owner = getOwner(this);
     let testContext = this;
-    owner.register('component:under-test', Component.extend(ContextBoundEventListenersMixin, {
+    let name = 'component:under-test';
+
+    this.owner = getOwner(this);
+    this.owner.register(name, Component.extend(ContextBoundEventListenersMixin, {
       init() {
         this._super(...arguments);
         testContext.componentInstance = this;
       }
     }));
 
-    this.Component = owner._lookupFactory('component:under-test');
+    this.Component = this.owner.factoryFor ? this.container.factoryFor(name) : this.owner._lookupFactory(name);
     setShouldAssertPassive(true);
   }
 });
