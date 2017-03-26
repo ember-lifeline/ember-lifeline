@@ -81,7 +81,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }, testedOptions);
 
     let delta = {};
-    $(subject.element.firstChild).trigger('drag', delta);
+    subject.element.firstChild.dispatchEvent(new Event('drag', { delta }));
 
     assert.equal(calls, 1, 'callback was called');
     assert.ok(hadRunloop, 'callback was called in runloop');

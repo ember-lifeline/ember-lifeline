@@ -2,7 +2,6 @@ import Ember from 'ember';
 
 const {
   Mixin,
-  $,
   run,
   merge,
   assert
@@ -33,12 +32,8 @@ function assertOnlyPassiveEventUsageProxy(event) {
 }
 
 function listenerDataFor(element, eventName) {
-  let passiveListeners = element.prop('_passiveListeners');
-  /* Set an object to cache passive listener data */
-  if (!passiveListeners) {
-    passiveListeners = {};
-    element.prop('_passiveListeners', passiveListeners);
-  }
+  /* Object to cache passive listener data */
+  let passiveListeners = getOrCreateProperty(element, '_passiveListeners');
 
   let passiveListenersForEvent = passiveListeners[eventName];
   /* Set an object for the event */
@@ -67,10 +62,25 @@ function removeHandlerFromListenerData(handler) {
    * element and reset the listenerData cache.
    */
   if (listenerData.handlers.length === 0) {
-    handler.element.off(handler.eventName, listenerData.listener);
+    handler.element.addEventListener(handler.eventName, listenerData.listener, false);
     listenerData.listener = null;
     listenerData.handlers = [];
   }
+}
+
+function getOrCreateProperty(element, name) {
+  let value = element[name];
+
+  if (!value) {
+    value = {};
+
+    Object.defineProperty(element, name, {
+      value,
+      configurable: true
+    });
+  }
+
+  return value;
 }
 
 /**
@@ -184,7 +194,7 @@ export default Mixin.create({
       /*
        * Attach the listener and cache the listener for teardown
        */
-      element.on(eventName, coalescedCallback);
+      element.addEventListener(eventName, coalescedCallback);
       listenerData.listener = coalescedCallback;
     }
 
@@ -229,7 +239,7 @@ export default Mixin.create({
         /*
          * Drop the event listener and remove the listener object
          */
-        element.off(eventName, listener.callback);
+        element.removeEventListener(eventName, listener.callback);
         this._listeners.splice(i, 1);
         break;
       }
@@ -242,7 +252,7 @@ export default Mixin.create({
     /* Drop non-passive event listeners */
     for (let i = 0; i < this._listeners.length; i++) {
       let { element, eventName, callback } = this._listeners[i];
-      element.off(eventName, callback);
+      element.removeEventListener(eventName, callback);
     }
     this._listeners.length = 0;
 
@@ -259,16 +269,14 @@ export default Mixin.create({
 function findElement(contextElement, selector) {
   let selectorType = typeof selector;
   let element;
+
   if (selectorType === 'string') {
-    element = $(selector, contextElement);
-  } else if (selector instanceof $) {
-    element = selector;
+    element = contextElement.querySelector(selector);
   } else if (selector.nodeType || selector === window) {
-    element = $(selector);
+    element = selector;
   }
 
   assert(`Called addEventListener with bad selector value ${selector}`, !!element);
-  assert(`Called addEventListener with selector not found in DOM: ${selector}`, element.length > 0);
 
   return element;
 }
