@@ -134,6 +134,19 @@ test('runTask tasks can be canceled', function(assert) {
   }, 10);
 });
 
+test('runTask triggers an assertion when init has not called _super in the super chain', function(assert) {
+  let subject = this.subject({
+    init() {
+    },
+    willDestroy() {
+    }
+  });
+
+  assert.throws(() => {
+    subject.runTask(() => {}, 5);
+  }, /without \`init\` calling \`_super\`/);
+});
+
 test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
   let subject = this.subject({
     doStuff() {}
