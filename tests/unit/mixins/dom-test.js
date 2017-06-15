@@ -32,6 +32,17 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   testedOptions: { passive: false }
 }].forEach(({ testName, testedOptions }) => {
 
+  test(`${testName} ensures arrays are not eagerly allocated`, function(assert) {
+    assert.expect(2);
+
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
+
+    assert.notOk(subject._listeners);
+    assert.notOk(subject._coalescedHandlers);
+  });
+
   test(`${testName} adds event listener to child element`, function(assert) {
     assert.expect(4);
 

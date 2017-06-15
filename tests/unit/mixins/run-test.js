@@ -33,6 +33,16 @@ module('ember-lifeline/mixins/run', {
   }
 });
 
+test('ensures arrays are not eagerly allocated', function(assert) {
+  assert.expect(3);
+
+  let subject = this.subject();
+
+  assert.notOk(subject._pendingTimers);
+  assert.notOk(subject._pendingDebounces);
+  assert.notOk(subject._pollerLabels);
+});
+
 test('invokes async tasks', function(assert) {
   assert.expect(2);
 

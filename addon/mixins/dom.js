@@ -88,16 +88,6 @@ export default Mixin.create({
     this._super(...arguments);
   },
 
-  get _listeners() {
-    delete this._listeners;
-    return this._listeners = [];
-  },
-
-  get _coalescedHandlers() {
-    delete this._coalescedHandlers;
-    return this._coalescedHandlers = [];
-  },
-
   /**
    Attaches an event listener that will automatically be removed when the host
    object is dropped from DOM.
@@ -201,16 +191,20 @@ export default Mixin.create({
      * teardown.
      */
     listenerData.handlers.push(callback);
-    this._coalescedHandlers.push({ element, eventName, callback });
+    this.getOrAllocateArray('_coalescedHandlers').push({ element, eventName, callback });
   },
 
   _addEventListener(element, eventName, _callback) {
     let callback = run.bind(this, _callback);
     element.on(eventName, callback);
-    this._listeners.push({ element, eventName, callback, _callback });
+    this.getOrAllocateArray('_listeners').push({ element, eventName, callback, _callback });
   },
 
   _removeCoalescedEventListener(element, eventName, callback) {
+    if (!this._coalescedHandlers) {
+      return;
+    }
+
     for (let i = 0; i < this._coalescedHandlers.length; i++) {
       let handler = this._coalescedHandlers[i];
       if (
@@ -225,6 +219,10 @@ export default Mixin.create({
   },
 
   _removeEventListener(element, eventName, _callback) {
+    if (!this._listeners) {
+      return;
+    }
+
     // We cannot use Array.findIndex as we cannot rely on babel/polyfill being present
     for (let i = 0; i < this._listeners.length; i++) {
       let listener = this._listeners[i];
@@ -246,21 +244,32 @@ export default Mixin.create({
   willDestroyElement() {
     this._super(...arguments);
 
-    /* Drop non-passive event listeners */
-    for (let i = 0; i < this._listeners.length; i++) {
-      let { element, eventName, callback } = this._listeners[i];
-      element.off(eventName, callback);
+    if (this._listeners) {
+      /* Drop non-passive event listeners */
+      for (let i = 0; i < this._listeners.length; i++) {
+        let { element, eventName, callback } = this._listeners[i];
+        element.off(eventName, callback);
+      }
+      this._listeners.length = 0;
     }
-    this._listeners.length = 0;
 
-    /* Drop passive event listeners */
-    for (let i = 0; i < this._coalescedHandlers.length; i++) {
-      let handler = this._coalescedHandlers[i];
-      removeHandlerFromListenerData(handler);
+    if (this._coalescedHandlers) {
+      /* Drop passive event listeners */
+      for (let i = 0; i < this._coalescedHandlers.length; i++) {
+        let handler = this._coalescedHandlers[i];
+        removeHandlerFromListenerData(handler);
+      }
+      this._coalescedHandlers.length = 0;
     }
-    this._coalescedHandlers.length = 0;
+  },
+
+  getOrAllocateArray(propertyName) {
+    if (!this[propertyName]) {
+      this[propertyName] = [];
+    }
+
+    return this[propertyName];
   }
-
 });
 
 function findElement(contextElement, selector) {
