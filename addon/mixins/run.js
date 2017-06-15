@@ -43,10 +43,21 @@ export function pollTaskFor(label) {
 export default Mixin.create({
   init() {
     this._super(...arguments);
+  },
 
-    this._pendingTimers = [];
-    this._pendingDebounces = {};
-    this._pollerLabels = [];
+  get _pendingTimers() {
+    delete this._pendingTimers;
+    return this._pendingTimers = [];
+  },
+
+  get _pendingDebounces() {
+    delete this._pendingDebounces;
+    return this._pendingDebounces = [];
+  },
+
+  get _pollerLabels() {
+    delete this._pollerLabels;
+    return this._pollerLabels = [];
   },
 
   /**

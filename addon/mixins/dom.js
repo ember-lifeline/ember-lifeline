@@ -86,9 +86,16 @@ function removeHandlerFromListenerData(handler) {
 export default Mixin.create({
   init() {
     this._super(...arguments);
+  },
 
-    this._listeners = [];
-    this._coalescedHandlers = [];
+  get _listeners() {
+    delete this._listeners;
+    return this._listeners = [];
+  },
+
+  get _coalescedHandlers() {
+    delete this._coalescedHandlers;
+    return this._coalescedHandlers = [];
   },
 
   /**
