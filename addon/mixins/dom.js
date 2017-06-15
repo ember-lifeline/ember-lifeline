@@ -209,7 +209,7 @@ export default Mixin.create({
 
   _addEventListener(element, eventName, _callback) {
     let callback = run.bind(this, _callback);
-    element.on(eventName, callback);
+    element.addEventListener(eventName, callback);
     this._listeners.push({ element, eventName, callback, _callback });
   },
 

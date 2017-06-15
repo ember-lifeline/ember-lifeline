@@ -78,10 +78,14 @@ moduleForComponent('ember-lifeline/mixins/dom', {
       calls++;
       hadRunloop = !!run.currentRunLoop;
       handledArgs = args;
+      debugger;
     }, testedOptions);
-
+debugger;
     let delta = {};
-    subject.element.firstChild.dispatchEvent(new Event('drag', { delta }));
+    let event = document.createEvent('MouseEvent');
+    event.initEvent('drag', true, true);
+    event.delta = {};
+    subject.element.firstChild.dispatchEvent(event);
 
     assert.equal(calls, 1, 'callback was called');
     assert.ok(hadRunloop, 'callback was called in runloop');
