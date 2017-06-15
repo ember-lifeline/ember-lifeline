@@ -75,6 +75,7 @@ export default Mixin.create({
    */
   runTask(callbackOrName, timeout = 0) {
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    assert(`The following object '${this}' forgot to invoke 'this._super` it its 'init'`, Array.isArray(this._pendingTimers));
     let type = typeof callbackOrName;
 
     let cancelId = run.later(() => {
