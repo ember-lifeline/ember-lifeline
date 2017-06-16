@@ -193,13 +193,13 @@ export default Mixin.create({
      * teardown.
      */
     listenerData.handlers.push(callback);
-    this.getOrAllocateArray('_coalescedHandlers').push({ element, eventName, callback });
+    this._getOrAllocateArray('_coalescedHandlers').push({ element, eventName, callback });
   },
 
   _addEventListener(element, eventName, _callback) {
     let callback = run.bind(this, _callback);
     element.on(eventName, callback);
-    this.getOrAllocateArray('_listeners').push({ element, eventName, callback, _callback });
+    this._getOrAllocateArray('_listeners').push({ element, eventName, callback, _callback });
   },
 
   _removeCoalescedEventListener(element, eventName, callback) {
@@ -265,7 +265,7 @@ export default Mixin.create({
     }
   },
 
-  getOrAllocateArray(propertyName) {
+  _getOrAllocateArray(propertyName) {
     if (!this[propertyName]) {
       this[propertyName] = [];
     }
