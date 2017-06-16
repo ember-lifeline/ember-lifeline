@@ -44,9 +44,9 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
-    this._pendingTimers = [];
-    this._pendingDebounces = {};
-    this._pollerLabels = [];
+    this._pendingTimers = undefined;
+    this._pendingDebounces = undefined;
+    this._pollerLabels = undefined;
   },
 
   /**
@@ -75,13 +75,13 @@ export default Mixin.create({
    */
   runTask(callbackOrName, timeout = 0) {
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
-    assert(`Called \`runTask\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._pendingTimers !== 'undefined');
 
     let type = typeof callbackOrName;
+    let pendingTimers = this._getOrAllocateArray('_pendingTimers');
 
     let cancelId = run.later(() => {
-      let cancelIndex = this._pendingTimers.indexOf(cancelId);
-      this._pendingTimers.splice(cancelIndex, 1);
+      let cancelIndex = pendingTimers.indexOf(cancelId);
+      pendingTimers.splice(cancelIndex, 1);
 
       if (type === 'function') {
         callbackOrName.call(this);
@@ -92,7 +92,7 @@ export default Mixin.create({
       }
     }, timeout);
 
-    this._pendingTimers.push(cancelId);
+    pendingTimers.push(cancelId);
     return cancelId;
   },
 
@@ -129,12 +129,13 @@ export default Mixin.create({
     assert(`Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
     assert(`Called \`debounceTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let debounce = this._pendingDebounces[name];
+    let pendingDebounces = this._getOrAllocateObject('_pendingDebounces');
+    let debounce = pendingDebounces[name];
     let debouncedFn;
 
     if (!debounce) {
       debouncedFn = (...args) => {
-        delete this._pendingDebounces[name];
+        delete pendingDebounces[name];
         this[name](...args);
       };
     } else {
@@ -144,7 +145,7 @@ export default Mixin.create({
     // cancelId is new, even if the debounced function was already present
     let cancelId = run.debounce(this, debouncedFn, ...debounceArgs);
 
-    this._pendingDebounces[name] = { debouncedFn, cancelId };
+    pendingDebounces[name] = { debouncedFn, cancelId };
   },
 
   /**
@@ -255,7 +256,7 @@ export default Mixin.create({
       assert(`The label provided to \`pollTask\` must be unique. \`${label}\` has already been registered.`, !pollTaskLabels[label]);
       pollTaskLabels[label] = true;
 
-      this._pollerLabels.push(label);
+      this._getOrAllocateArray('_pollerLabels').push(label);
     }
 
     if (shouldPoll()) {
@@ -274,16 +275,30 @@ export default Mixin.create({
   willDestroy() {
     this._super(...arguments);
 
-    assert(`Called \`willDestroy\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._pendingTimers !== 'undefined');
-
     cancelTimers(this._pendingTimers);
     cancelDebounces(this._pendingDebounces);
     clearPollers(this._pollerLabels);
+  },
+
+  _getOrAllocateArray(propertyName) {
+    if (!this[propertyName]) {
+      this[propertyName] = [];
+    }
+
+    return this[propertyName];
+  },
+
+  _getOrAllocateObject(propertyName) {
+    if (!this[propertyName]) {
+      this[propertyName] = {};
+    }
+
+    return this[propertyName];
   }
 });
 
 function clearPollers(labels) {
-  if (!labels.length) {
+  if (!labels || !labels.length) {
     return;
   }
 
@@ -295,7 +310,7 @@ function clearPollers(labels) {
 }
 
 function cancelTimers(timers) {
-  if (!timers.length) {
+  if (!timers || !timers.length) {
     return;
   }
 
@@ -307,9 +322,9 @@ function cancelTimers(timers) {
 }
 
 function cancelDebounces(obj) {
-  let debounceNames = Object.keys(obj);
+  let debounceNames = obj && Object.keys(obj);
 
-  if (!debounceNames.length) {
+  if (!debounceNames || !debounceNames.length) {
     return;
   }
 
