@@ -84,10 +84,6 @@ function removeHandlerFromListenerData(handler) {
  @public
  */
 export default Mixin.create({
-  init() {
-    this._super(...arguments);
-  },
-
   /**
    Attaches an event listener that will automatically be removed when the host
    object is dropped from DOM.
@@ -116,7 +112,6 @@ export default Mixin.create({
   addEventListener(selector, eventName, callback, _options) {
     assert('Must provide an element (not a jQuery selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
     assert('Called addEventListener before the component was rendered', this._currentState === this._states.inDOM);
-    assert(`Called \`addEventListener\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._listeners !== 'undefined');
 
     // Ember.assign would be better here, but Ember < 2.5 doesn't have that :(
     let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
@@ -138,7 +133,6 @@ export default Mixin.create({
    */
   removeEventListener(selector, eventName, callback, _options) {
     assert('Must provide an element (not a jQuery selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
-    assert(`Called \`removeEventListener\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._listeners !== 'undefined');
 
     let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
@@ -245,8 +239,6 @@ export default Mixin.create({
 
   willDestroyElement() {
     this._super(...arguments);
-
-    assert(`Called \`willDestroyElement\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._listeners !== 'undefined');
 
     if (this._listeners) {
       /* Drop non-passive event listeners */

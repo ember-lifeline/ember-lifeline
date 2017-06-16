@@ -41,10 +41,6 @@ export function pollTaskFor(label) {
  @public
  */
 export default Mixin.create({
-  init() {
-    this._super(...arguments);
-  },
-
   /**
    Runs the provided function at the specified timeout (defaulting to 0).
    The timer is properly canceled if the object is destroyed before it is invoked.
@@ -71,7 +67,6 @@ export default Mixin.create({
    */
   runTask(callbackOrName, timeout = 0) {
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
-    assert(`Called \`runTask\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._pendingTimers !== 'undefined');
 
     let type = typeof callbackOrName;
     let pendingTimers = this.getOrAllocateArray('_pendingTimers');
@@ -271,8 +266,6 @@ export default Mixin.create({
 
   willDestroy() {
     this._super(...arguments);
-
-    assert(`Called \`willDestroy\` without \`init\` calling \`_super\` in ${this}. Please ensure \`init\` is calling \`_super\`.`, typeof this._pendingTimers !== 'undefined');
 
     cancelTimers(this._pendingTimers);
     cancelDebounces(this._pendingDebounces);
