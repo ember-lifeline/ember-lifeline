@@ -41,6 +41,14 @@ export function pollTaskFor(label) {
  @public
  */
 export default Mixin.create({
+  init() {
+    this._super(...arguments);
+
+    this._pendingTimers = undefined;
+    this._pendingDebounces = undefined;
+    this._pollerLabels = undefined;
+  },
+
   /**
    Runs the provided function at the specified timeout (defaulting to 0).
    The timer is properly canceled if the object is destroyed before it is invoked.
@@ -121,7 +129,7 @@ export default Mixin.create({
     assert(`Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
     assert(`Called \`debounceTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let pendingDebounces = this.getOrAllocateArray('_pendingDebounces');
+    let pendingDebounces = this.getOrAllocateObject('_pendingDebounces');
     let debounce = pendingDebounces[name];
     let debouncedFn;
 
@@ -275,6 +283,14 @@ export default Mixin.create({
   getOrAllocateArray(propertyName) {
     if (!this[propertyName]) {
       this[propertyName] = [];
+    }
+
+    return this[propertyName];
+  },
+
+  getOrAllocateObject(propertyName) {
+    if (!this[propertyName]) {
+      this[propertyName] = {};
     }
 
     return this[propertyName];
