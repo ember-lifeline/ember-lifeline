@@ -89,7 +89,7 @@ export default Mixin.create({
 
     this._listeners = undefined;
     this._coalescedHandlers = undefined;
-  }
+  },
   /**
    Attaches an event listener that will automatically be removed when the host
    object is dropped from DOM.
