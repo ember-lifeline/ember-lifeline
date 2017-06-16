@@ -33,6 +33,16 @@ module('ember-lifeline/mixins/run', {
   }
 });
 
+test('ensures arrays are not eagerly allocated', function(assert) {
+  assert.expect(3);
+
+  let subject = this.subject();
+
+  assert.notOk(subject._pendingTimers);
+  assert.notOk(subject._pendingDebounces);
+  assert.notOk(subject._pollerLabels);
+});
+
 test('invokes async tasks', function(assert) {
   assert.expect(2);
 
@@ -122,19 +132,6 @@ test('runTask tasks can be canceled', function(assert) {
     assert.notOk(hasRun, 'callback should have been canceled previously');
     done();
   }, 10);
-});
-
-test('runTask triggers an assertion when init has not called _super in the super chain', function(assert) {
-  let subject = this.subject({
-    init() {
-    },
-    willDestroy() {
-    }
-  });
-
-  assert.throws(() => {
-    subject.runTask(() => {}, 5);
-  }, /without \`init\` calling \`_super\`/);
 });
 
 test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
