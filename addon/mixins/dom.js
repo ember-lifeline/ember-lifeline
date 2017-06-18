@@ -150,7 +150,8 @@ export default Mixin.create({
     }
   },
 
-  _addCoalescedEventListener(element, eventName, callback) {
+  _addCoalescedEventListener(element, eventName, _callback) {
+    let callback = run.bind(this, _callback);
     /*
      * listenerData caches the handler list and listener callback on the
      * element as a property.
@@ -193,7 +194,8 @@ export default Mixin.create({
      * teardown.
      */
     listenerData.handlers.push(callback);
-    this._getOrAllocateArray('_coalescedHandlers').push({ element, eventName, callback });
+
+    this._getOrAllocateArray('_coalescedHandlers').push({ element, eventName, callback, _callback });
   },
 
   _addEventListener(element, eventName, _callback) {
@@ -202,7 +204,7 @@ export default Mixin.create({
     this._getOrAllocateArray('_listeners').push({ element, eventName, callback, _callback });
   },
 
-  _removeCoalescedEventListener(element, eventName, callback) {
+  _removeCoalescedEventListener(element, eventName, _callback) {
     if (!this._coalescedHandlers) {
       return;
     }
@@ -212,7 +214,7 @@ export default Mixin.create({
       if (
         handler.element.get(0) === element.get(0)
         && handler.eventName === eventName
-        && handler.callback === callback
+        && handler._callback === _callback
       ) {
         removeHandlerFromListenerData(handler);
         break;
