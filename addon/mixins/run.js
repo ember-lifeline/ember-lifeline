@@ -97,6 +97,36 @@ export default Mixin.create({
   },
 
   /**
+   Cancel a previously scheduled task.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     didInsertElement() {
+       this._cancelId = this.runTask(() => {
+         console.log('This runs after 5 seconds if this component is still displayed');
+       }, 5000)
+     },
+
+     disable() {
+        this.cancelTask(this._cancelId);
+     }
+   });
+   ```
+
+   @method cancelTask
+   @param { Number } cancelId the id returned from the runTask call
+   @public
+   */
+  cancelTask(cancelId) {
+    cancelTimer(cancelId);
+  },
+
+  /**
    Runs the function with the provided name after the timeout has expired on the last
    invocation. The timer is properly canceled if the object is destroyed before it is
    invoked.
@@ -146,6 +176,38 @@ export default Mixin.create({
     let cancelId = run.debounce(this, debouncedFn, ...debounceArgs);
 
     pendingDebounces[name] = { debouncedFn, cancelId };
+  },
+
+  /**
+   Cancel a previously debounced task.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     logMe() {
+       console.log('This will only run once every 300ms.');
+     },
+
+     click() {
+       this.debounceTask('logMe', 300);
+     },
+
+     disable() {
+        this.cancelDebounce('logMe');
+     }
+   });
+   ```
+
+   @method cancelDebounce
+   @param { String } methodName the name of the debounced method to cancel
+   @public
+   */
+  cancelDebounce(name) {
+    cancelDebounce(this._pendingDebounces, name);
   },
 
   /**
@@ -272,6 +334,39 @@ export default Mixin.create({
     callback.call(this, next);
   },
 
+  /**
+   Clears a previously setup polling task.
+
+   Example:
+
+   ```js
+   // app/components/foo-bar.js
+   export default Component.extend({
+     api: injectService(),
+
+     enableAutoRefresh() {
+       this.pollTask((next) => {
+         this.get('api').request('get', 'some/path')
+           .then(() => {
+             this.runTask(next, 1800);
+           })
+       }, 'foo-bar#watch-some-path');
+     },
+
+     disableAutoRefresh() {
+        this.clearPoller('foo-bar#watch-some-path');
+     }
+   });
+   ```
+
+   @method clearPoller
+   @param { String } label the label for the pollTask to be cleared
+   @public
+   */
+  clearPoller(label) {
+    clearPoller(label);
+  },
+
   willDestroy() {
     this._super(...arguments);
 
@@ -303,10 +398,13 @@ function clearPollers(labels) {
   }
 
   for (let i = 0; i < labels.length; i++) {
-    let label = labels[i];
-    pollTaskLabels[label] = undefined;
-    queuedPollTasks[label] = undefined;
+    clearPoller(labels[i]);
   }
+}
+
+function clearPoller(label) {
+  pollTaskLabels[label] = undefined;
+  queuedPollTasks[label] = undefined;
 }
 
 function cancelTimers(timers) {
@@ -315,10 +413,12 @@ function cancelTimers(timers) {
   }
 
   for (let i = 0; i < timers.length; i++) {
-    let cancelId = timers[i];
-
-    run.cancel(cancelId);
+    cancelTimer(timers[i]);
   }
+}
+
+function cancelTimer(cancelId) {
+  run.cancel(cancelId);
 }
 
 function cancelDebounces(obj) {
@@ -329,9 +429,11 @@ function cancelDebounces(obj) {
   }
 
   for (let i = 0; i < debounceNames.length; i++) {
-    let taskName = debounceNames[i];
-    let { cancelId } = obj[taskName];
-
-    run.cancel(cancelId);
+    cancelDebounce(obj, debounceNames[i]);
   }
+}
+
+function cancelDebounce(obj, name) {
+  let { cancelId } = obj[name];
+  run.cancel(cancelId);
 }
