@@ -354,17 +354,17 @@ export default Mixin.create({
      },
 
      disableAutoRefresh() {
-        this.clearPoller('foo-bar#watch-some-path');
+        this.cancelPoll('foo-bar#watch-some-path');
      }
    });
    ```
 
-   @method clearPoller
+   @method cancelPoll
    @param { String } label the label for the pollTask to be cleared
    @public
    */
-  clearPoller(label) {
-    clearPoller(label);
+  cancelPoll(label) {
+    cancelPoll(label);
   },
 
   willDestroy() {
@@ -398,11 +398,11 @@ function clearPollers(labels) {
   }
 
   for (let i = 0; i < labels.length; i++) {
-    clearPoller(labels[i]);
+    cancelPoll(labels[i]);
   }
 }
 
-function clearPoller(label) {
+function cancelPoll(label) {
   pollTaskLabels[label] = undefined;
   queuedPollTasks[label] = undefined;
 }
@@ -421,19 +421,19 @@ function cancelTimer(cancelId) {
   run.cancel(cancelId);
 }
 
-function cancelDebounces(obj) {
-  let debounceNames = obj && Object.keys(obj);
+function cancelDebounces(pendingDebounces) {
+  let debounceNames = pendingDebounces && Object.keys(pendingDebounces);
 
   if (!debounceNames || !debounceNames.length) {
     return;
   }
 
   for (let i = 0; i < debounceNames.length; i++) {
-    cancelDebounce(obj, debounceNames[i]);
+    cancelDebounce(pendingDebounces, debounceNames[i]);
   }
 }
 
-function cancelDebounce(obj, name) {
-  let { cancelId } = obj[name];
+function cancelDebounce(pendingDebounces, name) {
+  let { cancelId } = pendingDebounces[name];
   run.cancel(cancelId);
 }

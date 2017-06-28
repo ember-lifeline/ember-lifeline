@@ -475,7 +475,7 @@ test('pollTask: can be manually cleared', function(assert) {
     subject.runTask(next);
   }, 'one');
 
-  subject.clearPoller('one');
+  subject.cancelPoll('one');
 
   assert.throws(() => {
     pollTaskFor('one');
