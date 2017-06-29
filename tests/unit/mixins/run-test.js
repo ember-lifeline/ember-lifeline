@@ -122,11 +122,11 @@ test('runTask tasks can be canceled', function(assert) {
   let done = assert.async();
   let hasRun = false;
 
-  let timer = subject.runTask(() => {
+  let cancelId = subject.runTask(() => {
     hasRun = true;
   }, 5);
 
-  run.cancel(timer);
+  subject.cancelTask(cancelId);
 
   window.setTimeout(() => {
     assert.notOk(hasRun, 'callback should have been canceled previously');
@@ -192,6 +192,29 @@ test('debounceTask should cancel properly on teardown', function(assert) {
   subject.debounceTask('doStuff', 5);
   subject.debounceTask('doStuff', 5);
   run(subject, 'destroy');
+
+  assert.equal(runCount, 0, 'should not have run');
+
+  window.setTimeout(() => {
+    assert.equal(runCount, 0, 'should not have run');
+    done();
+  }, 10);
+});
+
+test('debounceTask can be canceled', function(assert) {
+  let done = assert.async();
+  assert.expect(2);
+
+  let runCount = 0;
+  let subject = this.subject({
+    doStuff() {
+      runCount++;
+    }
+  });
+
+  subject.debounceTask('doStuff', 5);
+  subject.debounceTask('doStuff', 5);
+  subject.cancelDebounce('doStuff');
 
   assert.equal(runCount, 0, 'should not have run');
 
@@ -425,6 +448,34 @@ test('pollTask: does not leak when destroyed', function(assert) {
   }, 'one');
 
   run(subject, 'destroy');
+
+  assert.throws(() => {
+    pollTaskFor('one');
+  }, /A pollTask with a label of 'one' was not found/);
+
+  subject = this.subject({ force: true });
+
+  subject.pollTask((next) => {
+    assert.ok(true, 'pollTask was called');
+    subject.runTask(next, 5);
+  }, 'one');
+
+  // ensure that pending pollTask's are not running
+  return wait()
+    .then(() => {
+      pollTaskFor('one');
+    });
+});
+
+test('pollTask: can be manually cleared', function(assert) {
+  assert.expect(3);
+  let subject = this.subject();
+
+  subject.pollTask((next) => {
+    subject.runTask(next);
+  }, 'one');
+
+  subject.cancelPoll('one');
 
   assert.throws(() => {
     pollTaskFor('one');
