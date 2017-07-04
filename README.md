@@ -1,5 +1,9 @@
 # ember-lifeline
 
+[![Build Status](https://travis-ci.org/rwjblue/ember-lifeline.svg?branch=master)](https://travis-ci.org/rwjblue/ember-lifeline)
+[![Ember Observer Score](https://emberobserver.com/badges/ember-lifeline.svg)](https://emberobserver.com/addons/ember-lifeline)
+[![npm version](https://badge.fury.io/js/ember-lifeline.svg)](https://badge.fury.io/js/ember-lifeline)
+
 Ember applications have long life-cycles. A user may navigate to several pages
 and use many different features before they leave the application. This
 makes JavaScript and Ember development unlike Rails development, where the
