@@ -4,9 +4,10 @@ const {
   Mixin,
   $,
   run,
-  merge,
   assert
 } = Ember;
+
+const assign = Ember.assign || Ember.merge; // eslint-disable-line
 
 const DEFAULT_LISTENER_OPTIONS = {
   passive: true
@@ -119,8 +120,7 @@ export default Mixin.create({
     assert('Must provide an element (not a jQuery selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
     assert('Called addEventListener before the component was rendered', this._currentState === this._states.inDOM);
 
-    // Ember.assign would be better here, but Ember < 2.5 doesn't have that :(
-    let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
+    let options = assign(assign({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
 
     if (options.passive) {
