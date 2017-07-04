@@ -1,7 +1,7 @@
 {
   "name": "ember-lifeline",
   "version": "1.3.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Ember.js addon for lifecycle aware async tasks and DOM events.",
   "keywords": [
     "ember-addon"
   ],
