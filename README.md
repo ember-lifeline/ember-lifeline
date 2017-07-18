@@ -1,5 +1,9 @@
 # ember-lifeline
 
+[![Build Status](https://travis-ci.org/rwjblue/ember-lifeline.svg?branch=master)](https://travis-ci.org/rwjblue/ember-lifeline)
+[![Ember Observer Score](https://emberobserver.com/badges/ember-lifeline.svg)](https://emberobserver.com/addons/ember-lifeline)
+[![npm version](https://badge.fury.io/js/ember-lifeline.svg)](https://badge.fury.io/js/ember-lifeline)
+
 Ember applications have long life-cycles. A user may navigate to several pages
 and use many different features before they leave the application. This
 makes JavaScript and Ember development unlike Rails development, where the
@@ -26,7 +30,7 @@ about the weird parts of working in a long-lived app.
 ## Installation
 
     ember install ember-lifeline
-  
+
 To use any of the below mentioned methods in your component, view or service, you will have to import and apply one or both of these mixins to your class:
 * `ember-lifeline/mixins/run` for using any of the *Task methods
 * `ember-lifeline/mixins/dom` for using `addEventListener`
@@ -141,7 +145,7 @@ object itself.
 
 ### `debounceTask`
 
-**tl;dr Call `this.debounceTask(methodName, timeout)` on any component, view,
+**tl;dr Call `this.debounceTask(methodName, args*, wait, immediate)` on any component, view,
 or service to debounce work.**
 
 Debouncing is a common async pattern often used to manage user input. When a
@@ -184,7 +188,7 @@ cancelled.
 
 ### `throttleTask`
 
-**tl;dr Call `this.throttleTask(methodName, timeout)` on any component, view,
+**tl;dr Call `this.throttleTask(methodName, args*, spacing, immediate)` on any component, view,
 or service to throttle work.**
 
 When a task is throttled, it is executed immediately. For the length of the

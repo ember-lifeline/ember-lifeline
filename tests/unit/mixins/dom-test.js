@@ -291,6 +291,40 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 3, 'one more callback called for remaining context');
   });
 
+  test(`${testName} listeners are called with correct scope`, function(assert) {
+    assert.expect(2);
+
+    let testContext = this;
+    this.register('component:under-test-a', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.subjectA = this;
+      }
+    }));
+    this.register('component:under-test-b', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.subjectB = this;
+      }
+    }));
+
+    this.render(hbs`{{under-test-a}}{{under-test-b}}<span class="foo"></span>`);
+
+    let { subjectA, subjectB } = this;
+
+    let target = this.$('.foo');
+
+    let assertScope = (scope) => {
+      return function() {
+        assert.equal(this, scope);
+      };
+    };
+    subjectA.addEventListener(target, 'click', assertScope(subjectA), testedOptions);
+    subjectB.addEventListener(target, 'click', assertScope(subjectB), testedOptions);
+
+    target.click();
+  });
+
   test(`${testName.replace('add', 'remove')} removes event listener from child element`, function(assert) {
     assert.expect(1);
 
