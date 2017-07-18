@@ -44,9 +44,9 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
-    this._pendingTimers = [];
-    this._pendingDebounces = {};
-    this._pollerLabels = [];
+    this._pendingTimers = undefined;
+    this._pendingDebounces = undefined;
+    this._pollerLabels = undefined;
   },
 
   /**
@@ -57,7 +57,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
 
    export default Component.extend(ContextBoundTasksMixin, {
      didInsertElement() {
@@ -75,11 +75,13 @@ export default Mixin.create({
    */
   runTask(callbackOrName, timeout = 0) {
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+
     let type = typeof callbackOrName;
+    let pendingTimers = this._getOrAllocateArray('_pendingTimers');
 
     let cancelId = run.later(() => {
-      let cancelIndex = this._pendingTimers.indexOf(cancelId);
-      this._pendingTimers.splice(cancelIndex, 1);
+      let cancelIndex = pendingTimers.indexOf(cancelId);
+      pendingTimers.splice(cancelIndex, 1);
 
       if (type === 'function') {
         callbackOrName.call(this);
@@ -90,8 +92,38 @@ export default Mixin.create({
       }
     }, timeout);
 
-    this._pendingTimers.push(cancelId);
+    pendingTimers.push(cancelId);
     return cancelId;
+  },
+
+  /**
+   Cancel a previously scheduled task.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     didInsertElement() {
+       this._cancelId = this.runTask(() => {
+         console.log('This runs after 5 seconds if this component is still displayed');
+       }, 5000)
+     },
+
+     disable() {
+        this.cancelTask(this._cancelId);
+     }
+   });
+   ```
+
+   @method cancelTask
+   @param { Number } cancelId the id returned from the runTask call
+   @public
+   */
+  cancelTask(cancelId) {
+    cancelTimer(cancelId);
   },
 
   /**
@@ -103,7 +135,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
 
    export default Component.extend(ContextBoundTasksMixin, {
      logMe() {
@@ -127,12 +159,13 @@ export default Mixin.create({
     assert(`Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
     assert(`Called \`debounceTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let debounce = this._pendingDebounces[name];
+    let pendingDebounces = this._getOrAllocateObject('_pendingDebounces');
+    let debounce = pendingDebounces[name];
     let debouncedFn;
 
     if (!debounce) {
       debouncedFn = (...args) => {
-        delete this._pendingDebounces[name];
+        delete pendingDebounces[name];
         this[name](...args);
       };
     } else {
@@ -142,7 +175,39 @@ export default Mixin.create({
     // cancelId is new, even if the debounced function was already present
     let cancelId = run.debounce(this, debouncedFn, ...debounceArgs);
 
-    this._pendingDebounces[name] = { debouncedFn, cancelId };
+    pendingDebounces[name] = { debouncedFn, cancelId };
+  },
+
+  /**
+   Cancel a previously debounced task.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     logMe() {
+       console.log('This will only run once every 300ms.');
+     },
+
+     click() {
+       this.debounceTask('logMe', 300);
+     },
+
+     disable() {
+        this.cancelDebounce('logMe');
+     }
+   });
+   ```
+
+   @method cancelDebounce
+   @param { String } methodName the name of the debounced method to cancel
+   @public
+   */
+  cancelDebounce(name) {
+    cancelDebounce(this._pendingDebounces, name);
   },
 
   /**
@@ -153,7 +218,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
 
    export default Component.extend(ContextBoundTasksMixin, {
      logMe() {
@@ -210,7 +275,7 @@ export default Mixin.create({
 
    ```js
    import wait from 'ember-test-helpers/wait';
-   import { pollTaskFor } from 'web-client/mixins/context-bound-tasks';
+   import { pollTaskFor } from 'ember-lifeline/mixins/run';
 
    //...snip...
 
@@ -253,7 +318,7 @@ export default Mixin.create({
       assert(`The label provided to \`pollTask\` must be unique. \`${label}\` has already been registered.`, !pollTaskLabels[label]);
       pollTaskLabels[label] = true;
 
-      this._pollerLabels.push(label);
+      this._getOrAllocateArray('_pollerLabels').push(label);
     }
 
     if (shouldPoll()) {
@@ -269,50 +334,106 @@ export default Mixin.create({
     callback.call(this, next);
   },
 
+  /**
+   Clears a previously setup polling task.
+
+   Example:
+
+   ```js
+   // app/components/foo-bar.js
+   export default Component.extend({
+     api: injectService(),
+
+     enableAutoRefresh() {
+       this.pollTask((next) => {
+         this.get('api').request('get', 'some/path')
+           .then(() => {
+             this.runTask(next, 1800);
+           })
+       }, 'foo-bar#watch-some-path');
+     },
+
+     disableAutoRefresh() {
+        this.cancelPoll('foo-bar#watch-some-path');
+     }
+   });
+   ```
+
+   @method cancelPoll
+   @param { String } label the label for the pollTask to be cleared
+   @public
+   */
+  cancelPoll(label) {
+    cancelPoll(label);
+  },
+
   willDestroy() {
     this._super(...arguments);
 
     cancelTimers(this._pendingTimers);
     cancelDebounces(this._pendingDebounces);
     clearPollers(this._pollerLabels);
+  },
+
+  _getOrAllocateArray(propertyName) {
+    if (!this[propertyName]) {
+      this[propertyName] = [];
+    }
+
+    return this[propertyName];
+  },
+
+  _getOrAllocateObject(propertyName) {
+    if (!this[propertyName]) {
+      this[propertyName] = {};
+    }
+
+    return this[propertyName];
   }
 });
 
 function clearPollers(labels) {
-  if (!labels.length) {
+  if (!labels || !labels.length) {
     return;
   }
 
   for (let i = 0; i < labels.length; i++) {
-    let label = labels[i];
-    pollTaskLabels[label] = undefined;
-    queuedPollTasks[label] = undefined;
+    cancelPoll(labels[i]);
   }
 }
 
+function cancelPoll(label) {
+  pollTaskLabels[label] = undefined;
+  queuedPollTasks[label] = undefined;
+}
+
 function cancelTimers(timers) {
-  if (!timers.length) {
+  if (!timers || !timers.length) {
     return;
   }
 
   for (let i = 0; i < timers.length; i++) {
-    let cancelId = timers[i];
-
-    run.cancel(cancelId);
+    cancelTimer(timers[i]);
   }
 }
 
-function cancelDebounces(obj) {
-  let debounceNames = Object.keys(obj);
+function cancelTimer(cancelId) {
+  run.cancel(cancelId);
+}
 
-  if (!debounceNames.length) {
+function cancelDebounces(pendingDebounces) {
+  let debounceNames = pendingDebounces && Object.keys(pendingDebounces);
+
+  if (!debounceNames || !debounceNames.length) {
     return;
   }
 
   for (let i = 0; i < debounceNames.length; i++) {
-    let taskName = debounceNames[i];
-    let { cancelId } = obj[taskName];
-
-    run.cancel(cancelId);
+    cancelDebounce(pendingDebounces, debounceNames[i]);
   }
+}
+
+function cancelDebounce(pendingDebounces, name) {
+  let { cancelId } = pendingDebounces[name];
+  run.cancel(cancelId);
 }

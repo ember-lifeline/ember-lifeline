@@ -10,16 +10,18 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   integration: true,
 
   beforeEach() {
-    let owner = getOwner(this);
     let testContext = this;
-    owner.register('component:under-test', Component.extend(ContextBoundEventListenersMixin, {
+    let name = 'component:under-test';
+
+    this.owner = getOwner(this);
+    this.owner.register(name, Component.extend(ContextBoundEventListenersMixin, {
       init() {
         this._super(...arguments);
         testContext.componentInstance = this;
       }
     }));
 
-    this.Component = owner._lookupFactory('component:under-test');
+    this.Component = this.owner.factoryFor ? this.owner.factoryFor(name) : this.owner._lookupFactory(name);
     setShouldAssertPassive(true);
   }
 });
@@ -31,6 +33,17 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   testName: 'addEventListener(_,_,_,{passive:false})',
   testedOptions: { passive: false }
 }].forEach(({ testName, testedOptions }) => {
+
+  test(`${testName} ensures arrays are not eagerly allocated`, function(assert) {
+    assert.expect(2);
+
+    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
+
+    assert.notOk(subject._listeners);
+    assert.notOk(subject._coalescedHandlers);
+  });
 
   test(`${testName} adds event listener to child element`, function(assert) {
     assert.expect(4);
@@ -280,6 +293,40 @@ debugger;
 
     target.click();
     assert.equal(calls, 3, 'one more callback called for remaining context');
+  });
+
+  test(`${testName} listeners are called with correct scope`, function(assert) {
+    assert.expect(2);
+
+    let testContext = this;
+    this.register('component:under-test-a', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.subjectA = this;
+      }
+    }));
+    this.register('component:under-test-b', Component.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.subjectB = this;
+      }
+    }));
+
+    this.render(hbs`{{under-test-a}}{{under-test-b}}<span class="foo"></span>`);
+
+    let { subjectA, subjectB } = this;
+
+    let target = this.$('.foo');
+
+    let assertScope = (scope) => {
+      return function() {
+        assert.equal(this, scope);
+      };
+    };
+    subjectA.addEventListener(target, 'click', assertScope(subjectA), testedOptions);
+    subjectB.addEventListener(target, 'click', assertScope(subjectB), testedOptions);
+
+    target.click();
   });
 
   test(`${testName.replace('add', 'remove')} removes event listener from child element`, function(assert) {
