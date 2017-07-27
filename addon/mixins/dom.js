@@ -62,7 +62,7 @@ function removeHandlerFromListenerData(handler) {
    * element and reset the listenerData cache.
    */
   if (listenerData.handlers.length === 0) {
-    handler.element.addEventListener(handler.eventName, listenerData.listener, false);
+    handler.element.removeEventListener(handler.eventName, listenerData.listener, false);
     listenerData.listener = null;
     listenerData.handlers = [];
   }
