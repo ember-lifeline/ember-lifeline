@@ -120,43 +120,53 @@ export default Mixin.create({
    ```
 
    @method addEventListener
-   @param { String } selector the jQuery selector or element
+   @param { String } selector the DOM selector or element
    @param { String } _eventName the event name to listen for
    @param { Function } _callback the callback to run for that event
    @public
    */
   addEventListener(selector, eventName, callback, _options) {
-    assert('Must provide an element (not a jQuery selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
+    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
     assert('Called addEventListener before the component was rendered', this._currentState === this._states.inDOM);
 
     // Ember.assign would be better here, but Ember < 2.5 doesn't have that :(
     let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
+    let eventNames = eventName.split(' ');
 
-    if (options.passive) {
-      this._addCoalescedEventListener(element, eventName, callback);
-    } else {
-      this._addEventListener(element, eventName, callback);
+    for (let i = 0; i < eventNames.length; i++) {
+      eventName = eventNames[i];
+
+      if (options.passive) {
+        this._addCoalescedEventListener(element, eventName, callback);
+      } else {
+        this._addEventListener(element, eventName, callback);
+      }
     }
   },
 
   /**
 
-   @param { String } selector the jQuery selector or element
+   @param { String } selector the DOM selector or element
    @param { String } _eventName the event name to listen for
    @param { Function } _callback the callback to run for that event
    @public
    */
   removeEventListener(selector, eventName, callback, _options) {
-    assert('Must provide an element (not a jQuery selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
+    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
 
     let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
+    let eventNames = eventName.split(' ');
 
-    if (options.passive) {
-      this._removeCoalescedEventListener(element, eventName, callback);
-    } else {
-      this._removeEventListener(element, eventName, callback);
+    for (let i = 0; i < eventNames.length; i++) {
+      eventName = eventNames[i];
+
+      if (options.passive) {
+        this._removeCoalescedEventListener(element, eventName, callback);
+      } else {
+        this._removeEventListener(element, eventName, callback);
+      }
     }
   },
 
@@ -222,7 +232,7 @@ export default Mixin.create({
     for (let i = 0; i < this._coalescedHandlers.length; i++) {
       let handler = this._coalescedHandlers[i];
       if (
-        handler.element.get(0) === element.get(0)
+        handler.element === element
         && handler.eventName === eventName
         && handler._callback === _callback
       ) {
@@ -241,7 +251,7 @@ export default Mixin.create({
     for (let i = 0; i < this._listeners.length; i++) {
       let listener = this._listeners[i];
       if (
-        listener.element.get(0) === element.get(0)
+        listener.element === element
         && listener.eventName === eventName
         && listener._callback === _callback
       ) {
@@ -262,7 +272,7 @@ export default Mixin.create({
       /* Drop non-passive event listeners */
       for (let i = 0; i < this._listeners.length; i++) {
         let { element, eventName, callback } = this._listeners[i];
-      	element.removeEventListener(eventName, callback);
+        element.removeEventListener(eventName, callback);
       }
       this._listeners.length = 0;
     }
@@ -296,7 +306,7 @@ function findElement(contextElement, selector) {
     element = selector;
   }
 
-  assert(`Called addEventListener with bad selector value ${selector}`, !!element);
+  assert(`Called addEventListener with selector not found in DOM: ${selector}`, !!element);
 
   return element;
 }

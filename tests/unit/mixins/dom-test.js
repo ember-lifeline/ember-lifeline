@@ -3,6 +3,7 @@ import Ember from 'ember';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
 import ContextBoundEventListenersMixin, { setShouldAssertPassive } from 'ember-lifeline/mixins/dom';
+import { triggerEvent } from 'ember-native-dom-helpers';
 
 const { run, $, getOwner, Component } = Ember;
 
@@ -77,7 +78,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
    * event argument.
    *
    */
-  test(`${testName} adds jquery event listener to child element with multiple handler args`, function(assert) {
+  test(`${testName} adds jquery event listener to child element with multiple handler args`, async function(assert) {
     assert.expect(4);
 
     this.register('template:components/under-test', hbs`<span class="foo"></span>`);
@@ -90,23 +91,19 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     subject.addEventListener('.foo', 'drag', (...args) => {
       calls++;
       hadRunloop = !!run.currentRunLoop;
-      handledArgs = args;
-      debugger;
+      handledArgs = args[0];
     }, testedOptions);
-debugger;
+
     let delta = {};
-    let event = document.createEvent('MouseEvent');
-    event.initEvent('drag', true, true);
-    event.delta = {};
-    subject.element.firstChild.dispatchEvent(event);
+    await triggerEvent(subject.element.firstChild, 'drag', { details: { delta } });
 
     assert.equal(calls, 1, 'callback was called');
     assert.ok(hadRunloop, 'callback was called in runloop');
-    assert.ok(handledArgs[0].target, 'callback passed a target');
-    assert.equal(handledArgs[1], delta, 'second argument can be present');
+    assert.ok(handledArgs.target, 'callback passed a target');
+    assert.equal(handledArgs.details.delta, delta, 'second argument can be present');
   });
 
-  test(`${testName} adds multiple listeners to child element`, function(assert) {
+  test(`${testName} adds multiple listeners to child element`, async function(assert) {
     assert.expect(2);
 
     this.register('template:components/under-test', hbs`<span class="foo"></span>`);
@@ -118,16 +115,16 @@ debugger;
       calls++;
     }, testedOptions);
 
-    subject.element.firstChild.dispatchEvent(new Event('click'));
+    await triggerEvent(subject.element.firstChild, 'click');
 
     assert.equal(calls, 1, 'callback was called');
 
-    subject.element.firstChild.dispatchEvent(new Event('change'));
+    await triggerEvent(subject.element.firstChild, 'change');
 
     assert.equal(calls, 2, 'callback was called again');
   });
 
-  test(`${testName} adds event listener to non-child element w/ jQuery`, function(assert) {
+  test(`${testName} adds event listener to non-child element`, async function(assert) {
     assert.expect(5);
 
     this.set('show', true);
@@ -137,13 +134,14 @@ debugger;
     let ranCallback = 0;
     let hadRunloop = null;
     let handledEvent = null;
-    subject.addEventListener($('.foo'), 'click', (event) => {
+    let element = document.querySelector('.foo');
+    subject.addEventListener(element, 'click', (event) => {
       ranCallback++;
       hadRunloop = !!run.currentRunLoop;
       handledEvent = event;
     }, testedOptions);
 
-    this.$('.foo')[0].dispatchEvent(new Event('click'));
+    await triggerEvent(element, 'click');
 
     assert.equal(ranCallback, 1, 'callback was called once');
     assert.ok(hadRunloop, 'callback was called in runloop');
@@ -154,41 +152,9 @@ debugger;
 
     // Trigger the event on the non-child element again, after the component
     // is removed from DOM. The listener should not fire this time.
-    $('.foo')[0].dispatchEvent(new Event('click'));
+    await triggerEvent(element, 'click');
 
-    assert.equal(ranCallback, 1, 'callback was not called a second tim');
-  });
-
-  test(`${testName} adds event listener to non-child element`, function(assert) {
-    assert.expect(5);
-
-    this.set('show', true);
-    this.render(hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`);
-    let subject = this.componentInstance;
-
-    let calls = 0;
-    let hadRunloop = null;
-    let handledEvent = null;
-    subject.addEventListener($('.foo')[0], 'click', (event) => {
-      calls++;
-      hadRunloop = !!run.currentRunLoop;
-      handledEvent = event;
-    });
-
-    $('.foo')[0].dispatchEvent(new Event('click'));
-
-    assert.equal(calls, 1, 'callback was called');
-    assert.ok(hadRunloop, 'callback was called in runloop');
-    assert.ok(!!handledEvent.target, 'callback passed a target');
-    assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
-
-    this.set('show', false);
-
-    // Trigger the event on the non-child element again, after the component
-    // is removed from DOM. The listener should not fire this time.
-    $('.foo')[0].dispatchEvent(new Event('click'));
-
-    assert.equal(calls, 1, 'callback was not called again');
+    assert.equal(ranCallback, 1, 'callback was not called a second time');
   });
 
   test(`${testName} throws when there is no element to attach to`, function(assert) {
@@ -277,7 +243,7 @@ debugger;
 
     let { subjectA, subjectB } = this;
 
-    let target = this.$('.foo');
+    let target = document.querySelector('.foo');
 
     let calls = 0;
     let callback = () => {
@@ -316,7 +282,7 @@ debugger;
 
     let { subjectA, subjectB } = this;
 
-    let target = this.$('.foo');
+    let target = document.querySelector('.foo');
 
     let assertScope = (scope) => {
       return function() {
