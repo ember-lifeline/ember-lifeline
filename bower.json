@@ -1,6 +1,0 @@
-{
-  "name": "ember-lifeline",
-  "dependencies": {
-    "ember": "~2.10.0-beta.1"
-  }
-}
