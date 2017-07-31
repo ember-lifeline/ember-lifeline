@@ -33,7 +33,12 @@ function assertOnlyPassiveEventUsageProxy(event) {
 
 function listenerDataFor(element, eventName) {
   /* Object to cache passive listener data */
-  let passiveListeners = getOrCreateProperty(element, '_passiveListeners');
+  let passiveListeners = element._passiveListeners;
+
+  if (!passiveListeners) {
+    passiveListeners = {};
+    element._passiveListeners = passiveListeners;
+  }
 
   let passiveListenersForEvent = passiveListeners[eventName];
   /* Set an object for the event */
@@ -66,21 +71,6 @@ function removeHandlerFromListenerData(handler) {
     listenerData.listener = null;
     listenerData.handlers = [];
   }
-}
-
-function getOrCreateProperty(element, name) {
-  let value = element[name];
-
-  if (!value) {
-    value = {};
-
-    Object.defineProperty(element, name, {
-      value,
-      configurable: true
-    });
-  }
-
-  return value;
 }
 
 /**
