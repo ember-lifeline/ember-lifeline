@@ -122,16 +122,11 @@ export default Mixin.create({
     // Ember.assign would be better here, but Ember < 2.5 doesn't have that :(
     let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
-    let eventNames = eventName.split(' ');
 
-    for (let i = 0; i < eventNames.length; i++) {
-      eventName = eventNames[i];
-
-      if (options.passive) {
-        this._addCoalescedEventListener(element, eventName, callback);
-      } else {
-        this._addEventListener(element, eventName, callback);
-      }
+    if (options.passive) {
+      this._addCoalescedEventListener(element, eventName, callback);
+    } else {
+      this._addEventListener(element, eventName, callback);
     }
   },
 
@@ -147,16 +142,11 @@ export default Mixin.create({
 
     let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
-    let eventNames = eventName.split(' ');
 
-    for (let i = 0; i < eventNames.length; i++) {
-      eventName = eventNames[i];
-
-      if (options.passive) {
-        this._removeCoalescedEventListener(element, eventName, callback);
-      } else {
-        this._removeEventListener(element, eventName, callback);
-      }
+    if (options.passive) {
+      this._removeCoalescedEventListener(element, eventName, callback);
+    } else {
+      this._removeEventListener(element, eventName, callback);
     }
   },
 

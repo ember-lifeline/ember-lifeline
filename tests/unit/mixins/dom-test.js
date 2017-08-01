@@ -103,27 +103,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(handledArgs.details.delta, delta, 'second argument can be present');
   });
 
-  test(`${testName} adds multiple listeners to child element`, async function(assert) {
-    assert.expect(2);
-
-    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    let calls = 0;
-    subject.addEventListener('.foo', 'click change', () => {
-      calls++;
-    }, testedOptions);
-
-    await triggerEvent(subject.element.firstChild, 'click');
-
-    assert.equal(calls, 1, 'callback was called');
-
-    await triggerEvent(subject.element.firstChild, 'change');
-
-    assert.equal(calls, 2, 'callback was called again');
-  });
-
   test(`${testName} adds event listener to non-child element`, async function(assert) {
     assert.expect(5);
 
