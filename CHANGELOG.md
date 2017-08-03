@@ -1,8 +1,14 @@
 
+2.0.0 / 2017-08-01
+==================
+
+  * Removed ability to add multiple listeners to child elements in single call 
+  * Removed dependency on jQuery for ContextBoundEventListenersMixin
+  
 1.3.0 / 2017-06-30
 ==================
 
- * Introduce cancel\* methods 
+  * Introduce cancel\* methods 
 
 v1.2.1 / 2017-06-30
 ==================

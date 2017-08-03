@@ -2,7 +2,8 @@
 import Ember from 'ember';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
-import ContextBoundEventListenersMixin, { setShouldAssertPassive } from 'ember-lifeline/mixins/dom';
+import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+import { triggerEvent } from 'ember-native-dom-helpers';
 
 const { run, $, getOwner, Component } = Ember;
 
@@ -22,7 +23,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }));
 
     this.Component = this.owner.factoryFor ? this.owner.factoryFor(name) : this.owner._lookupFactory(name);
-    setShouldAssertPassive(true);
   }
 });
 
@@ -35,14 +35,13 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 }].forEach(({ testName, testedOptions }) => {
 
   test(`${testName} ensures arrays are not eagerly allocated`, function(assert) {
-    assert.expect(2);
+    assert.expect(1);
 
     this.register('template:components/under-test', hbs`<span class="foo"></span>`);
     this.render(hbs`{{under-test}}`);
     let subject = this.componentInstance;
 
     assert.notOk(subject._listeners);
-    assert.notOk(subject._coalescedHandlers);
   });
 
   test(`${testName} adds event listener to child element`, function(assert) {
@@ -77,7 +76,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
    * event argument.
    *
    */
-  test(`${testName} adds jquery event listener to child element with multiple handler args`, function(assert) {
+  test(`${testName} adds jquery event listener to child element with multiple handler args`, async function(assert) {
     assert.expect(4);
 
     this.register('template:components/under-test', hbs`<span class="foo"></span>`);
@@ -90,40 +89,19 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     subject.addEventListener('.foo', 'drag', (...args) => {
       calls++;
       hadRunloop = !!run.currentRunLoop;
-      handledArgs = args;
+      handledArgs = args[0];
     }, testedOptions);
 
     let delta = {};
-    $(subject.element.firstChild).trigger('drag', delta);
+    await triggerEvent(subject.element.firstChild, 'drag', { details: { delta } });
 
     assert.equal(calls, 1, 'callback was called');
     assert.ok(hadRunloop, 'callback was called in runloop');
-    assert.ok(handledArgs[0].target, 'callback passed a target');
-    assert.equal(handledArgs[1], delta, 'second argument can be present');
+    assert.ok(handledArgs.target, 'callback passed a target');
+    assert.equal(handledArgs.details.delta, delta, 'second argument can be present');
   });
 
-  test(`${testName} adds multiple listeners to child element`, function(assert) {
-    assert.expect(2);
-
-    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    let calls = 0;
-    subject.addEventListener('.foo', 'click change', () => {
-      calls++;
-    }, testedOptions);
-
-    subject.element.firstChild.dispatchEvent(new Event('click'));
-
-    assert.equal(calls, 1, 'callback was called');
-
-    subject.element.firstChild.dispatchEvent(new Event('change'));
-
-    assert.equal(calls, 2, 'callback was called again');
-  });
-
-  test(`${testName} adds event listener to non-child element w/ jQuery`, function(assert) {
+  test(`${testName} adds event listener to non-child element`, async function(assert) {
     assert.expect(5);
 
     this.set('show', true);
@@ -133,13 +111,14 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let ranCallback = 0;
     let hadRunloop = null;
     let handledEvent = null;
-    subject.addEventListener($('.foo'), 'click', (event) => {
+    let element = document.querySelector('.foo');
+    subject.addEventListener(element, 'click', (event) => {
       ranCallback++;
       hadRunloop = !!run.currentRunLoop;
       handledEvent = event;
     }, testedOptions);
 
-    this.$('.foo')[0].dispatchEvent(new Event('click'));
+    await triggerEvent(element, 'click');
 
     assert.equal(ranCallback, 1, 'callback was called once');
     assert.ok(hadRunloop, 'callback was called in runloop');
@@ -150,41 +129,9 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     // Trigger the event on the non-child element again, after the component
     // is removed from DOM. The listener should not fire this time.
-    $('.foo')[0].dispatchEvent(new Event('click'));
+    await triggerEvent(element, 'click');
 
-    assert.equal(ranCallback, 1, 'callback was not called a second tim');
-  });
-
-  test(`${testName} adds event listener to non-child element`, function(assert) {
-    assert.expect(5);
-
-    this.set('show', true);
-    this.render(hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`);
-    let subject = this.componentInstance;
-
-    let calls = 0;
-    let hadRunloop = null;
-    let handledEvent = null;
-    subject.addEventListener($('.foo')[0], 'click', (event) => {
-      calls++;
-      hadRunloop = !!run.currentRunLoop;
-      handledEvent = event;
-    });
-
-    $('.foo')[0].dispatchEvent(new Event('click'));
-
-    assert.equal(calls, 1, 'callback was called');
-    assert.ok(hadRunloop, 'callback was called in runloop');
-    assert.ok(!!handledEvent.target, 'callback passed a target');
-    assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
-
-    this.set('show', false);
-
-    // Trigger the event on the non-child element again, after the component
-    // is removed from DOM. The listener should not fire this time.
-    $('.foo')[0].dispatchEvent(new Event('click'));
-
-    assert.equal(calls, 1, 'callback was not called again');
+    assert.equal(ranCallback, 1, 'callback was not called a second time');
   });
 
   test(`${testName} throws when there is no element to attach to`, function(assert) {
@@ -273,7 +220,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     let { subjectA, subjectB } = this;
 
-    let target = this.$('.foo');
+    let target = document.querySelector('.foo');
 
     let calls = 0;
     let callback = () => {
@@ -312,7 +259,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     let { subjectA, subjectB } = this;
 
-    let target = this.$('.foo');
+    let target = document.querySelector('.foo');
 
     let assertScope = (scope) => {
       return function() {
@@ -344,86 +291,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     assert.equal(calls, 0, 'callback was not called');
   });
-
-});
-
-test('addEventListener(_,_) coalesces multiple listeners on same event', function(assert) {
-  assert.expect(1);
-
-  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-  this.render(hbs`{{under-test}}`);
-  let subject = this.componentInstance;
-
-  let calls = 0;
-  let callback = () => calls++;
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  });
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  });
-
-  subject.element.firstChild.dispatchEvent(new Event('click'));
-
-  assert.equal(calls, 1, 'callback only called once');
-});
-
-/* These features are based on ES2015 Proxies */
-if (window.Proxy) {
-
-  test('addEventListener(_,_) raises on preventDefault', function(assert) {
-    assert.expect(1);
-
-    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    subject.addEventListener('.foo', 'click', (e) => {
-      assert.throws(() => {
-        e.preventDefault();
-      }, /Passive event listeners/);
-    });
-
-    subject.element.firstChild.dispatchEvent(new Event('click'));
-  });
-
-  test('addEventListener(_,_) raises on stopPropogation', function(assert) {
-    assert.expect(1);
-
-    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    subject.addEventListener('.foo', 'click', (e) => {
-      assert.throws(() => {
-        e.stopPropagation();
-      }, /Passive event listeners/);
-    });
-
-    subject.element.firstChild.dispatchEvent(new Event('click'));
-  });
-
-}
-
-test('addEventListener(_,_,{passive: false}) does not coalesce multiple listeners on same event', function(assert) {
-  assert.expect(1);
-
-  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-  this.render(hbs`{{under-test}}`);
-  let subject = this.componentInstance;
-
-  let calls = 0;
-  let callback = () => calls++;
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  }, { passive: false });
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  }, { passive: false });
-
-  subject.element.firstChild.dispatchEvent(new Event('click'));
-
-  assert.equal(calls, 2, 'click is handled twice');
 });
 
 test('addEventListener(_,_,{passive: false}) permits stopPropogation', function(assert) {

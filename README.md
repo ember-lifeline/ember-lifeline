@@ -444,18 +444,6 @@ this.addEventListener(document.body, 'click', fn);
 this.addEventListener(window, 'scroll', fn);
 ```
 
-#### `{passive: true}`
-
-`addEventListener` accepts options as a fourth argument. Currently only a
-single option `passive` is accepted, and is defaulted to `true`.
-This option mirrors [new options available on native APIs](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
-that can be passed to `addEventListener`. Passivity defaulting to `true`
-is done with an eye to performance.
-
-Passivity refers to the ability for a handler to either `preventDefault` or,
-in our implementation, `stopPropagation`. In dev mode and testing, use of
-these APIs on the event object will raise an exception.
-
 ### `removeEventListener`
 
 **tl;dr call `this.removeEventListener(element, eventName, fn, options)` on a component or
