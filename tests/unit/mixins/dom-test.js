@@ -3,9 +3,9 @@ import Ember from 'ember';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
 import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
-import { triggerEvent } from 'ember-native-dom-helpers';
+import { find, triggerEvent } from 'ember-native-dom-helpers';
 
-const { run, $, getOwner, Component } = Ember;
+const { run, getOwner, Component } = Ember;
 
 moduleForComponent('ember-lifeline/mixins/dom', {
   integration: true,
@@ -111,7 +111,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let ranCallback = 0;
     let hadRunloop = null;
     let handledEvent = null;
-    let element = document.querySelector('.foo');
+    let element = find('.foo');
     subject.addEventListener(element, 'click', (event) => {
       ranCallback++;
       hadRunloop = !!run.currentRunLoop;
@@ -155,7 +155,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }, /Called \w+ before the component was rendered/);
   });
 
-  test(`${testName} adds event listener to non-child element in tagless component`, function(assert) {
+  test(`${testName} adds event listener to non-child element in tagless component`, async function(assert) {
     assert.expect(5);
 
     this.set('show', true);
@@ -165,13 +165,13 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let calls = 0;
     let hadRunloop = null;
     let handledEvent = null;
-    subject.addEventListener($('.foo')[0], 'click', (event) => {
+    subject.addEventListener(find('.foo'), 'click', (event) => {
       calls++;
       hadRunloop = !!run.currentRunLoop;
       handledEvent = event;
     }, testedOptions);
 
-    $('.foo')[0].dispatchEvent(new Event('click'));
+    await triggerEvent('.foo', 'click');
 
     assert.equal(calls, 1, 'callback was called');
     assert.ok(hadRunloop, 'callback was called in runloop');
@@ -182,7 +182,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     // Trigger the event on the non-child element again, after the component
     // is removed from DOM. The listener should not fire this time.
-    $('.foo')[0].dispatchEvent(new Event('click'));
+    await triggerEvent('.foo', 'click');
 
     assert.equal(calls, 1, 'callback was not called again');
   });
@@ -220,7 +220,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     let { subjectA, subjectB } = this;
 
-    let target = document.querySelector('.foo');
+    let target = find('.foo');
 
     let calls = 0;
     let callback = () => {
@@ -259,7 +259,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     let { subjectA, subjectB } = this;
 
-    let target = document.querySelector('.foo');
+    let target = find('.foo');
 
     let assertScope = (scope) => {
       return function() {
