@@ -2,7 +2,7 @@
 import Ember from 'ember';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
-import ContextBoundEventListenersMixin, { setShouldAssertPassive } from 'ember-lifeline/mixins/dom';
+import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
 import { triggerEvent } from 'ember-native-dom-helpers';
 
 const { run, $, getOwner, Component } = Ember;
@@ -23,7 +23,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }));
 
     this.Component = this.owner.factoryFor ? this.owner.factoryFor(name) : this.owner._lookupFactory(name);
-    setShouldAssertPassive(true);
   }
 });
 
@@ -36,14 +35,13 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 }].forEach(({ testName, testedOptions }) => {
 
   test(`${testName} ensures arrays are not eagerly allocated`, function(assert) {
-    assert.expect(2);
+    assert.expect(1);
 
     this.register('template:components/under-test', hbs`<span class="foo"></span>`);
     this.render(hbs`{{under-test}}`);
     let subject = this.componentInstance;
 
     assert.notOk(subject._listeners);
-    assert.notOk(subject._coalescedHandlers);
   });
 
   test(`${testName} adds event listener to child element`, function(assert) {
@@ -293,86 +291,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     assert.equal(calls, 0, 'callback was not called');
   });
-
-});
-
-test('addEventListener(_,_) coalesces multiple listeners on same event', function(assert) {
-  assert.expect(1);
-
-  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-  this.render(hbs`{{under-test}}`);
-  let subject = this.componentInstance;
-
-  let calls = 0;
-  let callback = () => calls++;
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  });
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  });
-
-  subject.element.firstChild.dispatchEvent(new Event('click'));
-
-  assert.equal(calls, 1, 'callback only called once');
-});
-
-/* These features are based on ES2015 Proxies */
-if (window.Proxy) {
-
-  test('addEventListener(_,_) raises on preventDefault', function(assert) {
-    assert.expect(1);
-
-    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    subject.addEventListener('.foo', 'click', (e) => {
-      assert.throws(() => {
-        e.preventDefault();
-      }, /Passive event listeners/);
-    });
-
-    subject.element.firstChild.dispatchEvent(new Event('click'));
-  });
-
-  test('addEventListener(_,_) raises on stopPropogation', function(assert) {
-    assert.expect(1);
-
-    this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    subject.addEventListener('.foo', 'click', (e) => {
-      assert.throws(() => {
-        e.stopPropagation();
-      }, /Passive event listeners/);
-    });
-
-    subject.element.firstChild.dispatchEvent(new Event('click'));
-  });
-
-}
-
-test('addEventListener(_,_,{passive: false}) does not coalesce multiple listeners on same event', function(assert) {
-  assert.expect(1);
-
-  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
-  this.render(hbs`{{under-test}}`);
-  let subject = this.componentInstance;
-
-  let calls = 0;
-  let callback = () => calls++;
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  }, { passive: false });
-  subject.addEventListener('.foo', 'click', () => {
-    run.scheduleOnce('afterRender', callback);
-  }, { passive: false });
-
-  subject.element.firstChild.dispatchEvent(new Event('click'));
-
-  assert.equal(calls, 2, 'click is handled twice');
 });
 
 test('addEventListener(_,_,{passive: false}) permits stopPropogation', function(assert) {

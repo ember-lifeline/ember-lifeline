@@ -1,77 +1,27 @@
 import Ember from 'ember';
+import { assert } from '@ember/debug';
 
 const {
   Mixin,
-  run,
-  merge,
-  assert
+  run
 } = Ember;
 
-const DEFAULT_LISTENER_OPTIONS = {
-  passive: true
-};
+const PASSIVE_SUPPORTED = (() => {
+  let ret = false;
 
-let shouldAssertPassive = false;
-
-export function setShouldAssertPassive(value) {
-  shouldAssertPassive = value && window.Proxy;
-}
-
-function assertOnlyPassiveEventUsageProxy(event) {
-  return new window.Proxy(event, {
-    get(obj, prop) {
-      if (prop === 'preventDefault') {
-        throw new Error('Passive event listeners cannot call preventDefault, please pass `{passive: false}`');
+  try {
+    let options = Object.defineProperty({}, 'passive', {
+      get() {
+        ret = true;
       }
-      if (prop === 'stopPropagation') {
-        throw new Error('Passive event listeners cannot call stopPropagation, please pass `{passive: false}`');
-      }
-      return obj[prop];
-    }
-  });
-}
+    });
 
-function listenerDataFor(element, eventName) {
-  /* Object to cache passive listener data */
-  let passiveListeners = element._passiveListeners;
-
-  if (!passiveListeners) {
-    passiveListeners = {};
-    element._passiveListeners = passiveListeners;
+    window.addEventListener('test', null, options);
+  } catch(err) {
+    // intentionally empty
   }
-
-  let passiveListenersForEvent = passiveListeners[eventName];
-  /* Set an object for the event */
-  if (!passiveListenersForEvent) {
-    passiveListenersForEvent = {
-      handlers: [],
-      listener: null
-    };
-    passiveListeners[eventName] = passiveListenersForEvent;
-  }
-
-  return passiveListenersForEvent;
-}
-
-function removeHandlerFromListenerData(handler) {
-  let listenerData = listenerDataFor(handler.element, handler.eventName);
-
-  /*
-   * Splice the handler out of the handlers list
-   */
-  let index = listenerData.handlers.indexOf(handler.callback);
-  listenerData.handlers.splice(index, 1);
-
-  /*
-   * If no more handlers remain, detach the passive listener from the
-   * element and reset the listenerData cache.
-   */
-  if (listenerData.handlers.length === 0) {
-    handler.element.removeEventListener(handler.eventName, listenerData.listener, false);
-    listenerData.listener = null;
-    listenerData.handlers = [];
-  }
-}
+  return ret;
+})();
 
 /**
  ContextBoundEventListenersMixin provides a mechanism to attach event listeners
@@ -88,7 +38,6 @@ export default Mixin.create({
     this._super(...arguments);
 
     this._listeners = undefined;
-    this._coalescedHandlers = undefined;
   },
   /**
    Attaches an event listener that will automatically be removed when the host
@@ -115,116 +64,43 @@ export default Mixin.create({
    @param { Function } _callback the callback to run for that event
    @public
    */
-  addEventListener(selector, eventName, callback, _options) {
+  addEventListener(selector, eventName, _callback, options) {
     assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
     assert('Called addEventListener before the component was rendered', this._currentState === this._states.inDOM);
 
-    // Ember.assign would be better here, but Ember < 2.5 doesn't have that :(
-    let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
+    let callback = run.bind(this, _callback);
 
-    if (options.passive) {
-      this._addCoalescedEventListener(element, eventName, callback);
-    } else {
-      this._addEventListener(element, eventName, callback);
+    if (!this._listeners) {
+      this._listeners = [];
     }
+
+    if (!PASSIVE_SUPPORTED) {
+      options = undefined;
+    }
+
+    element.addEventListener(eventName, callback, options);
+    this._listeners.push({ element, eventName, callback, _callback, options });
   },
 
   /**
 
    @param { String } selector the DOM selector or element
    @param { String } _eventName the event name to listen for
-   @param { Function } _callback the callback to run for that event
+   @param { Function } callback the callback to run for that event
    @public
    */
-  removeEventListener(selector, eventName, callback, _options) {
+  removeEventListener(selector, eventName, callback, options) {
     assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
 
-    let options = merge(merge({}, DEFAULT_LISTENER_OPTIONS), _options);
     let element = findElement(this.element, selector);
 
-    if (options.passive) {
-      this._removeCoalescedEventListener(element, eventName, callback);
-    } else {
-      this._removeEventListener(element, eventName, callback);
-    }
-  },
-
-  _addCoalescedEventListener(element, eventName, _callback) {
-    let callback = run.bind(this, _callback);
-    /*
-     * listenerData caches the handler list and listener callback on the
-     * element as a property.
-     */
-    let listenerData = listenerDataFor(element, eventName);
-
-    /*
-     * If listenerData has no handlers, we must setup the listener.
-     */
-    if (listenerData.handlers.length === 0) {
-
-      /*
-       * Create a callback that walks over all handlers and calls them in
-       * order. In dev mode, wrap the event in a proxy to ensure active
-       * steps like stopPropogation or preventDefault are not called.
-       */
-      let coalescedCallback = (event, ...callbackArgs) => {
-        let eventForHandlers = event;
-        if (shouldAssertPassive) {
-          eventForHandlers = assertOnlyPassiveEventUsageProxy(event);
-        }
-
-        run(() => {
-          listenerData.handlers.forEach((h) => {
-            h.apply(this, [eventForHandlers, ...callbackArgs]);
-          });
-        });
-      };
-
-      /*
-       * Attach the listener and cache the listener for teardown
-       */
-      element.addEventListener(eventName, coalescedCallback);
-      listenerData.listener = coalescedCallback;
-    }
-
-    /*
-     * Finally, push the handler onto the list of handlers. Do this on the
-     * listenerData for execution of the hooks, and on the context for
-     * teardown.
-     */
-    listenerData.handlers.push(callback);
-
-    this._getOrAllocateArray('_coalescedHandlers').push({ element, eventName, callback, _callback });
-  },
-
-  _addEventListener(element, eventName, _callback) {
-    let callback = run.bind(this, _callback);
-    element.addEventListener(eventName, callback);
-    this._getOrAllocateArray('_listeners').push({ element, eventName, callback, _callback });
-  },
-
-  _removeCoalescedEventListener(element, eventName, _callback) {
-    if (!this._coalescedHandlers) {
-      return;
-    }
-
-    for (let i = 0; i < this._coalescedHandlers.length; i++) {
-      let handler = this._coalescedHandlers[i];
-      if (
-        handler.element === element
-        && handler.eventName === eventName
-        && handler._callback === _callback
-      ) {
-        removeHandlerFromListenerData(handler);
-        break;
-      }
-    }
-  },
-
-  _removeEventListener(element, eventName, _callback) {
     if (!this._listeners) {
       return;
+    }
+
+    if (!PASSIVE_SUPPORTED) {
+      options = undefined;
     }
 
     // We cannot use Array.findIndex as we cannot rely on babel/polyfill being present
@@ -233,12 +109,12 @@ export default Mixin.create({
       if (
         listener.element === element
         && listener.eventName === eventName
-        && listener._callback === _callback
+        && listener._callback === callback
       ) {
         /*
          * Drop the event listener and remove the listener object
          */
-        element.removeEventListener(eventName, listener.callback);
+        element.removeEventListener(eventName, listener.callback, options);
         this._listeners.splice(i, 1);
         break;
       }
@@ -251,28 +127,11 @@ export default Mixin.create({
     if (this._listeners) {
       /* Drop non-passive event listeners */
       for (let i = 0; i < this._listeners.length; i++) {
-        let { element, eventName, callback } = this._listeners[i];
-        element.removeEventListener(eventName, callback);
+        let { element, eventName, callback, options } = this._listeners[i];
+        element.removeEventListener(eventName, callback, options);
       }
       this._listeners.length = 0;
     }
-
-    if (this._coalescedHandlers) {
-      /* Drop passive event listeners */
-      for (let i = 0; i < this._coalescedHandlers.length; i++) {
-        let handler = this._coalescedHandlers[i];
-        removeHandlerFromListenerData(handler);
-      }
-      this._coalescedHandlers.length = 0;
-    }
-  },
-
-  _getOrAllocateArray(propertyName) {
-    if (!this[propertyName]) {
-      this[propertyName] = [];
-    }
-
-    return this[propertyName];
   }
 });
 
