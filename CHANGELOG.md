@@ -1,5 +1,5 @@
 
-2.0.0 / 2017-08-01
+2.0.0-beta.1 / 2017-08-04
 ==================
 
   * Removed ability to add multiple listeners to child elements in single call 
