@@ -272,7 +272,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     target.click();
   });
 
-  test(`${testName.replace('add', 'remove')} removes event listener from child element`, function(assert) {
+  test(`${testName.replace('add', 'remove')} removes event listener from child element`, async function(assert) {
     assert.expect(1);
 
     this.register('template:components/under-test', hbs`<span class="foo"></span>`);
@@ -287,13 +287,13 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     subject.removeEventListener('.foo', 'click', listener, testedOptions);
 
-    subject.element.firstChild.dispatchEvent(new Event('click'));
+    await triggerEvent(subject.element.firstChild, 'click');
 
     assert.equal(calls, 0, 'callback was not called');
   });
 });
 
-test('addEventListener(_,_,{passive: false}) permits stopPropogation', function(assert) {
+test('addEventListener(_,_,{passive: false}) permits stopPropogation', async function(assert) {
   assert.expect(2);
 
   this.register('template:components/under-test', hbs`<span class="outer"><span class="inner"></span></span>`);
@@ -309,8 +309,30 @@ test('addEventListener(_,_,{passive: false}) permits stopPropogation', function(
     e.stopPropagation();
   }, { passive: false });
 
-  subject.element.firstChild.firstChild.dispatchEvent(new Event('click', { bubbles: true }));
+  await triggerEvent(subject.element.firstChild.firstChild, 'click', { bubbles: true });
 
   assert.equal(outerCalls, 0, 'outer callback never fires');
   assert.equal(innerCalls, 1, 'inner callback fires');
+});
+
+test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
+  assert.expect(2);
+
+  this.register('template:components/under-test', hbs`<span class="foo"></span>`);
+  this.render(hbs`{{under-test}}`);
+  let subject = this.componentInstance;
+
+  let calls = 0;
+  let listener = () => {
+    calls++;
+  };
+  let element = find('.foo');
+
+  subject.addEventListener('.foo', 'click', listener, { once: true });
+
+  await triggerEvent(element, 'click');
+  assert.equal(calls, 1, 'callback was called once');
+
+  await triggerEvent(element, 'click');
+  assert.equal(calls, 1, 'callback was called once');
 });
