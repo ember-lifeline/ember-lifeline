@@ -246,7 +246,7 @@ export default Mixin.create({
 
   /**
    Sets up a function that can perform polling logic in a testing safe way.
-   The callback is invoked synchronusly with an argument (generally called `next`).
+   The callback is invoked synchronously with an argument (generally called `next`).
    In normal development/production when `next` is invoked, it will trigger the
    task again (recursively). However, when in test mode the recursive polling
    functionality is disabled, and usage of the `pollTaskFor` helper is required.
