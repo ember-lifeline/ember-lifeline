@@ -154,11 +154,13 @@ export default Mixin.create({
   scheduleTask(queue, callbackOrName, ...args) {
     assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queue === 'string');
     assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+
     let type = typeof callbackOrName;
+    let pendingTimers = this._getOrAllocateArray('_pendingTimers');
 
     let cancelId = run.schedule(queue, this, () => {
-      let cancelIndex = this._pendingTimers.indexOf(cancelId);
-      this._pendingTimers.splice(cancelIndex, 1);
+      let cancelIndex = pendingTimers.indexOf(cancelId);
+      pendingTimers.splice(cancelIndex, 1);
 
       if (type === 'function') {
         callbackOrName.call(this, ...args);
@@ -169,7 +171,7 @@ export default Mixin.create({
       }
     });
 
-    this._pendingTimers.push(cancelId);
+    pendingTimers.push(cancelId);
     return cancelId;
   },
 
