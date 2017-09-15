@@ -201,7 +201,7 @@ test('scheduleTask tasks can be canceled', function(assert) {
       hasRun = true;
     });
 
-    run.cancel(timer);
+    subject.cancelTask(timer);
   });
 
   assert.notOk(hasRun, 'callback should have been canceled previously');
