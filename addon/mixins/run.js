@@ -18,8 +18,10 @@ export function setShouldPoll(callback) {
   _shouldPollOverride = callback;
 }
 
-let queuedPollTasks = {};
-let pollTaskLabels = {};
+let scheduledQueueTasks = Object.create(null);
+
+let queuedPollTasks = Object.create(null);
+let pollTaskLabels = Object.create(null);
 export function pollTaskFor(label) {
   assert(`A pollTask with a label of '${label}' was not found.`, pollTaskLabels[label]);
   assert(`You cannot advance a pollTask (\`${label}\`) when \`next\` has not been called.`, !!queuedPollTasks[label]);
@@ -43,6 +45,7 @@ export default Mixin.create({
     this._super(...arguments);
 
     this._pendingTimers = undefined;
+    this._pendingSchedules = undefined;
     this._pendingDebounces = undefined;
     this._pendingThrottles = undefined;
     this._pollerLabels = undefined;
@@ -118,11 +121,15 @@ export default Mixin.create({
    ```
 
    @method cancelTask
-   @param { Number } cancelId the id returned from the runTask call
+   @param { Number } cancelId the id returned from the runTask or scheduleTask call
    @public
    */
   cancelTask(cancelId) {
-    cancelTimer(cancelId);
+    if (typeof cancelId.cancel === 'function') {
+      cancelId.cancel();
+    } else {
+      cancelTimer(cancelId);
+    }
   },
 
   /**
@@ -151,28 +158,45 @@ export default Mixin.create({
    @param { Number } [timeout=0] the time in the future to run the callback
    @public
    */
-  scheduleTask(queue, callbackOrName, ...args) {
-    assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queue === 'string');
+  scheduleTask(queueName, callbackOrName, ...args) {
+    assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queueName === 'string');
     assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
+    let task;
     let type = typeof callbackOrName;
-    let pendingTimers = this._getOrAllocateArray('_pendingTimers');
+    if (type === 'function') {
+      task = () => {
+        if (!this.isDestroyed) {
+          callbackOrName.call(this, ...args);
+        }
+      };
+    } else if (type === 'string' && this[callbackOrName]) {
+      let callback = this[callbackOrName];
+      task = () => {
+        if (!this.isDestroyed) {
+          callback.call(this, ...args);
+        }
+      };
+    } else {
+      throw new Error('You must pass a callback function or method name to `scheduleTask`.');
+    }
 
-    let cancelId = run.schedule(queue, this, () => {
-      let cancelIndex = pendingTimers.indexOf(cancelId);
-      pendingTimers.splice(cancelIndex, 1);
-
-      if (type === 'function') {
-        callbackOrName.call(this, ...args);
-      } else if (type === 'string' && this[callbackOrName]) {
-        this[callbackOrName](...args);
-      } else {
-        throw new Error('You must pass a callback function or method name to `scheduleTask`.');
+    let scheduleInfo = {
+      task,
+      cancel() {
+        this.task = noop;
       }
-    });
+    };
 
-    pendingTimers.push(cancelId);
-    return cancelId;
+    let queueInfo = scheduledQueueTasks[queueName];
+    if (queueInfo) {
+      queueInfo.push(scheduleInfo);
+    } else {
+      queueInfo = scheduledQueueTasks[queueName] = [scheduleInfo];
+      run.schedule(queueName, null, flushScheduledQueueTasks, queueName);
+    }
+
+    return scheduleInfo;
   },
 
   /**
@@ -436,6 +460,16 @@ export default Mixin.create({
   }
 });
 
+function flushScheduledQueueTasks(queueName) {
+  let tasks = scheduledQueueTasks[queueName];
+  if (tasks) {
+    scheduledQueueTasks[queueName] = [];
+    for (let i = 0; i < tasks.length; ++i) {
+      tasks[i].task();
+    }
+  }
+}
+
 export function cancelBoundTasks(tasks, cancelFn) {
   if (!tasks || !tasks.length) {
     return;
@@ -475,3 +509,5 @@ function cancelDebounces(pendingDebounces) {
     cancelDebounce(pendingDebounces, debounceNames[i]);
   }
 }
+
+function noop() {}
