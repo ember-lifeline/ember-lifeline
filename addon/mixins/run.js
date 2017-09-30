@@ -378,7 +378,10 @@ export default Mixin.create({
 
    ```js
    // app/components/foo-bar.js
+   import Ember from 'ember';
    import DOMish from 'some-external-library';
+
+   const { run } = Ember;
 
    export default Component.extend({
      init() {
@@ -388,9 +391,10 @@ export default Mixin.create({
      },
 
      bindEvents() {
-       this.DOMish.on('foo', Ember.run.bind(this.respondToDomEvent));
+       let onFoo = run.bind(this.respondToDomEvent);
+       this.DOMish.on('foo', onFoo);
 
-       this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo));
+       this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
      },
 
      respondToDOMEvent() {
@@ -420,6 +424,9 @@ export default Mixin.create({
   ```js
    // app/components/foo-bar.js
    import DOMish from 'some-external-library';
+   import Ember from 'ember';
+
+   const { run } = Ember;
 
    export default Component.extend({
      init() {
@@ -429,9 +436,10 @@ export default Mixin.create({
      },
 
      bindEvents() {
-       this.DOMish.on('foo', Ember.run.bind(this.respondToDomEvent));
+       let onFoo = run.bind(this.respondToDomEvent);
+       this.DOMish.on('foo', onFoo);
 
-       this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo));
+       this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
      },
 
      respondToDOMEvent() {

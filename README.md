@@ -31,7 +31,7 @@ about the weird parts of working in a long-lived app.
 
     ember install ember-lifeline
 
-To use any of the below mentioned methods in your component, view or service, you will have to import and apply one or both of these mixins to your class:
+To use any of the below mentioned methods in your component, route or service, you will have to import and apply one or both of these mixins to your class:
 * `ember-lifeline/mixins/run` for using any of the *Task methods
 * `ember-lifeline/mixins/dom` for using `addEventListener`
 
@@ -39,7 +39,7 @@ To use any of the below mentioned methods in your component, view or service, yo
 
 ### `runTask`
 
-**tl;dr Call `this.runTask(fn, timeout)` on any component, view, or service to
+**tl;dr Call `this.runTask(fn, timeout)` on any component, route, or service to
 schedule work.**
 
 Use `runTask` where you might use `setTimeout`, `setInterval`, or
@@ -145,7 +145,7 @@ object itself.
 
 ### `debounceTask`
 
-**tl;dr Call `this.debounceTask(methodName, args*, wait, immediate)` on any component, view,
+**tl;dr Call `this.debounceTask(methodName, args*, wait, immediate)` on any component, route,
 or service to debounce work.**
 
 Debouncing is a common async pattern often used to manage user input. When a
@@ -188,7 +188,7 @@ cancelled.
 
 ### `throttleTask`
 
-**tl;dr Call `this.throttleTask(methodName, args*, spacing, immediate)` on any component, view,
+**tl;dr Call `this.throttleTask(methodName, args*, spacing, immediate)` on any component, route,
 or service to throttle work.**
 
 When a task is throttled, it is executed immediately. For the length of the
@@ -219,7 +219,7 @@ a timeout window of its own.
 
 ### `pollTask`
 
-**tl;dr call `this.pollTask(fn, label)` on any component, view, or service to setup
+**tl;dr call `this.pollTask(fn, label)` on any component, route, or service to setup
 polling.**
 
 Use `pollTask` where you might reach for recursive `this.runTask(fn, ms)`, `Ember.run.later`, `setTimeout`, and/or `setInterval`.
@@ -372,10 +372,116 @@ A couple of helpful assertions are provided with the `pollTask` functionality:
 * A given `label` can only be used once. If the same `label` is used a second time, an error will be thrown.
 * If nothing has been queued for the given label, calling `pollTaskFor(label)` will trigger an error.
 
+### `registerDisposable`
+
+**tl;dr call `this.registerDisposable(fn)` on any component, route, or service to register a function you want to run when the object is destroyed.**
+
+Use `registerDisposable` as a replacement for explictly unbinding any external bindings. A disposable is a function that disposes of bindings that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any bindings when the Ember object is destroyed.
+
+It's common to see code written to explicitly unbind event handlers from external libraries.
+
+```js
+// app/components/foo-bar.js
+import Ember from 'ember';
+import DOMish from 'some-external-library';
+
+const { run } = Ember;
+
+export default Component.extend({
+  init() {
+    this.DOMish = new DOMish();
+
+    this.bindEvents();
+  },
+
+  willDestroy() {
+    this.unbindEvents();
+  },
+
+  bindEvents() {
+    this.DOMish.on('foo', run.bind(this.respondToDomEvent));
+  },
+
+  unbindEvents() {
+    this.DOMish.off('foo');
+  }
+
+  respondToDOMEvent() {
+    // do something
+  }
+});
+```
+
+This not only adds verbosity to code, but also requires that you symetrically tear down any bindings you setup. By utilizing the `registerDisposable` API, `ember-lifeline` will ensure your registered disposable function will run when the object is destroyed.
+
+```js
+// app/components/foo-bar.js
+import Ember from 'ember';
+import DOMish from 'some-external-library';
+
+const { run } = Ember;
+
+export default Component.extend({
+  init() {
+    this.DOMish = new DOMish();
+
+    this.bindEvents();
+  },
+
+  bindEvents() {
+    let onFoo = run.bind(this.respondToDomEvent);
+    this.DOMish.on('foo', onFoo);
+
+    this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
+  },
+
+  respondToDOMEvent() {
+    // do something
+  }
+});
+```
+
+### `runDisposable`
+
+**tl;dr call `this.runDisposable(label)` when you want to explicity run the disposable function without waiting for the object's destruction.**
+
+```js
+  // app/components/foo-bar.js
+  import DOMish from 'some-external-library';
+  import Ember from 'ember';
+
+  const { run } = Ember;
+
+  export default Component.extend({
+    init() {
+      this.DOMish = new DOMish();
+
+      this.bindEvents();
+    },
+
+    bindEvents() {
+      let onFoo = run.bind(this.respondToDomEvent);
+      this.DOMish.on('foo', onFoo);
+
+      this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
+    },
+
+    respondToDOMEvent() {
+      // do something
+    },
+
+    actions: {
+      cancelDOM() {
+        this.runDisposable(this.domFooToken);
+      }
+    }
+  });
+  ```
+
 ### `addEventListener`
 
 **tl;dr call `this.addEventListener(element, eventName, fn, options)` on a component or
-view to add a jQuery event listener that will be automatically removed when
+route to add a jQuery event listener that will be automatically removed when
 the component is un-rendered.**
 
 Event listeners pose similar but different challenges. They likewise must
@@ -447,9 +553,9 @@ this.addEventListener(window, 'scroll', fn);
 ### `removeEventListener`
 
 **tl;dr call `this.removeEventListener(element, eventName, fn, options)` on a component or
-view to actively remove a jQuery event listener previously added by a call to `addEventListener`.**
+route to actively remove a jQuery event listener previously added by a call to `addEventListener`.**
 
-Although any listener added by a call to `addEventListener` will be teared down when the view or component is being
+Although any listener added by a call to `addEventListener` will be teared down when the route or component is being
 destroyed, there might be cases where you want to actively remove an existing event listener even during the active
 lifecycle, for example when temporarily dealing with high volume events like `scroll` or `mousemove`.
 
