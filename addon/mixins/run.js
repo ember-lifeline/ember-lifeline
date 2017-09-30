@@ -446,6 +446,7 @@ export default Mixin.create({
    });
    ```
 
+   @method runDisposable
    @param {any} label
    @public
    */
