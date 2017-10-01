@@ -464,11 +464,12 @@ You can explicity run the disposable without waiting for the object's destructio
 ```js
   // app/components/foo-bar.js
   import DOMish from 'some-external-library';
+  import DisposableMixin from 'ember-lifeline/mixins/disposable';
   import Ember from 'ember';
 
   const { run } = Ember;
 
-  export default Component.extend({
+  export default Component.extend(DisposableMixin, {
     init() {
       this.DOMish = new DOMish();
 
