@@ -18,10 +18,10 @@ export default Mixin.create({
   },
 
   /**
-   Adds a new disposable to the object. A disposable is a function that
-   disposes of bindings that are outside of Ember's lifecyle. This essentially
+   Adds a new disposable to the Ember object. A disposable is a function that
+   disposes of resources that are outside of Ember's lifecyle. This essentially
    means you can register a function that you want to run to automatically tear
-   down any bindings when the Ember object is destroyed.
+   down any resources when the Ember object is destroyed.
 
    Example:
 
@@ -43,7 +43,7 @@ export default Mixin.create({
        let onFoo = run.bind(this.respondToDomEvent);
        this.DOMish.on('foo', onFoo);
 
-       this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
+       this.domFooDisposable = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
      },
 
      respondToDOMEvent() {
@@ -53,62 +53,21 @@ export default Mixin.create({
    ```
 
   @method registerDisposable
-  @param { Function } disposable
-  @returns A label representing the position of the disposable
+  @param { Function } dispose
+  @returns A disposable object
   @public
   */
-  registerDisposable(disposable) {
-    if (typeof disposable !== 'function') {
-      throw new Error('You must pass a function as a disposable');
+  registerDisposable(dispose) {
+    if (typeof dispose !== 'function') {
+      throw new Error('You must pass a function for `dispose`');
     }
 
     let disposables = getOrAllocate(this, '_registeredDisposables', []);
+    let disposable = toDisposable(dispose);
 
-    return disposables.push(disposable) - 1;
-  },
+    disposables.push(disposable);
 
-  /**
-  Runs a disposable identified by the supplied token.
-
- ```js
-  // app/components/foo-bar.js
-  import DOMish from 'some-external-library';
-  import Ember from 'ember';
-
-  const { run } = Ember;
-
-  export default Component.extend({
-    init() {
-      this.DOMish = new DOMish();
-
-      this.bindEvents();
-    },
-
-    bindEvents() {
-      let onFoo = run.bind(this.respondToDomEvent);
-      this.DOMish.on('foo', onFoo);
-
-      this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
-    },
-
-    respondToDOMEvent() {
-      // do something
-    },
-
-    actions: {
-      cancelDOM() {
-        this.runDisposable(this.domFooToken);
-      }
-    }
-  });
-  ```
-
-  @method runDisposable
-  @param {any} label
-  @public
-  */
-  runDisposable(token) {
-    runDisposable(this._registeredDisposables, token);
+    return disposable;
   },
 
   willDestroy() {
@@ -126,19 +85,18 @@ function runDisposables(disposables) {
   for (let i = 0, l = disposables.length; i < l; i++) {
     let disposable = disposables.pop();
 
-    disposable();
+    disposable.dispose();
   }
 }
 
-function runDisposable(disposables, token) {
-  if (!disposables || token < 0) {
-    return;
-  }
-
-  let disposable = disposables[token];
-
-  if (disposable) {
-    disposables.splice(token, 1);
-    disposable();
-  }
+function toDisposable(doDispose) {
+  return {
+    dispose() {
+      if (!this.disposed) {
+        this.disposed = true;
+        doDispose();
+      }
+    },
+    disposed: false
+  };
 }

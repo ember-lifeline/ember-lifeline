@@ -24,36 +24,54 @@ test('registerDisposable: ensures a function is passed as a disposable', functio
 
   assert.throws(() => {
     this.subject.registerDisposable({});
-  }, /You must pass a function as a disposable/);
+  }, /You must pass a function for `dispose`/);
 });
 
-test('registerDisposable: returns a label when a disposable is registered', function(assert) {
+test('registerDisposable: returns a token when a disposable is registered', function(assert) {
   assert.expect(2);
 
   let disposable = () => {};
 
-  let label = this.subject.registerDisposable(disposable);
+  let token = this.subject.registerDisposable(disposable);
 
-  assert.equal(label, 0, 'label is returned');
+  assert.equal(token, this.subject._registeredDisposables[0], 'token is returned');
 
-  let otherLabel = this.subject.registerDisposable(disposable);
+  let otherToken = this.subject.registerDisposable(disposable);
 
-  assert.notEqual(label, otherLabel, 'label returned is unique');
+  assert.notEqual(token, otherToken, 'token returned is unique');
 });
 
-test('runDisposable: runs the disposable when called with valid label', function(assert) {
-  assert.expect(1);
+test('disposable invoked explicitly disposes of disposable', function(assert) {
+  assert.expect(2);
 
   let callCount = 0;
   let disposable = () => {
     callCount++;
   };
 
-  let label = this.subject.registerDisposable(disposable);
+  let token = this.subject.registerDisposable(disposable);
 
-  this.subject.runDisposable(label);
+  token.dispose();
 
   assert.equal(callCount, 1, 'disposable is called');
+  assert.ok(this.subject._registeredDisposables[0].disposed, 'disposable marked as disposed');
+});
+
+test('disposable invoked explicitly multiple times is only invoked once', function(assert) {
+  assert.expect(2);
+
+  let callCount = 0;
+  let disposable = () => {
+    callCount++;
+  };
+
+  let token = this.subject.registerDisposable(disposable);
+
+  token.dispose();
+  token.dispose();
+
+  assert.equal(callCount, 1, 'disposable is called');
+  assert.ok(this.subject._registeredDisposables[0].disposed, 'disposable marked as disposed');
 });
 
 test('runDisposables: runs all disposables when destroying', function(assert) {

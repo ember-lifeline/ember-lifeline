@@ -377,7 +377,9 @@ A couple of helpful assertions are provided with the `pollTask` functionality:
 
 **tl;dr call `this.registerDisposable(fn)` on any component, route, or service to register a function you want to run when the object is destroyed.**
 
-Use `registerDisposable` as a replacement for explictly unbinding any external bindings. A disposable is a function that disposes of bindings that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any bindings when the Ember object is destroyed.
+Use `registerDisposable` as a replacement for explictly unbinding any external bindings. A disposable is a function that disposes of resources that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any resources when the Ember object is destroyed.
+
+Example: 
 
 It's common to see code written to explicitly unbind event handlers from external libraries.
 
@@ -390,6 +392,8 @@ const { run } = Ember;
 
 export default Component.extend({
   init() {
+    this._super(...arguments);
+
     this.DOMish = new DOMish();
 
     this.bindEvents();
@@ -424,6 +428,8 @@ const { run } = Ember;
 
 export default Component.extend({
   init() {
+    this._super(...arguments);
+
     this.DOMish = new DOMish();
 
     this.bindEvents();
@@ -442,9 +448,16 @@ export default Component.extend({
 });
 ```
 
-### `runDisposable`
+The `registerDisposable` method returns a `disposable`, which is an object with the following interface:
 
-**tl;dr call `this.runDisposable(token)` when you want to explicity run the disposable function without waiting for the object's destruction.**
+```ts
+interface IDisposable {
+  dispose: function;
+  disposed: boolean;
+}
+```
+
+You can explicity run the disposable without waiting for the object's destruction.**
 
 ```js
   // app/components/foo-bar.js
@@ -464,7 +477,7 @@ export default Component.extend({
       let onFoo = run.bind(this.respondToDomEvent);
       this.DOMish.on('foo', onFoo);
 
-      this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
+      this.domFooDisposable = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
     },
 
     respondToDOMEvent() {
@@ -473,7 +486,7 @@ export default Component.extend({
 
     actions: {
       cancelDOM() {
-        this.runDisposable(this.domFooToken);
+        this.domFooDisposable.dispose();
       }
     }
   });
