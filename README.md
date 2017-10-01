@@ -386,11 +386,12 @@ It's common to see code written to explicitly unbind event handlers from externa
 ```js
 // app/components/foo-bar.js
 import Ember from 'ember';
+import DisposableMixin from 'ember-lifeline/mixins/disposable';
 import DOMish from 'some-external-library';
 
 const { run } = Ember;
 
-export default Component.extend({
+export default Component.extend(DisposableMixin, {
   init() {
     this._super(...arguments);
 
@@ -422,11 +423,12 @@ This not only adds verbosity to code, but also requires that you symetrically te
 ```js
 // app/components/foo-bar.js
 import Ember from 'ember';
+import DisposableMixin from 'ember-lifeline/mixins/disposable';
 import DOMish from 'some-external-library';
 
 const { run } = Ember;
 
-export default Component.extend({
+export default Component.extend(DisposableMixin, {
   init() {
     this._super(...arguments);
 
