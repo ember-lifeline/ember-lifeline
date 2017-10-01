@@ -377,7 +377,7 @@ A couple of helpful assertions are provided with the `pollTask` functionality:
 
 **tl;dr call `this.registerDisposable(fn)` on any component, route, or service to register a function you want to run when the object is destroyed.**
 
-Use `registerDisposable` as a replacement for explictly unbinding any external bindings. A disposable is a function that disposes of resources that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any resources when the Ember object is destroyed.
+Use `registerDisposable` as a replacement for explictly disposing of any externally managed resources. A disposable is a function that disposes of resources that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any resources when the Ember object is destroyed.
 
 Example: 
 
