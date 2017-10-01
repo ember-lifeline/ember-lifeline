@@ -62,7 +62,7 @@ export default Mixin.create({
       throw new Error('You must pass a function for `dispose`');
     }
 
-    let disposables = getOrAllocate(this, '_registeredDisposables', []);
+    let disposables = getOrAllocate(this, '_registeredDisposables', Array);
     let disposable = toDisposable(dispose);
 
     disposables.push(disposable);
@@ -71,9 +71,9 @@ export default Mixin.create({
   },
 
   willDestroy() {
-    this._super(...arguments);
-
     runDisposables(this._registeredDisposables);
+
+    this._super(...arguments);
   }
 });
 

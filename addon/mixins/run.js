@@ -78,7 +78,7 @@ export default Mixin.create({
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
     let type = typeof callbackOrName;
-    let pendingTimers = getOrAllocate(this, '_pendingTimers', []);
+    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
 
     let cancelId = run.later(() => {
       let cancelIndex = pendingTimers.indexOf(cancelId);
@@ -160,7 +160,7 @@ export default Mixin.create({
     assert(`Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
     assert(`Called \`debounceTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let pendingDebounces = getOrAllocate(this, '_pendingDebounces', {});
+    let pendingDebounces = getOrAllocate(this, '_pendingDebounces', Object);
     let debounce = pendingDebounces[name];
     let debouncedFn;
 
@@ -319,7 +319,7 @@ export default Mixin.create({
       assert(`The label provided to \`pollTask\` must be unique. \`${label}\` has already been registered.`, !pollTaskLabels[label]);
       pollTaskLabels[label] = true;
 
-      getOrAllocate(this, '_pollerLabels', []).push(label);
+      getOrAllocate(this, '_pollerLabels', Array).push(label);
     }
 
     if (shouldPoll()) {

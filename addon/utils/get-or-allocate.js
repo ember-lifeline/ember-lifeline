@@ -5,13 +5,13 @@
  * @export
  * @param {Object} obj
  * @param {String} propertyName
- * @param {any} value
+ * @param {any} Type
  * @public
  * @returns the value of the newly allocated property
  */
-export default function getOrAllocate(obj, propertyName, value) {
+export default function getOrAllocate(obj, propertyName, Type) {
   if (!obj[propertyName]) {
-    obj[propertyName] = value;
+    obj[propertyName] = new Type();
   }
 
   return obj[propertyName];
