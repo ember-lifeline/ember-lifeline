@@ -443,7 +443,7 @@ export default Component.extend({
 
 ### `runDisposable`
 
-**tl;dr call `this.runDisposable(label)` when you want to explicity run the disposable function without waiting for the object's destruction.**
+**tl;dr call `this.runDisposable(token)` when you want to explicity run the disposable function without waiting for the object's destruction.**
 
 ```js
   // app/components/foo-bar.js

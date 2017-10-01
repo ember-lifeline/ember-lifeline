@@ -419,7 +419,7 @@ export default Mixin.create({
   },
 
   /**
-   Runs a disposable identified by the supplied label.
+   Runs a disposable identified by the supplied token.
 
   ```js
    // app/components/foo-bar.js
@@ -458,8 +458,8 @@ export default Mixin.create({
    @param {any} label
    @public
    */
-  runDisposable(label) {
-    runDisposable(this._registeredDisposables, label);
+  runDisposable(token) {
+    runDisposable(this._registeredDisposables, token);
   },
 
   willDestroy() {
@@ -546,15 +546,15 @@ function runDisposables(disposables) {
   }
 }
 
-function runDisposable(disposables, label) {
-  if (!disposables || label < 0) {
+function runDisposable(disposables, token) {
+  if (!disposables || token < 0) {
     return;
   }
 
-  let disposable = disposables[label];
+  let disposable = disposables[token];
 
   if (disposable) {
-    disposables.splice(label, 1);
+    disposables.splice(token, 1);
     disposable();
   }
 }
