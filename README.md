@@ -34,6 +34,7 @@ about the weird parts of working in a long-lived app.
 To use any of the below mentioned methods in your component, route or service, you will have to import and apply one or both of these mixins to your class:
 * `ember-lifeline/mixins/run` for using any of the *Task methods
 * `ember-lifeline/mixins/dom` for using `addEventListener`
+* `ember-lifeline/mixins/disposable` for using `registerDisposable` and `runDisposable`
 
 ## Usage
 
