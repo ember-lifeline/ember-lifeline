@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import getOrAllocate from '../utils/get-or-allocate';
 
 const { Mixin } = Ember;
 
@@ -61,7 +62,7 @@ export default Mixin.create({
       throw new Error('You must pass a function as a disposable');
     }
 
-    let disposables = this._getOrAllocateArray('_registeredDisposables');
+    let disposables = getOrAllocate(this, '_registeredDisposables', []);
 
     return disposables.push(disposable) - 1;
   },
@@ -114,22 +115,6 @@ export default Mixin.create({
     this._super(...arguments);
 
     runDisposables(this._registeredDisposables);
-  },
-
-  _getOrAllocateArray(propertyName) {
-    if (!this[propertyName]) {
-      this[propertyName] = [];
-    }
-
-    return this[propertyName];
-  },
-
-  _getOrAllocateObject(propertyName) {
-    if (!this[propertyName]) {
-      this[propertyName] = {};
-    }
-
-    return this[propertyName];
   }
 });
 

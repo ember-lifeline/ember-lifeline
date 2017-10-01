@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import getOrAllocate from '../utils/get-or-allocate';
 
 const {
   Mixin,
@@ -77,7 +78,7 @@ export default Mixin.create({
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
     let type = typeof callbackOrName;
-    let pendingTimers = this._getOrAllocateArray('_pendingTimers');
+    let pendingTimers = getOrAllocate(this, '_pendingTimers', []);
 
     let cancelId = run.later(() => {
       let cancelIndex = pendingTimers.indexOf(cancelId);
@@ -159,7 +160,7 @@ export default Mixin.create({
     assert(`Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
     assert(`Called \`debounceTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let pendingDebounces = this._getOrAllocateObject('_pendingDebounces');
+    let pendingDebounces = getOrAllocate(this, '_pendingDebounces', {});
     let debounce = pendingDebounces[name];
     let debouncedFn;
 
@@ -318,7 +319,7 @@ export default Mixin.create({
       assert(`The label provided to \`pollTask\` must be unique. \`${label}\` has already been registered.`, !pollTaskLabels[label]);
       pollTaskLabels[label] = true;
 
-      this._getOrAllocateArray('_pollerLabels').push(label);
+      getOrAllocate(this, '_pollerLabels', []).push(label);
     }
 
     if (shouldPoll()) {
@@ -373,22 +374,6 @@ export default Mixin.create({
     cancelTimers(this._pendingTimers);
     cancelDebounces(this._pendingDebounces);
     clearPollers(this._pollerLabels);
-  },
-
-  _getOrAllocateArray(propertyName) {
-    if (!this[propertyName]) {
-      this[propertyName] = [];
-    }
-
-    return this[propertyName];
-  },
-
-  _getOrAllocateObject(propertyName) {
-    if (!this[propertyName]) {
-      this[propertyName] = {};
-    }
-
-    return this[propertyName];
   }
 });
 
