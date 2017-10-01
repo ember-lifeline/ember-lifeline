@@ -27,31 +27,31 @@ test('registerDisposable: ensures a function is passed as a disposable', functio
   }, /You must pass a function for `dispose`/);
 });
 
-test('registerDisposable: returns a token when a disposable is registered', function(assert) {
+test('registerDisposable: returns a disposable when a disposable is registered', function(assert) {
   assert.expect(2);
 
-  let disposable = () => {};
+  let dispose = () => {};
 
-  let token = this.subject.registerDisposable(disposable);
+  let disposable = this.subject.registerDisposable(dispose);
 
-  assert.equal(token, this.subject._registeredDisposables[0], 'token is returned');
+  assert.equal(disposable, this.subject._registeredDisposables[0], 'disposable is returned');
 
-  let otherToken = this.subject.registerDisposable(disposable);
+  let otherDisposable = this.subject.registerDisposable(dispose);
 
-  assert.notEqual(token, otherToken, 'token returned is unique');
+  assert.notEqual(disposable, otherDisposable, 'disposable returned is unique');
 });
 
 test('disposable invoked explicitly disposes of disposable', function(assert) {
   assert.expect(2);
 
   let callCount = 0;
-  let disposable = () => {
+  let dispose = () => {
     callCount++;
   };
 
-  let token = this.subject.registerDisposable(disposable);
+  let disposable = this.subject.registerDisposable(dispose);
 
-  token.dispose();
+  disposable.dispose();
 
   assert.equal(callCount, 1, 'disposable is called');
   assert.ok(this.subject._registeredDisposables[0].disposed, 'disposable marked as disposed');
@@ -61,14 +61,14 @@ test('disposable invoked explicitly multiple times is only invoked once', functi
   assert.expect(2);
 
   let callCount = 0;
-  let disposable = () => {
+  let dispose = () => {
     callCount++;
   };
 
-  let token = this.subject.registerDisposable(disposable);
+  let disposable = this.subject.registerDisposable(dispose);
 
-  token.dispose();
-  token.dispose();
+  disposable.dispose();
+  disposable.dispose();
 
   assert.equal(callCount, 1, 'disposable is called');
   assert.ok(this.subject._registeredDisposables[0].disposed, 'disposable marked as disposed');
@@ -77,15 +77,30 @@ test('disposable invoked explicitly multiple times is only invoked once', functi
 test('runDisposables: runs all disposables when destroying', function(assert) {
   assert.expect(2);
 
-  let disposable = () => {};
-  let disposableTheSecond = () => {};
+  let dispose = () => {};
+  let disposeTheSecond = () => {};
 
-  this.subject.registerDisposable(disposable);
-  this.subject.registerDisposable(disposableTheSecond);
+  this.subject.registerDisposable(dispose);
+  this.subject.registerDisposable(disposeTheSecond);
 
   assert.equal(this.subject._registeredDisposables.length, 2, 'two disposables are registered');
 
   run(this.subject, 'destroy');
 
   assert.equal(this.subject._registeredDisposables.length, 0, 'no disposables are registered');
+});
+
+test('runDisposables: sets all disposables to disposed', function(assert) {
+  assert.expect(2);
+
+  let dispose = () => {};
+  let disposeTheSecond = () => {};
+
+  let disposable = this.subject.registerDisposable(dispose);
+  let disposableTheSecond = this.subject.registerDisposable(disposeTheSecond);
+
+  run(this.subject, 'destroy');
+
+  assert.ok(disposable.disposed, 'first disposable is desposed');
+  assert.ok(disposableTheSecond.disposed, 'second disposable is desposed');
 });
