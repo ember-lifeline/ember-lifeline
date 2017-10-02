@@ -19,14 +19,6 @@ module('ember-lifeline/mixins/disposable', {
   }
 });
 
-test('registerDisposable: ensures a function is passed as a disposable', function(assert) {
-  assert.expect(1);
-
-  assert.throws(() => {
-    this.subject.registerDisposable({});
-  }, /You must pass a function for `dispose`/);
-});
-
 test('registerDisposable: returns a disposable when a disposable is registered', function(assert) {
   assert.expect(2);
 

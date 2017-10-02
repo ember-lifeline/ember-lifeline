@@ -1,7 +1,10 @@
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 
-const { Mixin } = Ember;
+const {
+  Mixin,
+  assert
+} = Ember;
 
 /**
  DisposableMixin provides a mechanism register disposables with automatic disposing when the
@@ -58,9 +61,7 @@ export default Mixin.create({
   @public
   */
   registerDisposable(dispose) {
-    if (typeof dispose !== 'function') {
-      throw new Error('You must pass a function for `dispose`');
-    }
+    assert('Called \`registerDisposable\` where \`dispose\` is not a function', typeof dispose === 'function');
 
     let disposables = getOrAllocate(this, '_registeredDisposables', Array);
     let disposable = toDisposable(dispose);
