@@ -1,10 +1,13 @@
+2.0.0-beta.2 / 2017-10-08
+
+  * Upgrade to use Ember's new JS modules API. 🎉
 
 2.0.0-beta.1 / 2017-08-04
 ==================
 
   * Removed ability to add multiple listeners to child elements in single call 
   * Removed dependency on jQuery for ContextBoundEventListenersMixin
-  
+
 1.3.0 / 2017-06-30
 ==================
 
