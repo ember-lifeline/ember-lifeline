@@ -1,10 +1,6 @@
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
-
-const {
-  Mixin,
-  run
-} = Ember;
 
 const PASSIVE_SUPPORTED = (() => {
   let ret = false;

@@ -1,13 +1,12 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import wait from 'ember-test-helpers/wait';
 
-import ContextBoundTasksMixin, { setShouldPoll, pollTaskFor } from 'ember-lifeline/mixins/run';
-
-const {
-  Object: EmberObject,
-  run
-} = Ember;
+import ContextBoundTasksMixin, {
+  setShouldPoll,
+  pollTaskFor
+} from 'ember-lifeline/mixins/run';
 
 module('ember-lifeline/mixins/run', {
   beforeEach() {
