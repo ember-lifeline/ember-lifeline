@@ -1,11 +1,12 @@
 /* global Event */
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+
+import { getOwner } from '@ember/application';
+import Component from '@ember/component';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
 import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
 import { find, triggerEvent } from 'ember-native-dom-helpers';
-
-const { run, getOwner, Component } = Ember;
 
 moduleForComponent('ember-lifeline/mixins/dom', {
   integration: true,

@@ -1,10 +1,6 @@
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+import { assert } from '@ember/debug';
 import getOrAllocate from '../utils/get-or-allocate';
-
-const {
-  Mixin,
-  assert
-} = Ember;
 
 /**
  DisposableMixin provides a mechanism register disposables with automatic disposing when the

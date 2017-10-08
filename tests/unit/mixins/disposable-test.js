@@ -1,12 +1,8 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 
 import DisposableMixin from 'ember-lifeline/mixins/disposable';
-
-const {
-  Object: EmberObject,
-  run
-} = Ember;
 
 module('ember-lifeline/mixins/disposable', {
   beforeEach() {
