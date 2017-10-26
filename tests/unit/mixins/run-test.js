@@ -173,22 +173,14 @@ test('throttleTask can be canceled', function(assert) {
   }, 10);
 });
 
-test('No timers exist after throttled task is canceled', function(assert) {
-  assert.expect(2);
-
-  // eslint-disable-next-line ember-suave/no-const-outside-module-scope
-  const { run } = Ember;
+test('No error should be thrown by QUnit (throttles should be cleaned up)', function(assert) {
+  assert.expect(0);
 
   let subject = this.subject({
-    doStuff() {
-    }
+    doStuff() {}
   });
 
-  let cancelId = subject.throttleTask('doStuff', 5, false);
-
-  assert.ok(run.hasScheduledTimers(), 'Timers setup');
-  subject.cancelThrottle(cancelId);
-  assert.notOk(run.hasScheduledTimers(), 'Timers cancelled');
+  subject.throttleTask('doStuff', 5);
 });
 
 test('debounceTask runs tasks', function(assert) {
