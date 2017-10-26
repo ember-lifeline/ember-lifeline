@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
@@ -170,6 +171,24 @@ test('throttleTask can be canceled', function(assert) {
     assert.equal(runCount, 2, 'callback should have been canceled previously');
     done();
   }, 10);
+});
+
+test('No timers exist after throttled task is canceled', function(assert) {
+  assert.expect(2);
+
+  // eslint-disable-next-line ember-suave/no-const-outside-module-scope
+  const { run } = Ember;
+
+  let subject = this.subject({
+    doStuff() {
+    }
+  });
+
+  let cancelId = subject.throttleTask('doStuff', 5, false);
+
+  assert.ok(run.hasScheduledTimers(), 'Timers setup');
+  subject.cancelThrottle(cancelId);
+  assert.notOk(run.hasScheduledTimers(), 'Timers cancelled');
 });
 
 test('debounceTask runs tasks', function(assert) {
