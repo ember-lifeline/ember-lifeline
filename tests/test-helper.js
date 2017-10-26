@@ -10,7 +10,6 @@ setResolver(resolver);
 start();
 
 const TESTS_WITH_LEAKY_ASYNC = [];
-// eslint-disable-next-line ember-suave/no-const-outside-module-scope
 const { run } = Ember;
 
 QUnit.testDone(({ module, name }) => {
