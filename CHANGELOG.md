@@ -1,4 +1,10 @@
+2.0.0-beta.3 / 2017-10-26
+==================
+
+* Ensure `this.throttleTask` created timers are cleared upon destroy.
+
 2.0.0-beta.2 / 2017-10-08
+==================
 
   * Upgrade to use Ember's new JS modules API. 🎉
 
