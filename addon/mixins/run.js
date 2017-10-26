@@ -208,6 +208,10 @@ export default Mixin.create({
     cancelDebounce(this._pendingDebounces, name);
   },
 
+  cancelThrottle(cancelId) {
+    cancelThrottle(cancelId);
+  },
+
   /**
    Runs the function with the provided name immediately, and only once in the time window
    specified by the timeout argument.
@@ -239,7 +243,13 @@ export default Mixin.create({
     assert(`Called \`this.throttleTask('${name}', ${timeout})\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
     assert(`Called \`throttleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    run.throttle(this, name, timeout);
+    let pendingThrottles = getOrAllocate(this, '_pendingThrottles', Array);
+
+    let cancelId = run.throttle(this, name, timeout);
+
+    pendingThrottles.push(cancelId);
+
+    return cancelId;
   },
 
   /**
@@ -370,6 +380,7 @@ export default Mixin.create({
 
     cancelTimers(this._pendingTimers);
     cancelDebounces(this._pendingDebounces);
+    cancelThrottles(this._pendingThrottles);
     clearPollers(this._pollerLabels);
   }
 });
@@ -417,5 +428,19 @@ function cancelDebounces(pendingDebounces) {
 
 function cancelDebounce(pendingDebounces, name) {
   let { cancelId } = pendingDebounces[name];
+  run.cancel(cancelId);
+}
+
+function cancelThrottles(pendingThrottles) {
+  if (!pendingThrottles || !pendingThrottles.length) {
+    return;
+  }
+
+  for (let i = 0; i < pendingThrottles.length; i++) {
+    cancelThrottle(pendingThrottles[i]);
+  }
+}
+
+function cancelThrottle(cancelId) {
   run.cancel(cancelId);
 }
