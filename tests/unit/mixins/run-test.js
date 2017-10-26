@@ -151,6 +151,27 @@ test('throttleTask triggers an assertion the function name provided does not exi
   }, /is not a function/);
 });
 
+test('throttleTask can be canceled', function(assert) {
+  assert.expect(1);
+
+  let done = assert.async();
+  let runCount = 0;
+  let subject = this.subject({
+    doStuff() {
+      runCount++;
+    }
+  });
+
+  subject.throttleTask('doStuff', 5, false);
+  subject.cancelThrottle('doStuff');
+  subject.throttleTask('doStuff', 5, false);
+
+  window.setTimeout(() => {
+    assert.equal(runCount, 2, 'callback should have been canceled previously');
+    done();
+  }, 10);
+});
+
 test('debounceTask runs tasks', function(assert) {
   assert.expect(3);
 
