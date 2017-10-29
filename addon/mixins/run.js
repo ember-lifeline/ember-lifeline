@@ -379,21 +379,25 @@ export default Mixin.create({
   willDestroy() {
     this._super(...arguments);
 
-    cancelTimers(this._pendingTimers);
+    cancelBoundTasks(this._pendingTimers, cancelTimer);
+    cancelBoundTasks(this._pollerLabels, cancelPoll);
+    cancelBoundTasks(this._pendingThrottles, cancelThrottle);
     cancelDebounces(this._pendingDebounces);
-    cancelThrottles(this._pendingThrottles);
-    clearPollers(this._pollerLabels);
   }
 });
 
-function clearPollers(labels) {
-  if (!labels || !labels.length) {
+export function cancelBoundTasks(tasks, cancelFn) {
+  if (!tasks || !tasks.length) {
     return;
   }
 
-  for (let i = 0; i < labels.length; i++) {
-    cancelPoll(labels[i]);
+  for (let i = 0; i < tasks.length; i++) {
+    cancelFn(tasks[i]);
   }
+}
+
+function cancelTimer(cancelId) {
+  run.cancel(cancelId);
 }
 
 function cancelPoll(label) {
@@ -401,17 +405,12 @@ function cancelPoll(label) {
   queuedPollTasks[label] = undefined;
 }
 
-function cancelTimers(timers) {
-  if (!timers || !timers.length) {
-    return;
-  }
-
-  for (let i = 0; i < timers.length; i++) {
-    cancelTimer(timers[i]);
-  }
+function cancelThrottle(cancelId) {
+  run.cancel(cancelId);
 }
 
-function cancelTimer(cancelId) {
+function cancelDebounce(pendingDebounces, name) {
+  let { cancelId } = pendingDebounces[name];
   run.cancel(cancelId);
 }
 
@@ -425,23 +424,4 @@ function cancelDebounces(pendingDebounces) {
   for (let i = 0; i < debounceNames.length; i++) {
     cancelDebounce(pendingDebounces, debounceNames[i]);
   }
-}
-
-function cancelDebounce(pendingDebounces, name) {
-  let { cancelId } = pendingDebounces[name];
-  run.cancel(cancelId);
-}
-
-function cancelThrottles(pendingThrottles) {
-  if (!pendingThrottles || !pendingThrottles.length) {
-    return;
-  }
-
-  for (let i = 0; i < pendingThrottles.length; i++) {
-    cancelThrottle(pendingThrottles[i]);
-  }
-}
-
-function cancelThrottle(cancelId) {
-  run.cancel(cancelId);
 }
