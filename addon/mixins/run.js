@@ -161,24 +161,21 @@ export default Mixin.create({
     assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queueName === 'string');
     assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let task;
+    let task, callback;
     let type = typeof callbackOrName;
     if (type === 'function') {
-      task = () => {
-        if (!this.isDestroyed) {
-          callbackOrName.call(this, ...args);
-        }
-      };
-    } else if (type === 'string' && this[callbackOrName]) {
-      let callback = this[callbackOrName];
-      task = () => {
-        if (!this.isDestroyed) {
-          callback.call(this, ...args);
-        }
-      };
-    } else {
-      throw new Error('You must pass a callback function or method name to `scheduleTask`.');
+      callback = callbackOrName;
+    } else if (type === 'string') {
+      callback = this[callbackOrName];
     }
+
+    assert('You must pass a callback function or method name to `scheduleTask`.', typeof callback === 'function');
+
+    task = () => {
+      if (!this.isDestroyed && !this.isDestroying) {
+        callback.apply(this, args);
+      }
+    };
 
     let scheduleInfo = {
       task,
