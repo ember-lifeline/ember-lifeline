@@ -45,7 +45,6 @@ export default Mixin.create({
     this._super(...arguments);
 
     this._pendingTimers = undefined;
-    this._pendingSchedules = undefined;
     this._pendingDebounces = undefined;
     this._pendingThrottles = undefined;
     this._pollerLabels = undefined;
