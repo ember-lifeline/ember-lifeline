@@ -18,8 +18,6 @@ export function setShouldPoll(callback) {
   _shouldPollOverride = callback;
 }
 
-let scheduledQueueTasks = Object.create(null);
-
 let queuedPollTasks = Object.create(null);
 let pollTaskLabels = Object.create(null);
 export function pollTaskFor(label) {
@@ -70,7 +68,7 @@ export default Mixin.create({
    ```
 
    @method runTask
-   @param { Function } callback the callback to run at the provided time
+   @param { Function } callbackOrName the callback to run at the provided time
    @param { Number } [timeout=0] the time in the future to run the callback
    @public
    */
@@ -124,11 +122,7 @@ export default Mixin.create({
    @public
    */
   cancelTask(cancelId) {
-    if (typeof cancelId.cancel === 'function') {
-      cancelId.cancel();
-    } else {
-      cancelTimer(cancelId);
-    }
+    cancelTimer(cancelId);
   },
 
   /**
@@ -144,24 +138,25 @@ export default Mixin.create({
    export default Component.extend(ContextBoundTasksMixin, {
      init() {
        this._super(...arguments);
-       this.scheduleTask('afterRender', () => {
-         console.log('This runs at the end of the run loop (via the afterRender queue) if this component is still displayed');
+       this.scheduleTask('actions', () => {
+         console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
        })
      }
    });
    ```
 
    @method scheduleTask
-   @param { Function } callback the callback to run at the provided time
+   @param { String } queueName the queue to schedule the task into
+   @param { Function } callbackOrName the callback to run at the provided time
    @param { ...* } args arguments to pass to the callback
-   @param { Number } [timeout=0] the time in the future to run the callback
    @public
    */
   scheduleTask(queueName, callbackOrName, ...args) {
     assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queueName === 'string');
+    assert(`Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`, queueName !== 'afterRender');
     assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let task, callback;
+    let callback;
     let type = typeof callbackOrName;
     if (type === 'function') {
       callback = callbackOrName;
@@ -171,28 +166,12 @@ export default Mixin.create({
 
     assert('You must pass a callback function or method name to `scheduleTask`.', typeof callback === 'function');
 
-    task = () => {
-      if (!this.isDestroyed && !this.isDestroying) {
-        callback.apply(this, args);
-      }
-    };
+    let cancelId = run.schedule(queueName, this, callback, ...args);
 
-    let scheduleInfo = {
-      task,
-      cancel() {
-        this.task = noop;
-      }
-    };
+    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
+    pendingTimers.push(cancelId);
 
-    let queueInfo = scheduledQueueTasks[queueName];
-    if (queueInfo) {
-      queueInfo.push(scheduleInfo);
-    } else {
-      queueInfo = scheduledQueueTasks[queueName] = [scheduleInfo];
-      run.schedule(queueName, null, flushScheduledQueueTasks, queueName);
-    }
-
-    return scheduleInfo;
+    return cancelId;
   },
 
   /**
@@ -456,16 +435,6 @@ export default Mixin.create({
   }
 });
 
-function flushScheduledQueueTasks(queueName) {
-  let tasks = scheduledQueueTasks[queueName];
-  if (tasks) {
-    scheduledQueueTasks[queueName] = [];
-    for (let i = 0; i < tasks.length; ++i) {
-      tasks[i].task();
-    }
-  }
-}
-
 export function cancelBoundTasks(tasks, cancelFn) {
   if (!tasks || !tasks.length) {
     return;
@@ -505,5 +474,3 @@ function cancelDebounces(pendingDebounces) {
     cancelDebounce(pendingDebounces, debounceNames[i]);
   }
 }
-
-function noop() {}

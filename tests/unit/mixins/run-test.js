@@ -197,7 +197,7 @@ test('scheduleTask tasks can be canceled', function(assert) {
   let hasRun = false;
 
   run(() => {
-    let timer = subject.scheduleTask('afterRender', () => {
+    let timer = subject.scheduleTask('actions', () => {
       hasRun = true;
     });
 
