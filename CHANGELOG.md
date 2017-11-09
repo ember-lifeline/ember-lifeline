@@ -1,3 +1,8 @@
+2.0.0-beta.4 / 2017-11-09
+==================
+
+* Allow calling `addEventListener` from objects other than components (when passing specific `HTMLElement`).
+
 2.0.0-beta.3 / 2017-10-26
 ==================
 
