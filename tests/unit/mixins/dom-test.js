@@ -309,7 +309,8 @@ moduleForComponent('ember-lifeline/mixins/dom', {
       }
     }));
 
-    let subject = owner.factoryFor(serviceName).create();
+    let factory = owner.factoryFor ? owner.factoryFor(serviceName) : owner._lookupFactory(serviceName);
+    let subject = factory.create();
 
     this.render(hbs`<span class="foo"></span>`);
 
