@@ -61,8 +61,14 @@ export default Mixin.create({
    @public
    */
   addEventListener(selector, eventName, _callback, options) {
-    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
-    assert('Called addEventListener before the component was rendered', this._currentState === this._states.inDOM);
+    assert(
+      'Must provide an element (not a DOM selector) when using addEventListener in a tagless entity.',
+      this.tagName || typeof selector !== 'string'
+    );
+    assert(
+      'Called addEventListener before the component was rendered',
+      !(this.tagName && typeof selector === 'string') || this._currentState === this._states.inDOM
+    );
 
     let element = findElement(this.element, selector);
     let callback = run.bind(this, _callback);

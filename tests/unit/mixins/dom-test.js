@@ -3,6 +3,7 @@ import { run } from '@ember/runloop';
 
 import { getOwner } from '@ember/application';
 import Component from '@ember/component';
+import Service from '@ember/service';
 import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
 import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
@@ -17,6 +18,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     this.owner = getOwner(this);
     this.owner.register(name, Component.extend(ContextBoundEventListenersMixin, {
+      tagName: 'div',
       init() {
         this._super(...arguments);
         testContext.componentInstance = this;
@@ -291,6 +293,41 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     await triggerEvent(subject.element.firstChild, 'click');
 
     assert.equal(calls, 0, 'callback was not called');
+  });
+
+  test(`${testName} adds event listener when an element is passed in from a service instance`, async function(assert) {
+    assert.expect(4);
+
+    let testContext = this;
+    let serviceName = 'service:under-test';
+    let owner = getOwner(this);
+
+    owner.register(serviceName, Service.extend(ContextBoundEventListenersMixin, {
+      init() {
+        this._super(...arguments);
+        testContext.componentInstance = this;
+      }
+    }));
+
+    let subject = owner.factoryFor(serviceName).create();
+
+    this.render(hbs`<span class="foo"></span>`);
+
+    let calls = 0;
+    let hadRunloop = null;
+    let handledEvent = null;
+    subject.addEventListener(find('.foo'), 'click', (event) => {
+      calls++;
+      hadRunloop = !!run.currentRunLoop;
+      handledEvent = event;
+    }, testedOptions);
+
+    await triggerEvent('.foo', 'click');
+
+    assert.equal(calls, 1, 'callback was called');
+    assert.ok(hadRunloop, 'callback was called in runloop');
+    assert.ok(!!handledEvent.target, 'callback passed a target');
+    assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
   });
 });
 
