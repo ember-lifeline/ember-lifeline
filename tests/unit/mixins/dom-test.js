@@ -18,7 +18,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     this.owner = getOwner(this);
     this.owner.register(name, Component.extend(ContextBoundEventListenersMixin, {
-      tagName: 'div',
       init() {
         this._super(...arguments);
         testContext.componentInstance = this;
@@ -155,7 +154,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
 
     assert.throws(() => {
       subject.addEventListener('.foo', 'click', () => {}, testedOptions);
-    }, /Called \w+ before the component was rendered/);
+    }, /Called \w+ with a css selector before the component was rendered/);
   });
 
   test(`${testName} adds event listener to non-child element in tagless component`, async function(assert) {
@@ -323,6 +322,22 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.ok(hadRunloop, 'callback was called in runloop');
     assert.ok(!!handledEvent.target, 'callback passed a target');
     assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
+  });
+
+  test(`${testName} throws when a css selector is passed in from a service instance`, async function(assert) {
+    assert.expect(1);
+
+    let serviceName = 'service:under-test';
+    let owner = getOwner(this);
+
+    owner.register('service:under-test', Service.extend(ContextBoundEventListenersMixin));
+
+    let factory = owner.factoryFor ? owner.factoryFor(serviceName) : owner._lookupFactory(serviceName);
+    let subject = factory.create();
+
+    assert.throws(() => {
+      subject.addEventListener('.foo', 'click', () => {}, testedOptions);
+    }, /Must provide an element/);
   });
 });
 
