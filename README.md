@@ -237,6 +237,7 @@ export default Component.extend(RunMixin, {
   },
   updateClickedEl() {
     this.set('lastClickedEl', this._evt.target);
+    this._evt = null;
   }
 });
 ```
