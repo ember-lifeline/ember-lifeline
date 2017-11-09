@@ -298,16 +298,10 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   test(`${testName} adds event listener when an element is passed in from a service instance`, async function(assert) {
     assert.expect(4);
 
-    let testContext = this;
     let serviceName = 'service:under-test';
     let owner = getOwner(this);
 
-    owner.register(serviceName, Service.extend(ContextBoundEventListenersMixin, {
-      init() {
-        this._super(...arguments);
-        testContext.componentInstance = this;
-      }
-    }));
+    owner.register('service:under-test', Service.extend(ContextBoundEventListenersMixin));
 
     let factory = owner.factoryFor ? owner.factoryFor(serviceName) : owner._lookupFactory(serviceName);
     let subject = factory.create();
