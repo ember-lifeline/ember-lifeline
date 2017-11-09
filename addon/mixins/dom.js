@@ -54,6 +54,24 @@ export default Mixin.create({
    });
    ```
 
+   This can also be used in other ember types like services and controllers. In
+   order to use it there an html element reference must be used instead of a
+   css selector. This way we can be sure the element actually exists when the
+   listener is attached:
+
+   ```js
+   import Service from 'ember-service';
+   import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+
+   export default Service.extend(ContextBoundEventListenersMixin, {
+     init() {
+       this._super(...arguments);
+       const el = document.querySelector('.foo');
+       this.addEventListener(el, 'click')
+     }
+   });
+   ```
+
    @method addEventListener
    @param { String } selector the DOM selector or element
    @param { String } _eventName the event name to listen for
@@ -61,8 +79,12 @@ export default Mixin.create({
    @public
    */
   addEventListener(selector, eventName, _callback, options) {
-    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
-    assert('Called addEventListener before the component was rendered', this._currentState === this._states.inDOM);
+    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
+      !this.isComponent || this.tagName !== '' || typeof selector !== 'string');
+    assert('Called addEventListener with a css selector before the component was rendered',
+      !this.isComponent || typeof selector !== 'string' || this._currentState === this._states.inDOM);
+    assert('Must provide an element (not a DOM selector) when calling addEventListener outside of component instance.',
+      this.isComponent || typeof selector !== 'string');
 
     let element = findElement(this.element, selector);
     let callback = run.bind(this, _callback);

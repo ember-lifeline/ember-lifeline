@@ -218,6 +218,31 @@ In this example, the first click will update `time`, but clicks after that
 for 500ms will be disregarded. Then, the next click will fire and start
 a timeout window of its own.
 
+Often it is desired to pass additional arguments to the throttle callback. We
+also need to reference the same function in order for throttling to work. In
+order to acheive this it is recommended to make use of instance variables. This
+enables the throttle function to use the arguments in the state they are in
+at the time the callback is executed:
+
+```js
+import Ember from 'ember';
+import RunMixin from 'ember-lifeline/mixins/run';
+
+const { Component } = Ember;
+
+export default Component.extend(RunMixin, {
+  click(evt) {
+    this._evt = evt;
+    this.throttleTask('updateClickedEl', 500);
+  },
+  updateClickedEl() {
+    this.set('lastClickedEl', this._evt.target);
+    this._evt = null;
+  }
+});
+```
+
+
 ### `pollTask`
 
 **tl;dr call `this.pollTask(fn, label)` on any component, route, or service to setup
