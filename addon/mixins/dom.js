@@ -141,7 +141,22 @@ export default Mixin.create({
 
   willDestroyElement() {
     this._super(...arguments);
+    this._removeEventListeners();
+    // Determines whether or not we need to perform cleanup in the willDestroy hook
+    this._hasCalledWillDestroyElement = true;
+  },
 
+  willDestroy() {
+    this._super(...arguments);
+    if (!this._hasCalledWillDestroyElement) {
+      this._removeEventListeners();
+    }
+  },
+
+  /**
+   @private
+   */
+  _removeEventListeners() {
     if (this._listeners) {
       /* Drop non-passive event listeners */
       for (let i = 0; i < this._listeners.length; i++) {

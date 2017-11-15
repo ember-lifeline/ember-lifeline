@@ -294,8 +294,8 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 0, 'callback was not called');
   });
 
-  test(`${testName} adds event listener when an element is passed in from a service instance`, async function(assert) {
-    assert.expect(4);
+  test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function(assert) {
+    assert.expect(5);
 
     let serviceName = 'service:under-test';
     let owner = getOwner(this);
@@ -322,6 +322,12 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.ok(hadRunloop, 'callback was called in runloop');
     assert.ok(!!handledEvent.target, 'callback passed a target');
     assert.equal(handledEvent.target.className, 'foo', 'target has the expected class');
+
+    run(() => subject.destroy()); // Listeners should be removed when the service is destroyed
+
+    await triggerEvent('.foo', 'click');
+
+    assert.equal(calls, 1, 'callback is not called again once the instance is destroyed');
   });
 
   test(`${testName} throws when a css selector is passed in from a service instance`, async function(assert) {
