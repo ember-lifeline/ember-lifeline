@@ -159,7 +159,7 @@ export default Mixin.create({
         let { element, eventName, callback, options } = this._listeners[i];
         element.removeEventListener(eventName, callback, options);
       }
-      this._listeners.length = 0;
+      delete this._listeners;
     }
   }
 });
