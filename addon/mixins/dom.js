@@ -139,27 +139,15 @@ export default Mixin.create({
     }
   },
 
-  willDestroyElement() {
-    this._super(...arguments);
-    this._removeEventListeners();
-  },
-
   willDestroy() {
     this._super(...arguments);
-    this._removeEventListeners();
-  },
-
-  /**
-   @private
-   */
-  _removeEventListeners() {
     if (this._listeners) {
       /* Drop non-passive event listeners */
       for (let i = 0; i < this._listeners.length; i++) {
         let { element, eventName, callback, options } = this._listeners[i];
         element.removeEventListener(eventName, callback, options);
       }
-      delete this._listeners;
+      this._listeners = undefined;
     }
   }
 });
