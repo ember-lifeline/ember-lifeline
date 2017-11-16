@@ -18,8 +18,8 @@ export function setShouldPoll(callback) {
   _shouldPollOverride = callback;
 }
 
-let queuedPollTasks = {};
-let pollTaskLabels = {};
+let queuedPollTasks = Object.create(null);
+let pollTaskLabels = Object.create(null);
 export function pollTaskFor(label) {
   assert(`A pollTask with a label of '${label}' was not found.`, pollTaskLabels[label]);
   assert(`You cannot advance a pollTask (\`${label}\`) when \`next\` has not been called.`, !!queuedPollTasks[label]);
@@ -68,7 +68,7 @@ export default Mixin.create({
    ```
 
    @method runTask
-   @param { Function } callback the callback to run at the provided time
+   @param { Function } callbackOrName the callback to run at the provided time
    @param { Number } [timeout=0] the time in the future to run the callback
    @public
    */
@@ -118,11 +118,60 @@ export default Mixin.create({
    ```
 
    @method cancelTask
-   @param { Number } cancelId the id returned from the runTask call
+   @param { Number } cancelId the id returned from the runTask or scheduleTask call
    @public
    */
   cancelTask(cancelId) {
     cancelTimer(cancelId);
+  },
+
+  /**
+   Adds the provided function to the named queue to be executed at the end of the RunLoop.
+   The timer is properly canceled if the object is destroyed before it is invoked.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     init() {
+       this._super(...arguments);
+       this.scheduleTask('actions', () => {
+         console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
+       })
+     }
+   });
+   ```
+
+   @method scheduleTask
+   @param { String } queueName the queue to schedule the task into
+   @param { Function } callbackOrName the callback to run at the provided time
+   @param { ...* } args arguments to pass to the callback
+   @public
+   */
+  scheduleTask(queueName, callbackOrName, ...args) {
+    assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queueName === 'string');
+    assert(`Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`, queueName !== 'afterRender');
+    assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+
+    let callback;
+    let type = typeof callbackOrName;
+    if (type === 'function') {
+      callback = callbackOrName;
+    } else if (type === 'string') {
+      callback = this[callbackOrName];
+    }
+
+    assert('You must pass a callback function or method name to `scheduleTask`.', typeof callback === 'function');
+
+    let cancelId = run.schedule(queueName, this, callback, ...args);
+
+    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
+    pendingTimers.push(cancelId);
+
+    return cancelId;
   },
 
   /**
