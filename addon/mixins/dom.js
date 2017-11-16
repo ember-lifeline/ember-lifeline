@@ -89,7 +89,7 @@ export default Mixin.create({
     let element = findElement(this.element, selector);
     let callback = run.bind(this, _callback);
 
-    if (!this._listeners) {
+    if (!Array.isArray(this._listeners)) {
       this._listeners = [];
     }
 
@@ -113,7 +113,7 @@ export default Mixin.create({
 
     let element = findElement(this.element, selector);
 
-    if (!this._listeners) {
+    if (!Array.isArray(this._listeners)) {
       return;
     }
 
@@ -141,7 +141,7 @@ export default Mixin.create({
 
   willDestroy() {
     this._super(...arguments);
-    if (this._listeners) {
+    if (Array.isArray(this._listeners)) {
       /* Drop non-passive event listeners */
       for (let i = 0; i < this._listeners.length; i++) {
         let { element, eventName, callback, options } = this._listeners[i];
