@@ -295,7 +295,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   });
 
   test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function(assert) {
-    assert.expect(5);
+    assert.expect(6);
 
     let serviceName = 'service:under-test';
     let owner = getOwner(this);
