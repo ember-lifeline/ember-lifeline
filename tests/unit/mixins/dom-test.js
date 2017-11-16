@@ -328,6 +328,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     await triggerEvent('.foo', 'click');
 
     assert.equal(calls, 1, 'callback is not called again once the instance is destroyed');
+    assert.notOk(subject._listeners);
   });
 
   test(`${testName} throws when a css selector is passed in from a service instance`, async function(assert) {
