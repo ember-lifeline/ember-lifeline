@@ -1,25 +1,16 @@
-2.0.0-beta.4 / 2017-11-09
+
+v2.0.0 / 2017-11-16
 ==================
 
-* Allow calling `addEventListener` from objects other than components (when passing specific `HTMLElement`).
-
-2.0.0-beta.3 / 2017-10-26
-==================
-
-* Ensure `this.throttleTask` created timers are cleared upon destroy.
-
-2.0.0-beta.2 / 2017-10-08
-==================
-
+  * New feature - `scheduleTask` - allows for scheduling tasks via lifeline
+  * New feature - `registerDisposable` - registers a function to be called on destruction of the object
+  * Allow calling `addEventListener` from objects other than components (when passing specific `HTMLElement`).
+  * Ensure `this.throttleTask` created timers are cleared upon destroy.
   * Upgrade to use Ember's new JS modules API. 🎉
-
-2.0.0-beta.1 / 2017-08-04
-==================
-
   * Removed ability to add multiple listeners to child elements in single call 
   * Removed dependency on jQuery for ContextBoundEventListenersMixin
 
-1.3.0 / 2017-06-30
+v1.3.0 / 2017-06-30
 ==================
 
   * Introduce cancel\* methods 
