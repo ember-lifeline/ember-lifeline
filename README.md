@@ -598,15 +598,15 @@ You can explicity run the disposable without waiting for the object's destructio
 
 ### `addEventListener`
 
-**tl;dr call `this.addEventListener(element, eventName, fn, options)` on a component or
-route to add a jQuery event listener that will be automatically removed when
-the component is un-rendered.**
+**tl;dr call `this.addEventListener(element, eventName, fn, options)` on a
+component or route to add a DOM event listener that will be automatically
+removed when the component is un-rendered.**
 
-Event listeners pose similar but different challenges. They likewise must
-have a runloop added around their callback, and are pinned to an
-object's lifecycle- in this case to the detachment of that component
-from the DOM (`willDestroyElement`). For example this is an idiomatic and
-correct way to add an event listener to the window in Ember:
+Event listeners pose similar but different challenges. They likewise must have a
+runloop added around their callback, and are pinned to an object's lifecycle, in
+this case to the detachment of that component from the DOM
+(`willDestroyElement`). For example this is an idiomatic and correct way to add
+an event listener to the window in Ember:
 
 ```js
 import Ember from 'ember';
@@ -656,11 +656,6 @@ several ways to specify an element:
 // Attach to an element inside this component
 this.addEventListener('.someClass', 'scroll', fn);
 
-// Attach to a jQuery list
-this.addEventListener(this.$('.someClass'), 'scroll', fn);
-// Any jQuery list, even those outside the component
-this.addEventListener($('.someClass'), 'scroll', fn);
-
 // Attach to a DOM node
 this.addEventListener(document.body, 'click', fn);
 
@@ -670,8 +665,9 @@ this.addEventListener(window, 'scroll', fn);
 
 ### `removeEventListener`
 
-**tl;dr call `this.removeEventListener(element, eventName, fn, options)` on a component or
-route to actively remove a jQuery event listener previously added by a call to `addEventListener`.**
+**tl;dr call `this.removeEventListener(element, eventName, fn, options)` on a
+component or route to actively remove a DOM event listener previously added by a
+call to `addEventListener`.**
 
 Although any listener added by a call to `addEventListener` will be teared down when the route or component is being
 destroyed, there might be cases where you want to actively remove an existing event listener even during the active
