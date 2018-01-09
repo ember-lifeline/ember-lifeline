@@ -3,6 +3,7 @@ import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
+import getNextToken from '../utils/get-next-token';
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -19,12 +20,12 @@ export function setShouldPoll(callback) {
 }
 
 let queuedPollTasks = Object.create(null);
-let pollTaskLabels = Object.create(null);
-export function pollTaskFor(label) {
-  assert(`A pollTask with a label of '${label}' was not found.`, pollTaskLabels[label]);
-  assert(`You cannot advance a pollTask (\`${label}\`) when \`next\` has not been called.`, !!queuedPollTasks[label]);
+let pollTaskTokens = Object.create(null);
+export function pollTaskFor(token) {
+  assert(`A pollTask with a token of '${token}' was not found.`, pollTaskTokens[token]);
+  assert(`You cannot advance pollTask '${token}' when \`next\` has not been called.`, !!queuedPollTasks[token]);
 
-  return run.join(null, queuedPollTasks[label]);
+  return run.join(null, queuedPollTasks[token]);
 }
 
 /**
@@ -45,7 +46,7 @@ export default Mixin.create({
     this._pendingTimers = undefined;
     this._pendingDebounces = undefined;
     this._pendingThrottles = undefined;
-    this._pollerLabels = undefined;
+    this._pollerTokens = undefined;
   },
 
   /**
@@ -319,12 +320,14 @@ export default Mixin.create({
      init() {
        this._super(...arguments);
 
-       this.pollTask((next) => {
+       let token = this.pollTask((next) => {
          this.get('api').request('get', 'some/path')
            .then(() => {
              this.runTask(next, 1800);
            })
-       }, 'foo-bar#watch-some-path');
+       });
+
+       this.set('pollToken', token);
      }
    });
    ```
@@ -344,7 +347,7 @@ export default Mixin.create({
        .then(() => {
          assert.equal(serverRequests, 1, 'called initially');
 
-         pollTaskFor('foo-bar#watch-some-path');
+         pollTaskFor(this.get('pollToken'));
          return wait();
        })
        .then(() => {
@@ -355,10 +358,9 @@ export default Mixin.create({
 
    @method pollTask
    @param { Function | String } callbackOrMethodName the callback or method name to run
-   @param { String } [label] the label for the pollTask to be created
    @public
    */
-  pollTask(callbackOrMethodName, label) {
+  pollTask(callbackOrMethodName) {
     let next, callback;
     let type = typeof callbackOrMethodName;
 
@@ -371,25 +373,23 @@ export default Mixin.create({
     }
 
     let tick = () => callback.call(this, next);
+    let token = getNextToken();
 
-    if (label) {
-      assert(`The label provided to \`pollTask\` must be unique. \`${label}\` has already been registered.`, !pollTaskLabels[label]);
-      pollTaskLabels[label] = true;
+    pollTaskTokens[token] = true;
 
-      getOrAllocate(this, '_pollerLabels', Array).push(label);
-    }
+    getOrAllocate(this, '_pollerTokens', Array).push(token);
 
     if (shouldPoll()) {
       next = tick;
-    } else if (label) {
-      next = () => {
-        queuedPollTasks[label] = tick;
-      };
     } else {
-      next = () => {};
+      next = () => {
+        queuedPollTasks[token] = tick;
+      };
     }
 
     callback.call(this, next);
+
+    return token;
   },
 
   /**
@@ -408,7 +408,7 @@ export default Mixin.create({
            .then(() => {
              this.runTask(next, 1800);
            })
-       }, 'foo-bar#watch-some-path');
+       });
      },
 
      disableAutoRefresh() {
@@ -418,18 +418,18 @@ export default Mixin.create({
    ```
 
    @method cancelPoll
-   @param { String } label the label for the pollTask to be cleared
+   @param { String } token the token for the pollTask to be cleared
    @public
    */
-  cancelPoll(label) {
-    cancelPoll(label);
+  cancelPoll(token) {
+    cancelPoll(token);
   },
 
   willDestroy() {
     this._super(...arguments);
 
     cancelBoundTasks(this._pendingTimers, cancelTimer);
-    cancelBoundTasks(this._pollerLabels, cancelPoll);
+    cancelBoundTasks(this._pollerTokens, cancelPoll);
     cancelBoundTasks(this._pendingThrottles, cancelThrottle);
     cancelDebounces(this._pendingDebounces);
   }
@@ -449,9 +449,9 @@ function cancelTimer(cancelId) {
   run.cancel(cancelId);
 }
 
-function cancelPoll(label) {
-  pollTaskLabels[label] = undefined;
-  queuedPollTasks[label] = undefined;
+function cancelPoll(token) {
+  pollTaskTokens[token] = undefined;
+  queuedPollTasks[token] = undefined;
 }
 
 function cancelThrottle(cancelId) {
