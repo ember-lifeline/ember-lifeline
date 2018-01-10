@@ -450,8 +450,8 @@ function cancelTimer(cancelId) {
 }
 
 function cancelPoll(token) {
-  pollTaskTokens[token] = undefined;
-  queuedPollTasks[token] = undefined;
+  delete pollTaskTokens[token];
+  delete queuedPollTasks[token];
 }
 
 function cancelThrottle(cancelId) {
