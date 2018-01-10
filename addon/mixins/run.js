@@ -327,7 +327,7 @@ export default Mixin.create({
            })
        });
 
-       this.set('pollToken', token);
+       this._pollToken = token;
      }
    });
    ```
@@ -347,7 +347,7 @@ export default Mixin.create({
        .then(() => {
          assert.equal(serverRequests, 1, 'called initially');
 
-         pollTaskFor(this.get('pollToken'));
+         pollTaskFor(this._pollToken);
          return wait();
        })
        .then(() => {
