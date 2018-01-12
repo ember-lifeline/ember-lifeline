@@ -260,7 +260,7 @@ export default Mixin.create({
   },
 
   cancelThrottle(cancelId) {
-    cancelThrottle(cancelId);
+    cancelTimer(cancelId);
   },
 
   /**
@@ -430,7 +430,7 @@ export default Mixin.create({
 
     cancelBoundTasks(this._pendingTimers, cancelTimer);
     cancelBoundTasks(this._pollerTokens, cancelPoll);
-    cancelBoundTasks(this._pendingThrottles, cancelThrottle);
+    cancelBoundTasks(this._pendingThrottles, cancelTimer);
     cancelDebounces(this._pendingDebounces);
   }
 });
@@ -452,10 +452,6 @@ function cancelTimer(cancelId) {
 function cancelPoll(token) {
   delete pollTaskTokens[token];
   delete queuedPollTasks[token];
-}
-
-function cancelThrottle(cancelId) {
-  run.cancel(cancelId);
 }
 
 function cancelDebounce(pendingDebounces, name) {
