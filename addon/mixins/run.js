@@ -360,7 +360,7 @@ export default Mixin.create({
    @param { Function | String } callbackOrMethodName the callback or method name to run
    @public
    */
-  pollTask(callbackOrMethodName) {
+  pollTask(callbackOrMethodName, token = getNextToken()) {
     let next, callback;
     let type = typeof callbackOrMethodName;
 
@@ -373,7 +373,6 @@ export default Mixin.create({
     }
 
     let tick = () => callback.call(this, next);
-    let token = getNextToken();
 
     pollTaskTokens[token] = true;
 
