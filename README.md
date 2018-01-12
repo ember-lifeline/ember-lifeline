@@ -321,7 +321,7 @@ export default Component.extend(RunMixin, {
 
 ### `pollTask`
 
-**tl;dr call `this.pollTask(fn, label)` on any component, route, or service to setup
+**tl;dr call `this.pollTask(fn [, token])` on any component, route, or service to setup
 polling.**
 
 Use `pollTask` where you might reach for recursive `this.runTask(fn, ms)`, `Ember.run.later`, `setTimeout`, and/or `setInterval`.
@@ -471,8 +471,8 @@ test('updating-time updates', function(assert) {
 
 A couple of helpful assertions are provided with the `pollTask` functionality:
 
-* A given `label` can only be used once. If the same `label` is used a second time, an error will be thrown.
-* If nothing has been queued for the given label, calling `pollTaskFor(label)` will trigger an error.
+* A given `token` can only be used once. If the same `token` is used a second time, an error will be thrown.
+* If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
 
 ### `registerDisposable`
 
