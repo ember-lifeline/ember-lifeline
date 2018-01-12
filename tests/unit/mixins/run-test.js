@@ -346,7 +346,7 @@ test('debounceTask triggers an assertion the function name provided does not exi
   }, /is not a function/);
 });
 
-test('pollTask: provides ability to poll with callback provided', function(assert) {
+test('pollTask provides ability to poll with callback provided', function(assert) {
   assert.expect(2);
   setShouldPoll(() => true);
   let subject = this.subject();
@@ -368,7 +368,7 @@ test('pollTask: provides ability to poll with callback provided', function(asser
   return wait();
 });
 
-test('pollTask: provides ability to poll with method provided', function(assert) {
+test('pollTask provides ability to poll with method provided', function(assert) {
   assert.expect(2);
   setShouldPoll(() => true);
   let calledTimes = 0;
@@ -392,7 +392,7 @@ test('pollTask: provides ability to poll with method provided', function(assert)
   return wait();
 });
 
-test('pollTask: calls callback once in testing mode', function(assert) {
+test('pollTask calls callback once in testing mode', function(assert) {
   assert.expect(2);
   let subject = this.subject();
   let calledTimes = 0;
@@ -423,12 +423,12 @@ test('pollTask: calls callback once in testing mode', function(assert) {
   return wait();
 });
 
-test('pollTask: next tick can be incremented via test helper with callback', function(assert) {
+test('pollTask next tick can be incremented via test helper with callback', function(assert) {
   assert.expect(2);
   let subject = this.subject();
   let calledTimes = 0;
 
-  subject.pollTask((next) => {
+  let token = subject.pollTask((next) => {
     calledTimes++;
 
     if (calledTimes > 2) {
@@ -436,13 +436,13 @@ test('pollTask: next tick can be incremented via test helper with callback', fun
     }
 
     subject.runTask(next, 5);
-  }, 'testington');
+  });
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
   return wait()
     .then(function() {
-      pollTaskFor('testington');
+      pollTaskFor(token);
 
       assert.equal(calledTimes, 2, 'poll task argument was invoked after ticking');
 
@@ -451,7 +451,7 @@ test('pollTask: next tick can be incremented via test helper with callback', fun
     });
 });
 
-test('pollTask: next tick can be incremented via test helper with method name', function(assert) {
+test('pollTask next tick can be incremented via test helper with method name', function(assert) {
   assert.expect(2);
   let calledTimes = 0;
   let subject = this.subject({
@@ -466,13 +466,13 @@ test('pollTask: next tick can be incremented via test helper with method name', 
     }
   });
 
-  subject.pollTask('run', 'testington');
+  let token = subject.pollTask('run');
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
   return wait()
     .then(function() {
-      pollTaskFor('testington');
+      pollTaskFor(token);
 
       assert.equal(calledTimes, 2, 'poll task argument was invoked after ticking');
 
@@ -481,25 +481,25 @@ test('pollTask: next tick can be incremented via test helper with method name', 
     });
 });
 
-test('pollTask: cannot advance a poll that has not been scheduled', function(assert) {
+test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
   assert.expect(3);
 
   let subject = this.subject();
   let calledTimes = 0;
 
-  subject.pollTask(() => {
+  let token = subject.pollTask(() => {
     calledTimes++;
 
     if (calledTimes > 2) {
       assert.ok(false, 'should not be called more than twice');
     }
-  }, 'testington');
+  });
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
   assert.throws(function() {
-    pollTaskFor('testington');
-  }, /You cannot advance a pollTask \(`testington`\) when `next` has not been called./);
+    pollTaskFor(token);
+  }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -507,99 +507,63 @@ test('pollTask: cannot advance a poll that has not been scheduled', function(ass
   return wait();
 });
 
-test('pollTask: cannot use the same label twice in normal dev mode', function(assert) {
-  assert.expect(1);
-  setShouldPoll(() => true);
-  let subject = this.subject();
-
-  subject.pollTask(() => {}, 'one');
-
-  assert.throws(() => {
-    subject.pollTask(() => {}, 'one');
-  }, /The label provided to `pollTask` must be unique/);
-
-  // ensure that pending pollTask's are not running
-  return wait();
-});
-
-test('pollTask: cannot use the same label twice in test mode', function(assert) {
-  assert.expect(2);
-  let subject = this.subject();
-
-  subject.pollTask(() => {}, 'one');
-
-  assert.throws(() => {
-    subject.pollTask(() => {}, 'one');
-  }, /The label provided to `pollTask` must be unique/);
-
-  subject = this.subject({ force: true });
-
-  subject.pollTask((next) => {
-    assert.ok(true, 'pollTask was called');
-    subject.runTask(next, 5);
-  }, 'one');
-
-  // ensure that pending pollTask's are not running
-  return wait();
-});
-
-test('pollTask: does not leak when destroyed', function(assert) {
+test('pollTask does not leak when destroyed', function(assert) {
   assert.expect(3);
   let subject = this.subject();
 
-  subject.pollTask((next) => {
+  let token = subject.pollTask((next) => {
     subject.runTask(next);
-  }, 'one');
+  });
 
   run(subject, 'destroy');
 
   assert.throws(() => {
-    pollTaskFor('one');
-  }, /A pollTask with a label of 'one' was not found/);
+    pollTaskFor(token);
+  }, `A pollTask with a token of ${token} was not found`);
 
   subject = this.subject({ force: true });
 
-  subject.pollTask((next) => {
+  token = subject.pollTask((next) => {
     assert.ok(true, 'pollTask was called');
     subject.runTask(next, 5);
-  }, 'one');
+  });
 
   // ensure that pending pollTask's are not running
   return wait()
     .then(() => {
-      pollTaskFor('one');
+      pollTaskFor(token);
     });
 });
 
-test('pollTask: can be manually cleared', function(assert) {
+test('pollTask can be manually cleared', function(assert) {
   assert.expect(3);
   let subject = this.subject();
 
-  subject.pollTask((next) => {
+  let token = subject.pollTask((next) => {
     subject.runTask(next);
-  }, 'one');
+  });
 
-  subject.cancelPoll('one');
+  subject.cancelPoll(token);
 
   assert.throws(() => {
-    pollTaskFor('one');
-  }, /A pollTask with a label of 'one' was not found/);
+    pollTaskFor(token);
+  }, `A pollTask with a label of '${token}' was not found`);
 
   subject = this.subject({ force: true });
 
-  subject.pollTask((next) => {
+  token = subject.pollTask((next) => {
     assert.ok(true, 'pollTask was called');
     subject.runTask(next, 5);
-  }, 'one');
+  });
 
   // ensure that pending pollTask's are not running
   return wait()
     .then(() => {
-      pollTaskFor('one');
+      pollTaskFor(token);
     });
 });
 
-test('cancelBoundTasks: early returns if tasks is falsey', function(assert) {
+test('cancelBoundTasks early returns if tasks is falsey', function(assert) {
   assert.expect(1);
 
   let tasks = null;
@@ -613,7 +577,7 @@ test('cancelBoundTasks: early returns if tasks is falsey', function(assert) {
   assert.equal(callCount, 0, 'The cancel function should not have been called');
 });
 
-test('cancelBoundTasks: early returns if tasks is an empty array', function(assert) {
+test('cancelBoundTasks early returns if tasks is an empty array', function(assert) {
   assert.expect(1);
 
   let tasks = [];
@@ -627,7 +591,7 @@ test('cancelBoundTasks: early returns if tasks is an empty array', function(asse
   assert.equal(callCount, 0, 'The cancel function should not have been called');
 });
 
-test('cancelBoundTasks: cancel function is called once for each task', function(assert) {
+test('cancelBoundTasks cancel function is called once for each task', function(assert) {
   assert.expect(4);
 
   let tasks = ['one', 'two', 'three'];
