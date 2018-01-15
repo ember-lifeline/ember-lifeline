@@ -50,7 +50,7 @@ export default Mixin.create({
   },
 
   /**
-   Runs the provided function at the specified timeout (defaulting to 0).
+   Runs the provided task function at the specified timeout (defaulting to 0).
    The timer is properly canceled if the object is destroyed before it is invoked.
 
    Example:
@@ -69,27 +69,22 @@ export default Mixin.create({
    ```
 
    @method runTask
-   @param { Function } callbackOrName the callback to run at the provided time
-   @param { Number } [timeout=0] the time in the future to run the callback
+   @param { Function } taskOrName the task (or name of task) to run at the provided time
+   @param { Number } [timeout=0] the time in the future to run the task
    @public
    */
-  runTask(callbackOrName, timeout = 0) {
+  runTask(taskOrName, timeout = 0) {
     assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let type = typeof callbackOrName;
     let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
 
     let cancelId = run.later(() => {
       let cancelIndex = pendingTimers.indexOf(cancelId);
       pendingTimers.splice(cancelIndex, 1);
 
-      if (type === 'function') {
-        callbackOrName.call(this);
-      } else if (type === 'string' && this[callbackOrName]) {
-        this[callbackOrName]();
-      } else {
-        throw new Error('You must pass a callback function or method name to `runTask`.');
-      }
+      let task = getTask(this, taskOrName, 'runTask');
+
+      task.call(this);
     }, timeout);
 
     pendingTimers.push(cancelId);
@@ -148,26 +143,18 @@ export default Mixin.create({
 
    @method scheduleTask
    @param { String } queueName the queue to schedule the task into
-   @param { Function } callbackOrName the callback to run at the provided time
-   @param { ...* } args arguments to pass to the callback
+   @param { Function } taskOrName the task (or name of task) to run at the provided time
+   @param { ...* } args arguments to pass to the task
    @public
    */
-  scheduleTask(queueName, callbackOrName, ...args) {
+  scheduleTask(queueName, taskOrName, ...args) {
     assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queueName === 'string');
     assert(`Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`, queueName !== 'afterRender');
     assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
 
-    let callback;
-    let type = typeof callbackOrName;
-    if (type === 'function') {
-      callback = callbackOrName;
-    } else if (type === 'string') {
-      callback = this[callbackOrName];
-    }
+    let task = getTask(this, taskOrName, 'scheduleTask');
 
-    assert('You must pass a callback function or method name to `scheduleTask`.', typeof callback === 'function');
-
-    let cancelId = run.schedule(queueName, this, callback, ...args);
+    let cancelId = run.schedule(queueName, this, task, ...args);
 
     let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
     pendingTimers.push(cancelId);
@@ -198,7 +185,7 @@ export default Mixin.create({
    ```
 
    @method debounceTask
-   @param { String } methodName the name of the method to debounce
+   @param { String } name the name of the method to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
    @param { Number } wait the amount of time to wait before calling the method (in milliseconds)
    @public
@@ -210,21 +197,21 @@ export default Mixin.create({
 
     let pendingDebounces = getOrAllocate(this, '_pendingDebounces', Object);
     let debounce = pendingDebounces[name];
-    let debouncedFn;
+    let debouncedTask;
 
     if (!debounce) {
-      debouncedFn = (...args) => {
+      debouncedTask = (...args) => {
         delete pendingDebounces[name];
         this[name](...args);
       };
     } else {
-      debouncedFn = debounce.debouncedFn;
+      debouncedTask = debounce.debouncedTask;
     }
 
     // cancelId is new, even if the debounced function was already present
-    let cancelId = run.debounce(this, debouncedFn, ...debounceArgs);
+    let cancelId = run.debounce(this, debouncedTask, ...debounceArgs);
 
-    pendingDebounces[name] = { debouncedFn, cancelId };
+    pendingDebounces[name] = { debouncedTask, cancelId };
   },
 
   /**
@@ -259,10 +246,6 @@ export default Mixin.create({
     cancelDebounce(this._pendingDebounces, name);
   },
 
-  cancelThrottle(cancelId) {
-    cancelTimer(cancelId);
-  },
-
   /**
    Runs the function with the provided name immediately, and only once in the time window
    specified by the timeout argument.
@@ -285,8 +268,8 @@ export default Mixin.create({
    ```
 
    @method throttleTask
-   @param { String } functionName the name of the function to debounce
-   @param { Number } [timeout=5] the time in the future to run the callback (defaults to 5ms)
+   @param { String } name the name of the function to throttle
+   @param { Number } [timeout=5] the time in the future to run the task (defaults to 5ms)
    @public
    */
   throttleTask(name, timeout = 0) {
@@ -304,8 +287,40 @@ export default Mixin.create({
   },
 
   /**
+   Cancel a previously throttled task.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     logMe() {
+       console.log('This will only run once every 300ms.');
+     },
+
+     click() {
+       this.throttleTask('logMe', 300);
+     },
+
+     disable() {
+        this.cancelThrottle('logMe');
+     }
+   });
+   ```
+
+   @method cancelThrottle
+   @param { Number } cancelId the id returned from the throttleTask call
+   @public
+   */
+  cancelThrottle(cancelId) {
+    cancelTimer(cancelId);
+  },
+
+  /**
    Sets up a function that can perform polling logic in a testing safe way.
-   The callback is invoked synchronously with an argument (generally called `next`).
+   The task is invoked synchronously with an argument (generally called `next`).
    In normal development/production when `next` is invoked, it will trigger the
    task again (recursively). However, when in test mode the recursive polling
    functionality is disabled, and usage of the `pollTaskFor` helper is required.
@@ -357,22 +372,13 @@ export default Mixin.create({
    ```
 
    @method pollTask
-   @param { Function | String } callbackOrMethodName the callback or method name to run
+   @param { Function } taskOrName the task (or name of task) to run at the provided time
    @public
    */
-  pollTask(callbackOrMethodName, token = getNextToken()) {
-    let next, callback;
-    let type = typeof callbackOrMethodName;
-
-    if (type === 'function') {
-      callback = callbackOrMethodName;
-    } else if (type === 'string' && this[callbackOrMethodName]) {
-      callback = this[callbackOrMethodName];
-    } else {
-      throw new Error('You must pass a callback function or method name to `pollTask`.');
-    }
-
-    let tick = () => callback.call(this, next);
+  pollTask(taskOrName, token = getNextToken()) {
+    let next;
+    let task = getTask(this, taskOrName, 'pollTask');
+    let tick = () => task.call(this, next);
 
     pollTaskTokens[token] = true;
 
@@ -386,7 +392,7 @@ export default Mixin.create({
       };
     }
 
-    callback.call(this, next);
+    task.call(this, next);
 
     return token;
   },
@@ -442,6 +448,21 @@ export function cancelBoundTasks(tasks, cancelFn) {
   for (let i = 0; i < tasks.length; i++) {
     cancelFn(tasks[i]);
   }
+}
+
+export function getTask(instance, taskOrName, taskName) {
+  let type = typeof taskOrName;
+  let task;
+
+  if (type === 'function') {
+    task = taskOrName;
+  } else if (type === 'string' && instance[taskOrName]) {
+    task = instance[taskOrName];
+  } else {
+    throw new Error(`You must pass a task function or method name to '${taskName}'.`);
+  }
+
+  return task;
 }
 
 function cancelTimer(cancelId) {

@@ -6,7 +6,8 @@ import wait from 'ember-test-helpers/wait';
 import ContextBoundTasksMixin, {
   setShouldPoll,
   pollTaskFor,
-  cancelBoundTasks
+  cancelBoundTasks,
+  getTask
 } from 'ember-lifeline/mixins/run';
 
 module('ember-lifeline/mixins/run', {
@@ -226,13 +227,14 @@ test('throttleTask triggers an assertion the function name provided does not exi
 });
 
 test('throttleTask can be canceled', function(assert) {
-  assert.expect(1);
+  assert.expect(3);
 
   let done = assert.async();
   let runCount = 0;
   let subject = this.subject({
     doStuff() {
       runCount++;
+      assert.equal(this, subject, 'context is correct');
     }
   });
 
@@ -257,7 +259,7 @@ test('No error should be thrown by QUnit (throttles should be cleaned up)', func
 });
 
 test('debounceTask runs tasks', function(assert) {
-  assert.expect(3);
+  assert.expect(4);
 
   let done = assert.async();
   let runCount = 0;
@@ -265,6 +267,7 @@ test('debounceTask runs tasks', function(assert) {
   let subject = this.subject({
     doStuff(arg) {
       runCount++;
+      assert.equal(this, subject, 'context is correct');
       runArg = arg;
     }
   });
@@ -369,7 +372,7 @@ test('pollTask provides ability to poll with callback provided', function(assert
 });
 
 test('pollTask provides ability to poll with method provided', function(assert) {
-  assert.expect(2);
+  assert.expect(3);
   setShouldPoll(() => true);
   let calledTimes = 0;
   let subject = this.subject({
@@ -377,6 +380,7 @@ test('pollTask provides ability to poll with method provided', function(assert) 
       calledTimes++;
 
       if (calledTimes === 5) {
+        assert.equal(this, subject, 'context is correct');
         assert.ok(true, 'polled successfully');
       } else {
         subject.runTask(next, 5);
@@ -604,4 +608,28 @@ test('cancelBoundTasks cancel function is called once for each task', function(a
   cancelBoundTasks(tasks, cancelFn);
 
   assert.equal(callCount, 3, 'The cancel function is called 3 times');
+});
+
+test('getTask returns passed in task function as task', function(assert) {
+  assert.expect(1);
+
+  let task = () => {};
+
+  assert.equal(task, getTask(null, task, 'foo'), 'tasks are equal');
+});
+
+test('getTask returns passed in task from the instance', function(assert) {
+  assert.expect(1);
+
+  let instance = { fooTask: () => {} };
+
+  assert.equal(instance.fooTask, getTask(instance, 'fooTask', 'foo'), 'tasks are equal');
+});
+
+test('getTask throws when task not found', function(assert) {
+  assert.expect(1);
+
+  assert.throws(() => {
+    getTask({}, null, 'foo');
+  }, /You must pass a callback function or method name to 'foo'./);
 });
