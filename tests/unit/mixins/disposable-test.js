@@ -12,17 +12,23 @@ module('ember-lifeline/mixins/disposable', {
 
   afterEach() {
     run(this.subject, 'destroy');
-  }
+  },
 });
 
-test('registerDisposable: returns a disposable when a disposable is registered', function(assert) {
+test('registerDisposable: returns a disposable when a disposable is registered', function(
+  assert
+) {
   assert.expect(2);
 
   let dispose = () => {};
 
   let disposable = this.subject.registerDisposable(dispose);
 
-  assert.equal(disposable, this.subject._registeredDisposables[0], 'disposable is returned');
+  assert.equal(
+    disposable,
+    this.subject._registeredDisposables[0],
+    'disposable is returned'
+  );
 
   let otherDisposable = this.subject.registerDisposable(dispose);
 
@@ -42,10 +48,15 @@ test('disposable invoked explicitly disposes of disposable', function(assert) {
   disposable.dispose();
 
   assert.equal(callCount, 1, 'disposable is called');
-  assert.ok(this.subject._registeredDisposables[0].disposed, 'disposable marked as disposed');
+  assert.ok(
+    this.subject._registeredDisposables[0].disposed,
+    'disposable marked as disposed'
+  );
 });
 
-test('disposable invoked explicitly multiple times is only invoked once', function(assert) {
+test('disposable invoked explicitly multiple times is only invoked once', function(
+  assert
+) {
   assert.expect(2);
 
   let callCount = 0;
@@ -59,7 +70,10 @@ test('disposable invoked explicitly multiple times is only invoked once', functi
   disposable.dispose();
 
   assert.equal(callCount, 1, 'disposable is called');
-  assert.ok(this.subject._registeredDisposables[0].disposed, 'disposable marked as disposed');
+  assert.ok(
+    this.subject._registeredDisposables[0].disposed,
+    'disposable marked as disposed'
+  );
 });
 
 test('runDisposables: runs all disposables when destroying', function(assert) {
@@ -71,11 +85,19 @@ test('runDisposables: runs all disposables when destroying', function(assert) {
   this.subject.registerDisposable(dispose);
   this.subject.registerDisposable(disposeTheSecond);
 
-  assert.equal(this.subject._registeredDisposables.length, 2, 'two disposables are registered');
+  assert.equal(
+    this.subject._registeredDisposables.length,
+    2,
+    'two disposables are registered'
+  );
 
   run(this.subject, 'destroy');
 
-  assert.equal(this.subject._registeredDisposables.length, 0, 'no disposables are registered');
+  assert.equal(
+    this.subject._registeredDisposables.length,
+    0,
+    'no disposables are registered'
+  );
 });
 
 test('runDisposables: sets all disposables to disposed', function(assert) {

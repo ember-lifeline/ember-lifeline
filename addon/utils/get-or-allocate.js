@@ -1,4 +1,3 @@
-
 /**
  * Lazy allocates a property on an object
  *

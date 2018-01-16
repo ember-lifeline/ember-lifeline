@@ -9,11 +9,11 @@ const PASSIVE_SUPPORTED = (() => {
     let options = Object.defineProperty({}, 'passive', {
       get() {
         ret = true;
-      }
+      },
     });
 
     window.addEventListener('test', null, options);
-  } catch(err) {
+  } catch (err) {
     // intentionally empty
   }
   return ret;
@@ -79,12 +79,20 @@ export default Mixin.create({
    @public
    */
   addEventListener(selector, eventName, _callback, options) {
-    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
-      !this.isComponent || this.tagName !== '' || typeof selector !== 'string');
-    assert('Called addEventListener with a css selector before the component was rendered',
-      !this.isComponent || typeof selector !== 'string' || this._currentState === this._states.inDOM);
-    assert('Must provide an element (not a DOM selector) when calling addEventListener outside of component instance.',
-      this.isComponent || typeof selector !== 'string');
+    assert(
+      'Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
+      !this.isComponent || this.tagName !== '' || typeof selector !== 'string'
+    );
+    assert(
+      'Called addEventListener with a css selector before the component was rendered',
+      !this.isComponent ||
+        typeof selector !== 'string' ||
+        this._currentState === this._states.inDOM
+    );
+    assert(
+      'Must provide an element (not a DOM selector) when calling addEventListener outside of component instance.',
+      this.isComponent || typeof selector !== 'string'
+    );
 
     let element = findElement(this.element, selector);
     let callback = run.bind(this, _callback);
@@ -109,7 +117,10 @@ export default Mixin.create({
    @public
    */
   removeEventListener(selector, eventName, callback, options) {
-    assert('Must provide an element (not a DOM selector) when using addEventListener in a tagless component.', this.tagName !== '' || typeof selector !== 'string');
+    assert(
+      'Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
+      this.tagName !== '' || typeof selector !== 'string'
+    );
 
     let element = findElement(this.element, selector);
 
@@ -125,9 +136,9 @@ export default Mixin.create({
     for (let i = 0; i < this._listeners.length; i++) {
       let listener = this._listeners[i];
       if (
-        listener.element === element
-        && listener.eventName === eventName
-        && listener._callback === callback
+        listener.element === element &&
+        listener.eventName === eventName &&
+        listener._callback === callback
       ) {
         /*
          * Drop the event listener and remove the listener object
@@ -149,7 +160,7 @@ export default Mixin.create({
       }
       this._listeners = undefined;
     }
-  }
+  },
 });
 
 function findElement(contextElement, selector) {
@@ -162,7 +173,10 @@ function findElement(contextElement, selector) {
     element = selector;
   }
 
-  assert(`Called addEventListener with selector not found in DOM: ${selector}`, !!element);
+  assert(
+    `Called addEventListener with selector not found in DOM: ${selector}`,
+    !!element
+  );
 
   return element;
 }
