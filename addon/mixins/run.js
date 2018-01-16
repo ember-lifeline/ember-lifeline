@@ -69,7 +69,10 @@ export default Mixin.create({
    ```
 
    @method runTask
-   @param { Function } taskOrName the task (or name of task) to run at the provided time
+   @param { Function | String } taskOrName a function representing the task, or string
+                                           specifying a property representing the task,
+                                           which is run at the provided time specified
+                                           by timeout
    @param { Number } [timeout=0] the time in the future to run the task
    @public
    */
@@ -143,7 +146,10 @@ export default Mixin.create({
 
    @method scheduleTask
    @param { String } queueName the queue to schedule the task into
-   @param { Function } taskOrName the task (or name of task) to run at the provided time
+   @param { Function | String } taskOrName a function representing the task, or string
+                                           specifying a property representing the task,
+                                           which is run at the provided time specified
+                                           by timeout
    @param { ...* } args arguments to pass to the task
    @public
    */
@@ -185,7 +191,7 @@ export default Mixin.create({
    ```
 
    @method debounceTask
-   @param { String } name the name of the method to debounce
+   @param { String } name the name of the task to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
    @param { Number } wait the amount of time to wait before calling the method (in milliseconds)
    @public
@@ -268,7 +274,7 @@ export default Mixin.create({
    ```
 
    @method throttleTask
-   @param { String } name the name of the function to throttle
+   @param { String } name the name of the task to throttle
    @param { Number } [timeout=5] the time in the future to run the task (defaults to 5ms)
    @public
    */
@@ -372,7 +378,10 @@ export default Mixin.create({
    ```
 
    @method pollTask
-   @param { Function } taskOrName the task (or name of task) to run at the provided time
+   @param { Function | String } taskOrName a function representing the task, or string
+                                           specifying a property representing the task,
+                                           which is run at the provided time specified
+                                           by timeout
    @public
    */
   pollTask(taskOrName, token = getNextToken()) {
