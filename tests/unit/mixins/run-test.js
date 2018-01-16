@@ -631,5 +631,5 @@ test('getTask throws when task not found', function(assert) {
 
   assert.throws(() => {
     getTask({}, null, 'foo');
-  }, /You must pass a callback function or method name to 'foo'./);
+  }, /You must pass a task function or method name to 'foo'./);
 });
