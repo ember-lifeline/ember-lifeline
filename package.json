@@ -20,7 +20,10 @@
     "test": "ember try:each"
   },
   "dependencies": {
-    "ember-cli-babel": "^6.8.2"
+    "ember-cli-babel": "^6.8.2",
+    "eslint": "^4.15.0",
+    "eslint-plugin-prettier": "^2.5.0",
+    "prettier": "^1.10.2"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
