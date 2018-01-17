@@ -468,7 +468,7 @@ export function getTask(instance, taskOrName, taskName) {
   } else if (type === 'string' && instance[taskOrName]) {
     task = instance[taskOrName];
   } else {
-    throw new Error(`You must pass a task function or method name to '${taskName}'.`);
+    throw new TypeError(`You must pass a task function or method name to '${taskName}'.`);
   }
 
   return task;
