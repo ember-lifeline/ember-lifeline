@@ -294,11 +294,11 @@ In this example, the first click will update `time`, but clicks after that
 for 500ms will be disregarded. Then, the next click will fire and start
 a timeout window of its own.
 
-Often it is desired to pass additional arguments to the throttle callback. We
+Often it is desired to pass additional arguments to the throttle task. We
 also need to reference the same function in order for throttling to work. In
 order to acheive this it is recommended to make use of instance variables. This
 enables the throttle function to use the arguments in the state they are in
-at the time the callback is executed:
+at the time the task is executed:
 
 ```js
 import Ember from 'ember';
@@ -480,7 +480,7 @@ A couple of helpful assertions are provided with the `pollTask` functionality:
 
 Use `registerDisposable` as a replacement for explictly disposing of any externally managed resources. A disposable is a function that disposes of resources that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any resources when the Ember object is destroyed.
 
-Example: 
+Example:
 
 It's common to see code written to explicitly unbind event handlers from external libraries.
 
