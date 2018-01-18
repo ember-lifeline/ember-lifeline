@@ -2,22 +2,27 @@ module.exports = {
   root: true,
   parserOptions: {
     ecmaVersion: 2017,
-    sourceType: "module"
+    sourceType: 'module',
   },
   env: {
     es6: true,
-    browser: true
+    browser: true,
   },
-  plugins: ["prettier"],
-  extends: ["eslint:recommended", "plugin:ember-suave/recommended"],
+  plugins: [
+    'prettier'
+  ],
+  extends: [
+    'eslint:recommended',
+    'plugin:ember-suave/recommended',
+    'prettier'
+  ],
   rules: {
-    "prettier/prettier": [
-      "error",
+    'prettier/prettier': [
+      'error',
       {
         singleQuote: true,
-        trailingComma: "es5"
-      }
+        trailingComma: 'es5',
+      },
     ],
-    strict: "error"
-  }
+  },
 };

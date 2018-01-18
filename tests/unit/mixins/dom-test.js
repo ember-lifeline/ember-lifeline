@@ -43,9 +43,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     testedOptions: { passive: false },
   },
 ].forEach(({ testName, testedOptions }) => {
-  test(`${testName} ensures arrays are not eagerly allocated`, function(
-    assert
-  ) {
+  test(`${testName} ensures arrays are not eagerly allocated`, function(assert) {
     assert.expect(1);
 
     this.register(
@@ -102,9 +100,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
    * event argument.
    *
    */
-  test(`${testName} adds jquery event listener to child element with multiple handler args`, async function(
-    assert
-  ) {
+  test(`${testName} adds jquery event listener to child element with multiple handler args`, async function(assert) {
     assert.expect(4);
 
     this.register(
@@ -143,9 +139,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     );
   });
 
-  test(`${testName} adds event listener to non-child element`, async function(
-    assert
-  ) {
+  test(`${testName} adds event listener to non-child element`, async function(assert) {
     assert.expect(5);
 
     this.set('show', true);
@@ -189,9 +183,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(ranCallback, 1, 'callback was not called a second time');
   });
 
-  test(`${testName} throws when there is no element to attach to`, function(
-    assert
-  ) {
+  test(`${testName} throws when there is no element to attach to`, function(assert) {
     assert.expect(1);
 
     this.render(hbs`{{under-test}}`);
@@ -212,9 +204,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }, /Called \w+ with a css selector before the component was rendered/);
   });
 
-  test(`${testName} adds event listener to non-child element in tagless component`, async function(
-    assert
-  ) {
+  test(`${testName} adds event listener to non-child element in tagless component`, async function(assert) {
     assert.expect(5);
 
     this.set('show', true);
@@ -257,9 +247,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 1, 'callback was not called again');
   });
 
-  test(`${testName} throws when using a string selector in a tagless component`, function(
-    assert
-  ) {
+  test(`${testName} throws when using a string selector in a tagless component`, function(assert) {
     assert.expect(1);
 
     this.render(hbs`{{under-test tagName=""}}<span class="foo"></span>`);
@@ -270,9 +258,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     }, /Must provide an element/);
   });
 
-  test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, function(
-    assert
-  ) {
+  test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, function(assert) {
     assert.expect(2);
 
     let testContext = this;
@@ -396,9 +382,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.equal(calls, 0, 'callback was not called');
   });
 
-  test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function(
-    assert
-  ) {
+  test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function(assert) {
     assert.expect(6);
 
     let serviceName = 'service:under-test';
@@ -453,9 +437,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.notOk(subject._listeners);
   });
 
-  test(`${testName} throws when a css selector is passed in from a service instance`, async function(
-    assert
-  ) {
+  test(`${testName} throws when a css selector is passed in from a service instance`, async function(assert) {
     assert.expect(1);
 
     let serviceName = 'service:under-test';
@@ -477,9 +459,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
   });
 });
 
-test('addEventListener(_,_,{passive: false}) permits stopPropogation', async function(
-  assert
-) {
+test('addEventListener(_,_,{passive: false}) permits stopPropogation', async function(assert) {
   assert.expect(2);
 
   this.register(
@@ -511,9 +491,7 @@ test('addEventListener(_,_,{passive: false}) permits stopPropogation', async fun
   assert.equal(innerCalls, 1, 'inner callback fires');
 });
 
-test('addEventListener(_,_,{once: true}) is only called once', async function(
-  assert
-) {
+test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
   assert.expect(2);
 
   this.register(

@@ -15,9 +15,7 @@ module('ember-lifeline/mixins/disposable', {
   },
 });
 
-test('registerDisposable: returns a disposable when a disposable is registered', function(
-  assert
-) {
+test('registerDisposable: returns a disposable when a disposable is registered', function(assert) {
   assert.expect(2);
 
   let dispose = () => {};
@@ -54,9 +52,7 @@ test('disposable invoked explicitly disposes of disposable', function(assert) {
   );
 });
 
-test('disposable invoked explicitly multiple times is only invoked once', function(
-  assert
-) {
+test('disposable invoked explicitly multiple times is only invoked once', function(assert) {
   assert.expect(2);
 
   let callCount = 0;

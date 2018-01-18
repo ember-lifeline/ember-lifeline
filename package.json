@@ -20,7 +20,10 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
+    "package.json,{app,addon,config,tests}/**/*.{js,json}": [
+      "prettier --single-quote --trailing-comma es5 --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "ember-cli-babel": "^6.8.2"
@@ -46,7 +49,6 @@
     "ember-native-dom-helpers": "0.5.2",
     "ember-resolver": "^4.0.0",
     "ember-source": "~2.14.0-beta.1",
-    "eslint": "^4.15.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-ember-suave": "^1.0.0",
     "eslint-plugin-prettier": "^2.5.0",
