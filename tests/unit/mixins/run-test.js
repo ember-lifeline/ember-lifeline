@@ -7,7 +7,7 @@ import ContextBoundTasksMixin, {
   setShouldPoll,
   pollTaskFor,
   cancelBoundTasks,
-  getTask
+  getTask,
 } from 'ember-lifeline/mixins/run';
 
 module('ember-lifeline/mixins/run', {
@@ -30,8 +30,8 @@ module('ember-lifeline/mixins/run', {
       return this._subject;
     }
 
-    return this._subject = this.BaseObject.create(...arguments);
-  }
+    return (this._subject = this.BaseObject.create(...arguments));
+  },
 });
 
 test('ensures arrays are not eagerly allocated', function(assert) {
@@ -69,7 +69,7 @@ test('invokes named functions as async tasks', function(assert) {
       assert.equal(this, subject, 'context is correct');
       assert.ok(true, 'callback was called');
       done();
-    }
+    },
   });
   let hasRun = false;
 
@@ -162,7 +162,7 @@ test('scheduleTask invokes named functions as async tasks', function(assert) {
       assert.equal(this, subject, 'context is correct');
       assert.equal(name, 'foo', 'passed arguments are correct');
       assert.ok(true, 'callback was called');
-    }
+    },
   });
   let hasRun = false;
 
@@ -210,7 +210,7 @@ test('scheduleTask tasks can be canceled', function(assert) {
 
 test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
   let subject = this.subject({
-    doStuff() {}
+    doStuff() {},
   });
 
   assert.throws(() => {
@@ -235,7 +235,7 @@ test('throttleTask can be canceled', function(assert) {
     doStuff() {
       runCount++;
       assert.equal(this, subject, 'context is correct');
-    }
+    },
   });
 
   let cancelId = subject.throttleTask('doStuff', 5, false);
@@ -252,7 +252,7 @@ test('No error should be thrown by QUnit (throttles should be cleaned up)', func
   assert.expect(0);
 
   let subject = this.subject({
-    doStuff() {}
+    doStuff() {},
   });
 
   subject.throttleTask('doStuff', 5);
@@ -269,7 +269,7 @@ test('debounceTask runs tasks', function(assert) {
       runCount++;
       assert.equal(this, subject, 'context is correct');
       runArg = arg;
-    }
+    },
   });
 
   subject.debounceTask('doStuff', 'arg1', 5);
@@ -293,7 +293,7 @@ test('debounceTask should cancel properly on teardown', function(assert) {
   let subject = this.subject({
     doStuff() {
       runCount++;
-    }
+    },
   });
 
   subject.debounceTask('doStuff', 5);
@@ -316,7 +316,7 @@ test('debounceTask can be canceled', function(assert) {
   let subject = this.subject({
     doStuff() {
       runCount++;
-    }
+    },
   });
 
   subject.debounceTask('doStuff', 5);
@@ -333,7 +333,7 @@ test('debounceTask can be canceled', function(assert) {
 
 test('debounceTask triggers an assertion when a string is not the first argument', function(assert) {
   let subject = this.subject({
-    doStuff() {}
+    doStuff() {},
   });
 
   assert.throws(() => {
@@ -355,7 +355,7 @@ test('pollTask provides ability to poll with callback provided', function(assert
   let subject = this.subject();
   let calledTimes = 0;
 
-  subject.pollTask((next) => {
+  subject.pollTask(next => {
     calledTimes++;
 
     if (calledTimes === 5) {
@@ -385,7 +385,7 @@ test('pollTask provides ability to poll with method provided', function(assert) 
       } else {
         subject.runTask(next, 5);
       }
-    }
+    },
   });
 
   subject.pollTask('run');
@@ -401,7 +401,7 @@ test('pollTask calls callback once in testing mode', function(assert) {
   let subject = this.subject();
   let calledTimes = 0;
 
-  subject.pollTask((next) => {
+  subject.pollTask(next => {
     calledTimes++;
 
     if (calledTimes > 1) {
@@ -432,7 +432,7 @@ test('pollTask next tick can be incremented via test helper with callback', func
   let subject = this.subject();
   let calledTimes = 0;
 
-  let token = subject.pollTask((next) => {
+  let token = subject.pollTask(next => {
     calledTimes++;
 
     if (calledTimes > 2) {
@@ -444,15 +444,18 @@ test('pollTask next tick can be incremented via test helper with callback', func
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-  return wait()
-    .then(function() {
-      pollTaskFor(token);
+  return wait().then(function() {
+    pollTaskFor(token);
 
-      assert.equal(calledTimes, 2, 'poll task argument was invoked after ticking');
+    assert.equal(
+      calledTimes,
+      2,
+      'poll task argument was invoked after ticking'
+    );
 
-      // ensure that pending pollTask's are not running
-      return wait();
-    });
+    // ensure that pending pollTask's are not running
+    return wait();
+  });
 });
 
 test('pollTask next tick can be incremented via test helper with method name', function(assert) {
@@ -467,22 +470,25 @@ test('pollTask next tick can be incremented via test helper with method name', f
       }
 
       subject.runTask(next, 5);
-    }
+    },
   });
 
   let token = subject.pollTask('run');
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-  return wait()
-    .then(function() {
-      pollTaskFor(token);
+  return wait().then(function() {
+    pollTaskFor(token);
 
-      assert.equal(calledTimes, 2, 'poll task argument was invoked after ticking');
+    assert.equal(
+      calledTimes,
+      2,
+      'poll task argument was invoked after ticking'
+    );
 
-      // ensure that pending pollTask's are not running
-      return wait();
-    });
+    // ensure that pending pollTask's are not running
+    return wait();
+  });
 });
 
 test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
@@ -515,7 +521,7 @@ test('pollTask does not leak when destroyed', function(assert) {
   assert.expect(3);
   let subject = this.subject();
 
-  let token = subject.pollTask((next) => {
+  let token = subject.pollTask(next => {
     subject.runTask(next);
   });
 
@@ -527,23 +533,22 @@ test('pollTask does not leak when destroyed', function(assert) {
 
   subject = this.subject({ force: true });
 
-  token = subject.pollTask((next) => {
+  token = subject.pollTask(next => {
     assert.ok(true, 'pollTask was called');
     subject.runTask(next, 5);
   });
 
   // ensure that pending pollTask's are not running
-  return wait()
-    .then(() => {
-      pollTaskFor(token);
-    });
+  return wait().then(() => {
+    pollTaskFor(token);
+  });
 });
 
 test('pollTask can be manually cleared', function(assert) {
   assert.expect(3);
   let subject = this.subject();
 
-  let token = subject.pollTask((next) => {
+  let token = subject.pollTask(next => {
     subject.runTask(next);
   });
 
@@ -555,16 +560,15 @@ test('pollTask can be manually cleared', function(assert) {
 
   subject = this.subject({ force: true });
 
-  token = subject.pollTask((next) => {
+  token = subject.pollTask(next => {
     assert.ok(true, 'pollTask was called');
     subject.runTask(next, 5);
   });
 
   // ensure that pending pollTask's are not running
-  return wait()
-    .then(() => {
-      pollTaskFor(token);
-    });
+  return wait().then(() => {
+    pollTaskFor(token);
+  });
 });
 
 test('cancelBoundTasks early returns if tasks is falsey', function(assert) {
@@ -600,8 +604,12 @@ test('cancelBoundTasks cancel function is called once for each task', function(a
 
   let tasks = ['one', 'two', 'three'];
   let callCount = 0;
-  let cancelFn = (task) => {
-    assert.equal(task, tasks[callCount], 'The cancel function receives the correct param');
+  let cancelFn = task => {
+    assert.equal(
+      task,
+      tasks[callCount],
+      'The cancel function receives the correct param'
+    );
     callCount++;
   };
 
@@ -623,7 +631,11 @@ test('getTask returns passed in task from the instance', function(assert) {
 
   let instance = { fooTask: () => {} };
 
-  assert.equal(instance.fooTask, getTask(instance, 'fooTask', 'foo'), 'tasks are equal');
+  assert.equal(
+    instance.fooTask,
+    getTask(instance, 'fooTask', 'foo'),
+    'tasks are equal'
+  );
 });
 
 test('getTask throws when task not found', function(assert) {
