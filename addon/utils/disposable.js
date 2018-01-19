@@ -18,9 +18,10 @@ export function registerDisposable(obj, dispose) {
 }
 
 export function runDisposables(disposables) {
-  if (!disposables) {
-    return;
-  }
+  assert(
+    'Called `runDisposables` where `disposables` is not an array of disposables',
+    !!disposables
+  );
 
   for (let i = 0, l = disposables.length; i < l; i++) {
     let disposable = disposables.pop();

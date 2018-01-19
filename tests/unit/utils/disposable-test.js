@@ -3,7 +3,7 @@ import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import {
   registerDisposable,
-  // runDisposables,
+  runDisposables,
 } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
@@ -194,4 +194,12 @@ test('runDisposables: sets all disposables to disposed', function(assert) {
 
   assert.ok(disposable.disposed, 'first disposable is desposed');
   assert.ok(disposableTheSecond.disposed, 'second disposable is desposed');
+});
+
+test('runDisposables throws when no disposables are passed as a parameter', function(assert) {
+  assert.expect(1);
+
+  assert.throws(() => {
+    runDisposables();
+  }, 'Called `runDisposables` where `disposables` is not an array of disposables');
 });
