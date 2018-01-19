@@ -1,6 +1,5 @@
 import Mixin from '@ember/object/mixin';
-import { assert } from '@ember/debug';
-import getOrAllocate from '../utils/get-or-allocate';
+import { registerDisposable } from '../utils/disposable';
 
 /**
  DisposableMixin provides a mechanism register disposables with automatic disposing when the
@@ -57,46 +56,6 @@ export default Mixin.create({
   @public
   */
   registerDisposable(dispose) {
-    assert(
-      'Called `registerDisposable` where `dispose` is not a function',
-      typeof dispose === 'function'
-    );
-
-    let disposables = getOrAllocate(this, '_registeredDisposables', Array);
-    let disposable = toDisposable(dispose);
-
-    disposables.push(disposable);
-
-    return disposable;
-  },
-
-  willDestroy() {
-    runDisposables(this._registeredDisposables);
-
-    this._super(...arguments);
+    return registerDisposable(this, dispose);
   },
 });
-
-function runDisposables(disposables) {
-  if (!disposables) {
-    return;
-  }
-
-  for (let i = 0, l = disposables.length; i < l; i++) {
-    let disposable = disposables.pop();
-
-    disposable.dispose();
-  }
-}
-
-function toDisposable(doDispose) {
-  return {
-    dispose() {
-      if (!this.disposed) {
-        this.disposed = true;
-        doDispose();
-      }
-    },
-    disposed: false,
-  };
-}
