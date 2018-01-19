@@ -57,7 +57,10 @@ export default Mixin.create({
   @public
   */
   registerDisposable(dispose) {
-    assert('Called \`registerDisposable\` where \`dispose\` is not a function', typeof dispose === 'function');
+    assert(
+      'Called `registerDisposable` where `dispose` is not a function',
+      typeof dispose === 'function'
+    );
 
     let disposables = getOrAllocate(this, '_registeredDisposables', Array);
     let disposable = toDisposable(dispose);
@@ -71,7 +74,7 @@ export default Mixin.create({
     runDisposables(this._registeredDisposables);
 
     this._super(...arguments);
-  }
+  },
 });
 
 function runDisposables(disposables) {
@@ -94,6 +97,6 @@ function toDisposable(doDispose) {
         doDispose();
       }
     },
-    disposed: false
+    disposed: false,
   };
 }

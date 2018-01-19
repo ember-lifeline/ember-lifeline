@@ -22,8 +22,14 @@ export function setShouldPoll(callback) {
 let queuedPollTasks = Object.create(null);
 let pollTaskTokens = Object.create(null);
 export function pollTaskFor(token) {
-  assert(`A pollTask with a token of '${token}' was not found.`, pollTaskTokens[token]);
-  assert(`You cannot advance pollTask '${token}' when \`next\` has not been called.`, !!queuedPollTasks[token]);
+  assert(
+    `A pollTask with a token of '${token}' was not found.`,
+    pollTaskTokens[token]
+  );
+  assert(
+    `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
+    !!queuedPollTasks[token]
+  );
 
   return run.join(null, queuedPollTasks[token]);
 }
@@ -77,7 +83,10 @@ export default Mixin.create({
    @public
    */
   runTask(taskOrName, timeout = 0) {
-    assert(`Called \`runTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    assert(
+      `Called \`runTask\` on destroyed object: ${this}.`,
+      !this.isDestroyed
+    );
 
     let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
 
@@ -154,9 +163,18 @@ export default Mixin.create({
    @public
    */
   scheduleTask(queueName, taskOrName, ...args) {
-    assert(`Called \`scheduleTask\` without a string as the first argument on ${this}.`, typeof queueName === 'string');
-    assert(`Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`, queueName !== 'afterRender');
-    assert(`Called \`scheduleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    assert(
+      `Called \`scheduleTask\` without a string as the first argument on ${this}.`,
+      typeof queueName === 'string'
+    );
+    assert(
+      `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`,
+      queueName !== 'afterRender'
+    );
+    assert(
+      `Called \`scheduleTask\` on destroyed object: ${this}.`,
+      !this.isDestroyed
+    );
 
     let task = getTask(this, taskOrName, 'scheduleTask');
 
@@ -197,9 +215,18 @@ export default Mixin.create({
    @public
    */
   debounceTask(name, ...debounceArgs) {
-    assert(`Called \`debounceTask\` without a string as the first argument on ${this}.`, typeof name === 'string');
-    assert(`Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
-    assert(`Called \`debounceTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    assert(
+      `Called \`debounceTask\` without a string as the first argument on ${this}.`,
+      typeof name === 'string'
+    );
+    assert(
+      `Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`,
+      typeof this[name] === 'function'
+    );
+    assert(
+      `Called \`debounceTask\` on destroyed object: ${this}.`,
+      !this.isDestroyed
+    );
 
     let pendingDebounces = getOrAllocate(this, '_pendingDebounces', Object);
     let debounce = pendingDebounces[name];
@@ -279,9 +306,18 @@ export default Mixin.create({
    @public
    */
   throttleTask(name, timeout = 0) {
-    assert(`Called \`throttleTask\` without a string as the first argument on ${this}.`, typeof name === 'string');
-    assert(`Called \`this.throttleTask('${name}', ${timeout})\` where 'this.${name}' is not a function.`, typeof this[name] === 'function');
-    assert(`Called \`throttleTask\` on destroyed object: ${this}.`, !this.isDestroyed);
+    assert(
+      `Called \`throttleTask\` without a string as the first argument on ${this}.`,
+      typeof name === 'string'
+    );
+    assert(
+      `Called \`this.throttleTask('${name}', ${timeout})\` where 'this.${name}' is not a function.`,
+      typeof this[name] === 'function'
+    );
+    assert(
+      `Called \`throttleTask\` on destroyed object: ${this}.`,
+      !this.isDestroyed
+    );
 
     let pendingThrottles = getOrAllocate(this, '_pendingThrottles', Array);
 
@@ -446,7 +482,7 @@ export default Mixin.create({
     cancelBoundTasks(this._pollerTokens, cancelPoll);
     cancelBoundTasks(this._pendingThrottles, cancelTimer);
     cancelDebounces(this._pendingDebounces);
-  }
+  },
 });
 
 export function cancelBoundTasks(tasks, cancelFn) {
@@ -468,7 +504,9 @@ export function getTask(instance, taskOrName, taskName) {
   } else if (type === 'string' && instance[taskOrName]) {
     task = instance[taskOrName];
   } else {
-    throw new TypeError(`You must pass a task function or method name to '${taskName}'.`);
+    throw new TypeError(
+      `You must pass a task function or method name to '${taskName}'.`
+    );
   }
 
   return task;
