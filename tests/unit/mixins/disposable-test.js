@@ -15,24 +15,6 @@ module('ember-lifeline/mixins/disposable', {
   },
 });
 
-test('registerDisposable: returns a disposable when a disposable is registered', function(assert) {
-  assert.expect(2);
-
-  let dispose = () => {};
-
-  let disposable = this.subject.registerDisposable(dispose);
-
-  assert.equal(
-    disposable,
-    this.subject._registeredDisposables[0],
-    'disposable is returned'
-  );
-
-  let otherDisposable = this.subject.registerDisposable(dispose);
-
-  assert.notEqual(disposable, otherDisposable, 'disposable returned is unique');
-});
-
 test('disposable invoked explicitly disposes of disposable', function(assert) {
   assert.expect(2);
 
