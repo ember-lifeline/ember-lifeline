@@ -7,6 +7,15 @@ import getNextToken from '../utils/get-next-token';
 import { WILL_DESTROY_PATCHED } from '../utils/flags';
 import { registerDisposable, runDisposables } from '../utils/disposable';
 
+const { WeakMap } = Ember;
+
+/**
+ * A map of instances/timers that allows us to
+ * store cancelIds for scheduled timers per instance.
+ *
+ * @private
+ *
+ */
 let registeredTimers = new WeakMap();
 
 let _shouldPollOverride;

@@ -1,5 +1,8 @@
+import Ember from 'ember';
 import { assert } from '@ember/debug';
 import { WILL_DESTROY_PATCHED } from '../utils/flags';
+
+const { WeakMap } = Ember;
 
 export let registeredDisposables = new WeakMap();
 
