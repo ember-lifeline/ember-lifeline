@@ -4,12 +4,10 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
-import {
-  registeredDisposables,
-  registerDisposable,
-  runDisposables,
-  getPendingTimers,
-} from '../utils/disposable';
+import { WILL_DESTROY_PATCHED } from '../utils/flags';
+import { registerDisposable, runDisposables } from '../utils/disposable';
+
+let registeredTimers = new WeakMap();
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -52,6 +50,8 @@ export function pollTaskFor(token) {
  @public
  */
 export default Mixin.create({
+  [WILL_DESTROY_PATCHED]: true,
+
   init() {
     this._super(...arguments);
 
@@ -59,10 +59,6 @@ export default Mixin.create({
     this._pendingDebounces = undefined;
     this._pendingThrottles = undefined;
     this._pollerTokens = undefined;
-
-    this._isRunTaskDisposableRegistered = false;
-
-    this.willDestroy.patched = true;
   },
 
   /**
@@ -98,27 +94,24 @@ export default Mixin.create({
       !this.isDestroyed
     );
 
-    let registeredTimers = getPendingTimers(this);
+    let timers = registeredTimers.get(this);
 
-    if (!this._isRunTaskDisposableRegistered) {
-      registerDisposable(this, () => {
-        for (let i = 0; i < registeredTimers.length; i++) {
-          run.cancel(registeredTimers[i]);
-        }
-      });
-      this._isRunTaskDisposableRegistered = true;
+    if (!timers) {
+      registeredTimers.set(this, (timers = []));
+
+      registerDisposable(this, getTimersDisposable(timers));
     }
 
     let cancelId = run.later(() => {
-      let cancelIndex = registeredTimers.indexOf(cancelId);
-      registeredTimers.splice(cancelIndex, 1);
+      let cancelIndex = timers.indexOf(cancelId);
+      timers.splice(cancelIndex, 1);
 
       let task = getTask(this, taskOrName, 'runTask');
 
       task.call(this);
     }, timeout);
 
-    registeredTimers.push(cancelId);
+    timers.push(cancelId);
     return cancelId;
   },
 
@@ -497,7 +490,7 @@ export default Mixin.create({
   willDestroy() {
     this._super(...arguments);
 
-    runDisposables(registeredDisposables.get(this));
+    runDisposables(this);
 
     cancelBoundTasks(this._pendingTimers, cancelTimer);
     cancelBoundTasks(this._pollerTokens, cancelPoll);
@@ -557,4 +550,12 @@ function cancelDebounces(pendingDebounces) {
   for (let i = 0; i < debounceNames.length; i++) {
     cancelDebounce(pendingDebounces, debounceNames[i]);
   }
+}
+
+function getTimersDisposable(timers) {
+  return function() {
+    for (let i = 0; i < timers.length; i++) {
+      run.cancel(timers[i]);
+    }
+  };
 }

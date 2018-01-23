@@ -5,6 +5,7 @@ import {
   registeredDisposables,
   registerDisposable,
 } from 'ember-lifeline/utils/disposable';
+import { WILL_DESTROY_PATCHED } from 'ember-lifeline/utils/flags';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {
@@ -92,13 +93,13 @@ test('registerDisposable sets up willDestroy', function(assert) {
   let dispose = () => {};
 
   assert.notOk(
-    this.subject.willDestroy.patched,
+    this.subject[WILL_DESTROY_PATCHED],
     'willDestroy has not been patched'
   );
 
   registerDisposable(this.subject, dispose);
 
-  assert.ok(this.subject.willDestroy.patched, 'willDestroy is patched');
+  assert.ok(this.subject[WILL_DESTROY_PATCHED], 'willDestroy is patched');
 });
 
 test('registerDisposable sets up willDestroy only once', function(assert) {
@@ -107,13 +108,13 @@ test('registerDisposable sets up willDestroy only once', function(assert) {
   let dispose = () => {};
 
   assert.notOk(
-    this.subject.willDestroy.patched,
+    this.subject[WILL_DESTROY_PATCHED],
     'willDestroy has not been patched'
   );
 
   registerDisposable(this.subject, dispose);
 
-  assert.ok(this.subject.willDestroy.patched, 'willDestroy is patched');
+  assert.ok(this.subject[WILL_DESTROY_PATCHED], 'willDestroy is patched');
 
   this.subject.willDestroy.twice = false;
 
@@ -166,23 +167,18 @@ test('runDisposables: runs all disposables when destroying', function(assert) {
 
   let dispose = () => {};
   let disposeTheSecond = () => {};
+  let disposables;
 
   registerDisposable(this.subject, dispose);
   registerDisposable(this.subject, disposeTheSecond);
 
-  assert.equal(
-    registeredDisposables.get(this.subject).length,
-    2,
-    'two disposables are registered'
-  );
+  disposables = registeredDisposables.get(this.subject);
+
+  assert.equal(disposables.length, 2, 'two disposables are registered');
 
   run(this.subject, 'destroy');
 
-  assert.equal(
-    registeredDisposables.get(this.subject).length,
-    0,
-    'no disposables are registered'
-  );
+  assert.equal(disposables.length, 0, 'no disposables are registered');
 });
 
 test('runDisposables: sets all disposables to disposed', function(assert) {

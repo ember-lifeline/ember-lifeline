@@ -1,8 +1,7 @@
 import { assert } from '@ember/debug';
+import { WILL_DESTROY_PATCHED } from '../utils/flags';
 
 export let registeredDisposables = new WeakMap();
-
-let registeredTimers = new WeakMap();
 
 export function registerDisposable(obj, dispose) {
   assert(
@@ -24,7 +23,9 @@ export function registerDisposable(obj, dispose) {
   return disposable;
 }
 
-export function runDisposables(disposables) {
+export function runDisposables(obj) {
+  let disposables = registeredDisposables.get(obj);
+
   if (!disposables) {
     return;
   }
@@ -37,23 +38,13 @@ export function runDisposables(disposables) {
 }
 
 function getRegisteredDisposables(obj) {
-  let disposables = registeredDisposables.get(obj);
+  let arr = registeredDisposables.get(obj);
 
-  if (!disposables) {
-    registeredDisposables.set(obj, (disposables = []));
+  if (!arr) {
+    registeredDisposables.set(obj, (arr = []));
   }
 
-  return disposables;
-}
-
-export function getPendingTimers(obj) {
-  let timers = registeredTimers.get(obj);
-
-  if (!timers) {
-    registeredTimers.set(obj, (timers = []));
-  }
-
-  return timers;
+  return arr;
 }
 
 function _toDisposable(doDispose) {
@@ -73,14 +64,14 @@ function _setupWillDestroy(obj) {
     return;
   }
 
-  if (!obj.willDestroy.patched && registeredDisposables.get(obj)) {
+  if (!obj[WILL_DESTROY_PATCHED]) {
     let originalWillDestroy = obj.willDestroy;
 
     obj.willDestroy = function() {
-      runDisposables(registeredDisposables.get(obj));
+      runDisposables(obj);
 
       originalWillDestroy.apply(obj, arguments);
     };
-    obj.willDestroy.patched = true;
+    obj[WILL_DESTROY_PATCHED] = true;
   }
 }

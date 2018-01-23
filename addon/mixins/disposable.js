@@ -1,9 +1,6 @@
 import Mixin from '@ember/object/mixin';
-import {
-  registeredDisposables,
-  registerDisposable,
-  runDisposables,
-} from '../utils/disposable';
+import { registerDisposable, runDisposables } from '../utils/disposable';
+import { WILL_DESTROY_PATCHED } from '../utils/flags';
 
 /**
  DisposableMixin provides a mechanism register disposables with automatic disposing when the
@@ -13,12 +10,12 @@ import {
  @public
  */
 export default Mixin.create({
+  [WILL_DESTROY_PATCHED]: true,
+
   init() {
     this._super(...arguments);
 
     this._registeredDisposables = undefined;
-
-    this.willDestroy.patched = true;
   },
 
   /**
@@ -66,7 +63,7 @@ export default Mixin.create({
   },
 
   willDestroy() {
-    runDisposables(registeredDisposables.get(this));
+    runDisposables(this);
 
     this._super(...arguments);
   },
