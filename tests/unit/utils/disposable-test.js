@@ -2,6 +2,7 @@ import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import {
+  registeredDisposables,
   registerDisposable,
   runDisposables,
 } from 'ember-lifeline/utils/disposable';
@@ -27,11 +28,11 @@ test('registerDisposable asserts if `dispose` is not a function', function(asser
 test('registerDisposable correctly allocates array if not allocated', function(assert) {
   assert.expect(2);
 
-  assert.equal(this.subject._registeredDisposables, undefined);
+  assert.equal(registeredDisposables.get(this.subject), undefined);
 
   registerDisposable(this.subject, function() {});
 
-  assert.equal(this.subject._registeredDisposables.constructor, Array);
+  assert.equal(registeredDisposables.get(this.subject).constructor, Array);
 });
 
 test('registerDisposable correctly converts dispose function to disposable', function(assert) {
@@ -58,7 +59,7 @@ test('registerDisposable adds disposable to disposables', function(assert) {
   let disposable = registerDisposable(this.subject, dispose);
 
   assert.equal(
-    this.subject._registeredDisposables[0],
+    registeredDisposables.get(this.subject)[0],
     disposable,
     'dispose function is added to _registeredDisposables'
   );
@@ -73,7 +74,7 @@ test('registerDisposable adds unique disposable to disposables', function(assert
 
   assert.equal(
     disposable,
-    this.subject._registeredDisposables[0],
+    registeredDisposables.get(this.subject)[0],
     'disposable is returned'
   );
 
@@ -132,7 +133,7 @@ test('disposable invoked explicitly disposes of disposable', function(assert) {
 
   assert.equal(callCount, 1, 'disposable is called');
   assert.ok(
-    this.subject._registeredDisposables[0].disposed,
+    registeredDisposables.get(this.subject)[0].disposed,
     'disposable marked as disposed'
   );
 });
@@ -152,7 +153,7 @@ test('disposable invoked explicitly multiple times is only invoked once', functi
 
   assert.equal(callCount, 1, 'disposable is called');
   assert.ok(
-    this.subject._registeredDisposables[0].disposed,
+    registeredDisposables.get(this.subject)[0].disposed,
     'disposable marked as disposed'
   );
 });
@@ -167,7 +168,7 @@ test('runDisposables: runs all disposables when destroying', function(assert) {
   registerDisposable(this.subject, disposeTheSecond);
 
   assert.equal(
-    this.subject._registeredDisposables.length,
+    registeredDisposables.get(this.subject).length,
     2,
     'two disposables are registered'
   );
@@ -175,7 +176,7 @@ test('runDisposables: runs all disposables when destroying', function(assert) {
   run(this.subject, 'destroy');
 
   assert.equal(
-    this.subject._registeredDisposables.length,
+    registeredDisposables.get(this.subject).length,
     0,
     'no disposables are registered'
   );

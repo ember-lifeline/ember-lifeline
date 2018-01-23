@@ -4,6 +4,7 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
+import { registerDisposable, getPendingTimers } from '../utils/disposable';
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -53,6 +54,8 @@ export default Mixin.create({
     this._pendingDebounces = undefined;
     this._pendingThrottles = undefined;
     this._pollerTokens = undefined;
+
+    this._isRunTaskDisposableRegistered = false;
   },
 
   /**
@@ -88,18 +91,27 @@ export default Mixin.create({
       !this.isDestroyed
     );
 
-    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
+    let registeredTimers = getPendingTimers(this);
+
+    if (!this._isRunTaskDisposableRegistered) {
+      registerDisposable(this, () => {
+        for (let i = 0; i < registeredTimers.length; i++) {
+          run.cancel(registeredTimers[i]);
+        }
+      });
+      this._isRunTaskDisposableRegistered = true;
+    }
 
     let cancelId = run.later(() => {
-      let cancelIndex = pendingTimers.indexOf(cancelId);
-      pendingTimers.splice(cancelIndex, 1);
+      let cancelIndex = registeredTimers.indexOf(cancelId);
+      registeredTimers.splice(cancelIndex, 1);
 
       let task = getTask(this, taskOrName, 'runTask');
 
       task.call(this);
     }, timeout);
 
-    pendingTimers.push(cancelId);
+    registeredTimers.push(cancelId);
     return cancelId;
   },
 

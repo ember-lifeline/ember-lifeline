@@ -1,5 +1,8 @@
 import { assert } from '@ember/debug';
-import getOrAllocate from '../utils/get-or-allocate';
+
+export let registeredDisposables = new WeakMap();
+
+let registeredTimers = new WeakMap();
 
 export function registerDisposable(obj, dispose) {
   assert(
@@ -7,7 +10,7 @@ export function registerDisposable(obj, dispose) {
     typeof dispose === 'function'
   );
 
-  let disposables = getOrAllocate(obj, '_registeredDisposables', Array);
+  let disposables = getRegisteredDisposables(obj);
   let disposable = _toDisposable(dispose);
 
   disposables.push(disposable);
@@ -30,6 +33,26 @@ export function runDisposables(disposables) {
   }
 }
 
+function getRegisteredDisposables(obj) {
+  let disposables = registeredDisposables.get(obj);
+
+  if (!disposables) {
+    registeredDisposables.set(obj, (disposables = []));
+  }
+
+  return disposables;
+}
+
+export function getPendingTimers(obj) {
+  let timers = registeredTimers.get(obj);
+
+  if (!timers) {
+    registeredTimers.set(obj, (timers = []));
+  }
+
+  return timers;
+}
+
 function _toDisposable(doDispose) {
   return {
     dispose() {
@@ -47,11 +70,11 @@ function _setupWillDestroy(obj) {
     return;
   }
 
-  if (!obj.willDestroy.patched && obj._registeredDisposables) {
+  if (!obj.willDestroy.patched && registeredDisposables.get(obj)) {
     let originalWillDestroy = obj.willDestroy;
 
     obj.willDestroy = function() {
-      runDisposables(obj._registeredDisposables);
+      runDisposables(registeredDisposables.get(obj));
 
       originalWillDestroy.apply(obj, arguments);
     };
