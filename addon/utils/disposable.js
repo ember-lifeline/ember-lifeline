@@ -6,6 +6,10 @@ let registeredTimers = new WeakMap();
 
 export function registerDisposable(obj, dispose) {
   assert(
+    'Called `registerDisposable` where `obj` is not an object',
+    typeof obj === 'object'
+  );
+  assert(
     'Called `registerDisposable` where `dispose` is not a function',
     typeof dispose === 'function'
   );
@@ -21,10 +25,9 @@ export function registerDisposable(obj, dispose) {
 }
 
 export function runDisposables(disposables) {
-  assert(
-    'Called `runDisposables` where `disposables` is not an array of disposables',
-    !!disposables
-  );
+  if (!disposables) {
+    return;
+  }
 
   for (let i = 0, l = disposables.length; i < l; i++) {
     let disposable = disposables.pop();

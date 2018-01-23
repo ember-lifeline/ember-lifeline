@@ -4,7 +4,12 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
-import { registerDisposable, getPendingTimers } from '../utils/disposable';
+import {
+  registeredDisposables,
+  registerDisposable,
+  runDisposables,
+  getPendingTimers,
+} from '../utils/disposable';
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -56,6 +61,8 @@ export default Mixin.create({
     this._pollerTokens = undefined;
 
     this._isRunTaskDisposableRegistered = false;
+
+    this.willDestroy.patched = true;
   },
 
   /**
@@ -489,6 +496,8 @@ export default Mixin.create({
 
   willDestroy() {
     this._super(...arguments);
+
+    runDisposables(registeredDisposables.get(this));
 
     cancelBoundTasks(this._pendingTimers, cancelTimer);
     cancelBoundTasks(this._pollerTokens, cancelPoll);

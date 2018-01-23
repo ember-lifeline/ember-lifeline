@@ -4,7 +4,6 @@ import { module, test } from 'qunit';
 import {
   registeredDisposables,
   registerDisposable,
-  runDisposables,
 } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
@@ -17,8 +16,12 @@ module('ember-lifeline/utils/disposable', {
   },
 });
 
-test('registerDisposable asserts if `dispose` is not a function', function(assert) {
-  assert.expect(1);
+test('registerDisposable asserts params are not present', function(assert) {
+  assert.expect(2);
+
+  assert.throws(function() {
+    registerDisposable();
+  });
 
   assert.throws(function() {
     registerDisposable({}, null);
@@ -195,12 +198,4 @@ test('runDisposables: sets all disposables to disposed', function(assert) {
 
   assert.ok(disposable.disposed, 'first disposable is desposed');
   assert.ok(disposableTheSecond.disposed, 'second disposable is desposed');
-});
-
-test('runDisposables throws when no disposables are passed as a parameter', function(assert) {
-  assert.expect(1);
-
-  assert.throws(() => {
-    runDisposables();
-  }, 'Called `runDisposables` where `disposables` is not an array of disposables');
 });
