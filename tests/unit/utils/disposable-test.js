@@ -10,7 +10,12 @@ import { runDisposables } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {
-    this.subject = EmberObject.create();
+    this.subject = EmberObject.create({
+      [WILL_DESTROY_PATCHED]: true,
+      willDestroy() {
+        runDisposables(this);
+      },
+    });
   },
 
   afterEach() {
@@ -86,42 +91,6 @@ test('registerDisposable adds unique disposable to disposables', function(assert
   let otherDisposable = registerDisposable(this.subject, dispose);
 
   assert.notEqual(disposable, otherDisposable, 'disposable returned is unique');
-});
-
-test('registerDisposable sets up willDestroy', function(assert) {
-  assert.expect(2);
-
-  let dispose = () => {};
-
-  assert.notOk(
-    this.subject[WILL_DESTROY_PATCHED],
-    'willDestroy has not been patched'
-  );
-
-  registerDisposable(this.subject, dispose);
-
-  assert.ok(this.subject[WILL_DESTROY_PATCHED], 'willDestroy is patched');
-});
-
-test('registerDisposable sets up willDestroy only once', function(assert) {
-  assert.expect(3);
-
-  let dispose = () => {};
-
-  assert.notOk(
-    this.subject[WILL_DESTROY_PATCHED],
-    'willDestroy has not been patched'
-  );
-
-  registerDisposable(this.subject, dispose);
-
-  assert.ok(this.subject[WILL_DESTROY_PATCHED], 'willDestroy is patched');
-
-  this.subject.willDestroy.twice = false;
-
-  registerDisposable(this.subject, dispose);
-
-  assert.notOk(this.subject.willDestroy.twice, 'willDestroy only patched once');
 });
 
 test('disposable invoked explicitly disposes of disposable', function(assert) {

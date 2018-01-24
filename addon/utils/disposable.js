@@ -33,13 +33,15 @@ export function registerDisposable(obj, dispose) {
     'Called `registerDisposable` where `dispose` is not a function',
     typeof dispose === 'function'
   );
+  assert(
+    'Called `registerDisposable` without implementing `willDestroy` that calls `runDisposables`',
+    !!obj[WILL_DESTROY_PATCHED]
+  );
 
   let disposables = getRegisteredDisposables(obj);
   let disposable = _toDisposable(dispose);
 
   disposables.push(disposable);
-
-  _setupWillDestroy(obj);
 
   return disposable;
 }
@@ -84,21 +86,4 @@ function _toDisposable(doDispose) {
     },
     disposed: false,
   };
-}
-
-function _setupWillDestroy(obj) {
-  if (!obj.willDestroy) {
-    return;
-  }
-
-  if (!obj[WILL_DESTROY_PATCHED]) {
-    let originalWillDestroy = obj.willDestroy;
-
-    obj.willDestroy = function() {
-      runDisposables(obj);
-
-      originalWillDestroy.apply(obj, arguments);
-    };
-    obj[WILL_DESTROY_PATCHED] = true;
-  }
 }
