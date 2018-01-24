@@ -19,6 +19,15 @@ const PASSIVE_SUPPORTED = (() => {
   return ret;
 })();
 
+const LISTENER_ITEM_LENGTH = 5;
+const INDEX = {
+  ELEMENT: 0,
+  EVENT_NAME: 1,
+  CALLBACK: 2,
+  ORIGINAL_CALLBACK: 3,
+  OPTIONS: 4,
+};
+
 /**
  ContextBoundEventListenersMixin provides a mechanism to attach event listeners
  with runloops and automatic removal when the host object is removed from DOM.
@@ -97,7 +106,7 @@ export default Mixin.create({
     let element = findElement(this.element, selector);
     let callback = run.bind(this, _callback);
 
-    if (!Array.isArray(this._listeners)) {
+    if (this._listeners === undefined) {
       this._listeners = [];
     }
 
@@ -106,7 +115,7 @@ export default Mixin.create({
     }
 
     element.addEventListener(eventName, callback, options);
-    this._listeners.push({ element, eventName, callback, _callback, options });
+    this._listeners.push(element, eventName, callback, _callback, options);
   },
 
   /**
@@ -124,7 +133,7 @@ export default Mixin.create({
 
     let element = findElement(this.element, selector);
 
-    if (!Array.isArray(this._listeners)) {
+    if (this._listeners === undefined) {
       return;
     }
 
@@ -133,18 +142,18 @@ export default Mixin.create({
     }
 
     // We cannot use Array.findIndex as we cannot rely on babel/polyfill being present
-    for (let i = 0; i < this._listeners.length; i++) {
-      let listener = this._listeners[i];
+    for (let i = 0; i < this._listeners.length; i += LISTENER_ITEM_LENGTH) {
       if (
-        listener.element === element &&
-        listener.eventName === eventName &&
-        listener._callback === callback
+        this._listeners[i + INDEX.ELEMENT] === element &&
+        this._listeners[i + INDEX.EVENT_NAME] === eventName &&
+        this._listeners[i + INDEX.ORIGINAL_CALLBACK] === callback
       ) {
         /*
          * Drop the event listener and remove the listener object
          */
-        element.removeEventListener(eventName, listener.callback, options);
-        this._listeners.splice(i, 1);
+        let ownCallback = this._listeners[i + INDEX.CALLBACK];
+        element.removeEventListener(eventName, ownCallback, options);
+        this._listeners.splice(i, LISTENER_ITEM_LENGTH);
         break;
       }
     }
@@ -152,10 +161,14 @@ export default Mixin.create({
 
   willDestroy() {
     this._super(...arguments);
-    if (Array.isArray(this._listeners)) {
+    if (this._listeners !== undefined) {
       /* Drop non-passive event listeners */
-      for (let i = 0; i < this._listeners.length; i++) {
-        let { element, eventName, callback, options } = this._listeners[i];
+      for (let i = 0; i < this._listeners.length; i += LISTENER_ITEM_LENGTH) {
+        let element = this._listeners[i + INDEX.ELEMENT];
+        let eventName = this._listeners[i + INDEX.EVENT_NAME];
+        let callback = this._listeners[i + INDEX.CALLBACK];
+        let options = this._listeners[i + INDEX.OPTIONS];
+
         element.removeEventListener(eventName, callback, options);
       }
       this._listeners = undefined;
