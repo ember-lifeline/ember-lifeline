@@ -25,7 +25,7 @@ const INDEX = {
   EVENT_NAME: 1,
   CALLBACK: 2,
   ORIGINAL_CALLBACK: 3,
-  OPTIONS: 4
+  OPTIONS: 4,
 };
 
 /**
