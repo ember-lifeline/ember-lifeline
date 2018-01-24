@@ -62,6 +62,8 @@ export function runDisposables(obj) {
 
     disposable.dispose();
   }
+
+  registeredDisposables.delete(obj);
 }
 
 function getRegisteredDisposables(obj) {
