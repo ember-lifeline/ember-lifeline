@@ -500,7 +500,6 @@ export default Mixin.create({
     this._super(...arguments);
 
     runDisposables(this);
-    registeredTimers.delete(this);
 
     cancelBoundTasks(this._pendingTimers, cancelTimer);
     cancelBoundTasks(this._pollerTokens, cancelPoll);
