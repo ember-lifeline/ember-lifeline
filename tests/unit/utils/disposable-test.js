@@ -6,6 +6,7 @@ import {
   registerDisposable,
 } from 'ember-lifeline/utils/disposable';
 import { WILL_DESTROY_PATCHED } from 'ember-lifeline/utils/flags';
+import { runDisposables } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {
@@ -162,7 +163,41 @@ test('disposable invoked explicitly multiple times is only invoked once', functi
   );
 });
 
-test('runDisposables: runs all disposables when destroying', function(assert) {
+test('runDisposables runs all disposables when destroying', function(assert) {
+  assert.expect(2);
+
+  let dispose = () => {};
+  let disposeTheSecond = () => {};
+  let disposables;
+
+  registerDisposable(this.subject, dispose);
+  registerDisposable(this.subject, disposeTheSecond);
+
+  disposables = registeredDisposables.get(this.subject);
+
+  assert.equal(disposables.length, 2, 'two disposables are registered');
+
+  runDisposables(this.subject);
+
+  assert.equal(disposables.length, 0, 'no disposables are registered');
+});
+
+test('runDisposables sets all disposables to disposed', function(assert) {
+  assert.expect(2);
+
+  let dispose = () => {};
+  let disposeTheSecond = () => {};
+
+  let disposable = registerDisposable(this.subject, dispose);
+  let disposableTheSecond = registerDisposable(this.subject, disposeTheSecond);
+
+  runDisposables(this.subject);
+
+  assert.ok(disposable.disposed, 'first disposable is desposed');
+  assert.ok(disposableTheSecond.disposed, 'second disposable is desposed');
+});
+
+test('willDestroy integration runs all disposables when destroying', function(assert) {
   assert.expect(2);
 
   let dispose = () => {};
@@ -181,7 +216,7 @@ test('runDisposables: runs all disposables when destroying', function(assert) {
   assert.equal(disposables.length, 0, 'no disposables are registered');
 });
 
-test('runDisposables: sets all disposables to disposed', function(assert) {
+test('willDestroy integration sets all disposables to disposed', function(assert) {
   assert.expect(2);
 
   let dispose = () => {};

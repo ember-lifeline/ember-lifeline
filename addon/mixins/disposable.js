@@ -12,12 +12,6 @@ import { WILL_DESTROY_PATCHED } from '../utils/flags';
 export default Mixin.create({
   [WILL_DESTROY_PATCHED]: true,
 
-  init() {
-    this._super(...arguments);
-
-    this._registeredDisposables = undefined;
-  },
-
   /**
    Adds a new disposable to the Ember object. A disposable is a function that
    disposes of resources that are outside of Ember's lifecyle. This essentially
