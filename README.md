@@ -659,6 +659,9 @@ this.addEventListener('.someClass', 'scroll', fn);
 // Attach to a DOM node
 this.addEventListener(document.body, 'click', fn);
 
+// Attach to a component's root element
+this.addEventListener(this.element, 'scroll', fn);
+
 // Attach to window
 this.addEventListener(window, 'scroll', fn);
 ```
