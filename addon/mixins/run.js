@@ -16,7 +16,7 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-let registeredTimers = new WeakMap();
+const registeredTimers = new WeakMap();
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -496,7 +496,7 @@ export default Mixin.create({
     cancelPoll(token);
   },
 
-  willDestroy() {
+  destroy() {
     this._super(...arguments);
 
     runDisposables(this);

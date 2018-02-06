@@ -1,5 +1,3 @@
-function getFlag(str) {
-  return `__LIFELINE_${str}_${Math.floor(Math.random() * new Date())}`;
-}
-
-export const WILL_DESTROY_PATCHED = getFlag('WILL_DESTROY_PATCHED');
+export const WILL_DESTROY_PATCHED = `__LIFELINE_WILL_DESTROY_PATCHED_${Math.floor(
+  Math.random() * new Date()
+)}`;

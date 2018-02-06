@@ -150,7 +150,7 @@ export default Mixin.create({
     }
   },
 
-  willDestroy() {
+  destroy() {
     this._super(...arguments);
     if (Array.isArray(this._listeners)) {
       /* Drop non-passive event listeners */

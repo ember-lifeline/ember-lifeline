@@ -10,7 +10,7 @@ const { WeakMap } = Ember;
  *
  * @public
  */
-export let registeredDisposables = new WeakMap();
+export const registeredDisposables = new WeakMap();
 
 /**
  * Registers a new disposable function to run for an instance. Will
@@ -39,11 +39,8 @@ export function registerDisposable(obj, dispose) {
   );
 
   let disposables = getRegisteredDisposables(obj);
-  let disposable = _toDisposable(dispose);
 
-  disposables.push(disposable);
-
-  return disposable;
+  disposables.push(dispose);
 }
 
 /**
@@ -59,10 +56,10 @@ export function runDisposables(obj) {
     return;
   }
 
-  for (let i = 0, l = disposables.length; i < l; i++) {
-    let disposable = disposables.pop();
+  registeredDisposables.delete(obj);
 
-    disposable.dispose();
+  for (let i = 0; i < disposables.length; i++) {
+    disposables[i]();
   }
 }
 
@@ -74,16 +71,4 @@ function getRegisteredDisposables(obj) {
   }
 
   return arr;
-}
-
-function _toDisposable(doDispose) {
-  return {
-    dispose() {
-      if (!this.disposed) {
-        this.disposed = true;
-        doDispose();
-      }
-    },
-    disposed: false,
-  };
 }
