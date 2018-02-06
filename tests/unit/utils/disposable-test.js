@@ -5,14 +5,14 @@ import {
   registeredDisposables,
   registerDisposable,
 } from 'ember-lifeline/utils/disposable';
-import { WILL_DESTROY_PATCHED } from 'ember-lifeline/utils/flags';
+import { DESTROY_PATCHED } from 'ember-lifeline/utils/flags';
 import { runDisposables } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {
     this.subject = EmberObject.create({
-      [WILL_DESTROY_PATCHED]: true,
-      willDestroy() {
+      [DESTROY_PATCHED]: true,
+      destroy() {
         runDisposables(this);
       },
     });

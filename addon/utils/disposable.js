@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { assert } from '@ember/debug';
-import { WILL_DESTROY_PATCHED } from '../utils/flags';
+import { DESTROY_PATCHED } from '../utils/flags';
 
 const { WeakMap } = Ember;
 
@@ -34,8 +34,8 @@ export function registerDisposable(obj, dispose) {
     typeof dispose === 'function'
   );
   assert(
-    'Called `registerDisposable` without implementing `willDestroy` that calls `runDisposables`',
-    !!obj[WILL_DESTROY_PATCHED]
+    'Called `registerDisposable` without implementing `destroy` that calls `runDisposables`',
+    !!obj[DESTROY_PATCHED]
   );
 
   let disposables = getRegisteredDisposables(obj);

@@ -26,6 +26,8 @@ const registeredTimers = new WeakMap();
    import { runTask, runDisposables } from 'ember-lifeline';
 
    export default Component.extend({
+     [DESTROY_PATCHED]: true,
+
      didInsertElement() {
        runTask(this, () => {
          console.log('This runs after 5 seconds if this component is still displayed');

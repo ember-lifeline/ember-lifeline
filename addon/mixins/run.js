@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
-import { WILL_DESTROY_PATCHED } from '../utils/flags';
+import { DESTROY_PATCHED } from '../utils/flags';
 import { runTask, getTask } from '../utils/run';
 import { runDisposables } from '../utils/disposable';
 
@@ -49,7 +49,7 @@ export function pollTaskFor(token) {
  @public
  */
 export default Mixin.create({
-  [WILL_DESTROY_PATCHED]: true,
+  [DESTROY_PATCHED]: true,
 
   init() {
     this._super(...arguments);

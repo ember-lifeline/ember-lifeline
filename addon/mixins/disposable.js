@@ -1,6 +1,6 @@
 import Mixin from '@ember/object/mixin';
 import { registerDisposable, runDisposables } from '../utils/disposable';
-import { WILL_DESTROY_PATCHED } from '../utils/flags';
+import { DESTROY_PATCHED } from '../utils/flags';
 
 /**
  DisposableMixin provides a mechanism register disposables with automatic disposing when the
@@ -10,7 +10,7 @@ import { WILL_DESTROY_PATCHED } from '../utils/flags';
  @public
  */
 export default Mixin.create({
-  [WILL_DESTROY_PATCHED]: true,
+  [DESTROY_PATCHED]: true,
 
   /**
    Adds a new disposable to the Ember object. A disposable is a function that
