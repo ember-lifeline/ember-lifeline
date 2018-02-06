@@ -5,18 +5,8 @@ import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
 import { WILL_DESTROY_PATCHED } from '../utils/flags';
-import { registerDisposable, runDisposables } from '../utils/disposable';
-
-const { WeakMap } = Ember;
-
-/**
- * A map of instances/timers that allows us to
- * store cancelIds for scheduled timers per instance.
- *
- * @private
- *
- */
-const registeredTimers = new WeakMap();
+import { runTask, getTask } from '../utils/run';
+import { runDisposables } from '../utils/disposable';
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -98,30 +88,7 @@ export default Mixin.create({
    @public
    */
   runTask(taskOrName, timeout = 0) {
-    assert(
-      `Called \`runTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let timers = registeredTimers.get(this);
-
-    if (!timers) {
-      registeredTimers.set(this, (timers = []));
-
-      registerDisposable(this, getTimersDisposable(timers));
-    }
-
-    let cancelId = run.later(() => {
-      let cancelIndex = timers.indexOf(cancelId);
-      timers.splice(cancelIndex, 1);
-
-      let task = getTask(this, taskOrName, 'runTask');
-
-      task.call(this);
-    }, timeout);
-
-    timers.push(cancelId);
-    return cancelId;
+    return runTask(this, taskOrName, timeout);
   },
 
   /**
@@ -518,23 +485,6 @@ export function cancelBoundTasks(tasks, cancelFn) {
   }
 }
 
-export function getTask(instance, taskOrName, taskName) {
-  let type = typeof taskOrName;
-  let task;
-
-  if (type === 'function') {
-    task = taskOrName;
-  } else if (type === 'string' && instance[taskOrName]) {
-    task = instance[taskOrName];
-  } else {
-    throw new TypeError(
-      `You must pass a task function or method name to '${taskName}'.`
-    );
-  }
-
-  return task;
-}
-
 function cancelTimer(cancelId) {
   run.cancel(cancelId);
 }
@@ -559,12 +509,4 @@ function cancelDebounces(pendingDebounces) {
   for (let i = 0; i < debounceNames.length; i++) {
     cancelDebounce(pendingDebounces, debounceNames[i]);
   }
-}
-
-function getTimersDisposable(timers) {
-  return function() {
-    for (let i = 0; i < timers.length; i++) {
-      run.cancel(timers[i]);
-    }
-  };
 }
