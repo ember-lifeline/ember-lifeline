@@ -1,2 +1,2 @@
-export { runTask } from 'utils/run';
-export { runDisposables } from 'utils/disposable';
+export { runTask } from './utils/run';
+export { runDisposables } from './utils/disposable';
