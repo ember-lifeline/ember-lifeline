@@ -5,7 +5,7 @@ import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
 import { runTask, getTask } from '../utils/run';
-import { runDisposables, DESTROY_PATCHED } from '../utils/disposable';
+import { runDisposables } from '../utils/disposable';
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -48,8 +48,6 @@ export function pollTaskFor(token) {
  @public
  */
 export default Mixin.create({
-  [DESTROY_PATCHED]: true,
-
   init() {
     this._super(...arguments);
 

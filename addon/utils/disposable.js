@@ -3,10 +3,6 @@ import { assert } from '@ember/debug';
 
 const { WeakMap } = Ember;
 
-export const DESTROY_PATCHED = `__LIFELINE_DESTROY_PATCHED_${Math.floor(
-  Math.random() * new Date()
-)}`;
-
 /**
  * A map of instances/array of disposables. Only exported for
  * testing purposes.
@@ -35,10 +31,6 @@ export function registerDisposable(obj, dispose) {
   assert(
     'Called `registerDisposable` where `dispose` is not a function',
     typeof dispose === 'function'
-  );
-  assert(
-    'Called `registerDisposable` without implementing `destroy` that calls `runDisposables`',
-    !!obj[DESTROY_PATCHED]
   );
 
   let disposables = getRegisteredDisposables(obj);

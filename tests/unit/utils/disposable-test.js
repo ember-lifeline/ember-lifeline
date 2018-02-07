@@ -5,15 +5,11 @@ import {
   registeredDisposables,
   registerDisposable,
 } from 'ember-lifeline/utils/disposable';
-import {
-  runDisposables,
-  DESTROY_PATCHED,
-} from 'ember-lifeline/utils/disposable';
+import { runDisposables } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {
     this.subject = EmberObject.create({
-      [DESTROY_PATCHED]: true,
       destroy() {
         runDisposables(this);
       },
@@ -26,7 +22,7 @@ module('ember-lifeline/utils/disposable', {
 });
 
 test('registerDisposable asserts params are not present', function(assert) {
-  assert.expect(3);
+  assert.expect(2);
 
   assert.throws(function() {
     registerDisposable();
@@ -35,10 +31,6 @@ test('registerDisposable asserts params are not present', function(assert) {
   assert.throws(function() {
     registerDisposable({}, null);
   }, /Called `registerDisposable` where `dispose` is not a function/);
-
-  assert.throws(function() {
-    registerDisposable({}, () => {});
-  }, /Called `registerDisposable` without implementing `destroy` that calls `runDisposables`/);
 });
 
 test('registerDisposable correctly allocates array if not allocated', function(assert) {
