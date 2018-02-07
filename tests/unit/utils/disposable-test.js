@@ -5,8 +5,10 @@ import {
   registeredDisposables,
   registerDisposable,
 } from 'ember-lifeline/utils/disposable';
-import { DESTROY_PATCHED } from 'ember-lifeline/utils/flags';
-import { runDisposables } from 'ember-lifeline/utils/disposable';
+import {
+  runDisposables,
+  DESTROY_PATCHED,
+} from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {

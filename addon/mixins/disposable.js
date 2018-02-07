@@ -1,6 +1,9 @@
 import Mixin from '@ember/object/mixin';
-import { registerDisposable, runDisposables } from '../utils/disposable';
-import { DESTROY_PATCHED } from '../utils/flags';
+import {
+  registerDisposable,
+  runDisposables,
+  DESTROY_PATCHED,
+} from '../utils/disposable';
 
 /**
  DisposableMixin provides a mechanism register disposables with automatic disposing when the

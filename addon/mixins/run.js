@@ -4,9 +4,8 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
-import { DESTROY_PATCHED } from '../utils/flags';
 import { runTask, getTask } from '../utils/run';
-import { runDisposables } from '../utils/disposable';
+import { runDisposables, DESTROY_PATCHED } from '../utils/disposable';
 
 let _shouldPollOverride;
 function shouldPoll() {

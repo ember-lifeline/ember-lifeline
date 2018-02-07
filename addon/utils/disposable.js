@@ -1,8 +1,11 @@
 import Ember from 'ember';
 import { assert } from '@ember/debug';
-import { DESTROY_PATCHED } from '../utils/flags';
 
 const { WeakMap } = Ember;
+
+export const DESTROY_PATCHED = `__LIFELINE_DESTROY_PATCHED_${Math.floor(
+  Math.random() * new Date()
+)}`;
 
 /**
  * A map of instances/array of disposables. Only exported for
@@ -52,7 +55,7 @@ export function registerDisposable(obj, dispose) {
 export function runDisposables(obj) {
   let disposables = registeredDisposables.get(obj);
 
-  if (!disposables) {
+  if (disposables === undefined) {
     return;
   }
 
@@ -66,7 +69,7 @@ export function runDisposables(obj) {
 function getRegisteredDisposables(obj) {
   let arr = registeredDisposables.get(obj);
 
-  if (!arr) {
+  if (arr === undefined) {
     registeredDisposables.set(obj, (arr = []));
   }
 

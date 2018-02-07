@@ -2,7 +2,7 @@ import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { runTask, getTask } from 'ember-lifeline/utils/run';
-import { DESTROY_PATCHED } from 'ember-lifeline/utils/flags';
+import { DESTROY_PATCHED } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/run', {
   beforeEach() {
