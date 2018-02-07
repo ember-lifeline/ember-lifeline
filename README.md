@@ -502,6 +502,8 @@ export default Component.extend(DisposableMixin, {
   },
 
   destroy() {
+    this._super(...arguments);
+
     this.unbindEvents();
   },
 
