@@ -16,7 +16,7 @@ export const registeredDisposables = new WeakMap();
  * Registers a new disposable function to run for an instance. Will
  * handle lazily creating a new array to store the disposables per
  * instance if one does not exist. Will additionally patch an object's
- * `willDestroy` hook to ensure the destroyables are run/destroyed when
+ * `destroy` hook to ensure the destroyables are run/destroyed when
  * the object is destroyed.
  *
  * @public

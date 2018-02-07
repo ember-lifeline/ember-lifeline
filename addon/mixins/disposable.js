@@ -56,7 +56,7 @@ export default Mixin.create({
     return registerDisposable(this, dispose);
   },
 
-  willDestroy() {
+  destroy() {
     runDisposables(this);
 
     this._super(...arguments);
