@@ -30,15 +30,15 @@ test('registerDisposable asserts params are not present', function(assert) {
 
   assert.throws(function() {
     registerDisposable();
-  }, 'Called `registerDisposable` where `obj` is not an object');
+  }, /Called `registerDisposable` where `obj` is not an object/);
 
   assert.throws(function() {
     registerDisposable({}, null);
-  }, 'Called `registerDisposable` where `dispose` is not a function');
+  }, /Called `registerDisposable` where `dispose` is not a function/);
 
   assert.throws(function() {
     registerDisposable({}, () => {});
-  }, 'Called `registerDisposable` without implementing `destroy` that calls `runDisposables`');
+  }, /Called `registerDisposable` without implementing `destroy` that calls `runDisposables`/);
 });
 
 test('registerDisposable correctly allocates array if not allocated', function(assert) {
