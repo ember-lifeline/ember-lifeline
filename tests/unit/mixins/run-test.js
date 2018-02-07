@@ -166,7 +166,7 @@ test('scheduleTask invokes named functions as async tasks', function(assert) {
   let hasRun = false;
 
   run(() => {
-    subject.scheduleTask('sync', 'run', 'foo');
+    subject.scheduleTask('actions', 'run', 'foo');
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
