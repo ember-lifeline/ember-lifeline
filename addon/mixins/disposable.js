@@ -6,7 +6,7 @@ import { DESTROY_PATCHED } from '../utils/flags';
  DisposableMixin provides a mechanism register disposables with automatic disposing when the
  host object is destroyed.
 
- @class ContextBoundTasksMixin
+ @class DisposableMixin
  @public
  */
 export default Mixin.create({
