@@ -26,15 +26,19 @@ module('ember-lifeline/utils/disposable', {
 });
 
 test('registerDisposable asserts params are not present', function(assert) {
-  assert.expect(2);
+  assert.expect(3);
 
   assert.throws(function() {
     registerDisposable();
-  });
+  }, 'Called `registerDisposable` where `obj` is not an object');
 
   assert.throws(function() {
     registerDisposable({}, null);
-  });
+  }, 'Called `registerDisposable` where `dispose` is not a function');
+
+  assert.throws(function() {
+    registerDisposable({}, () => {});
+  }, 'Called `registerDisposable` without implementing `destroy` that calls `runDisposables`');
 });
 
 test('registerDisposable correctly allocates array if not allocated', function(assert) {
