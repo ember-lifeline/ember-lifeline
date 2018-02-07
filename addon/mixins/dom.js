@@ -159,7 +159,7 @@ export default Mixin.create({
     }
   },
 
-  willDestroy() {
+  destroy() {
     this._super(...arguments);
     if (this._listeners !== undefined) {
       /* Drop non-passive event listeners */

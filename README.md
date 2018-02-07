@@ -163,7 +163,7 @@ const { Component, run } = Ember;
 export default Component.extend({
   init() {
     this._super();
-    run.schedule('sync', this, () => {
+    run.schedule('actions', this, () => {
       this.set('date', new Date);
     });
   }
@@ -183,7 +183,7 @@ const { Component, run } = Ember;
 export default Component.extend({
   init() {
     this._super();
-    run.schedule('sync', this, () => {
+    run.schedule('actions', this, () => {
       // First, check if this object is even valid
       if (this.isDestroyed) { return; }
       this.set('date', new Date);
@@ -208,7 +208,7 @@ const { Component } = Ember;
 export default Component.extend(RunMixin, {
   init() {
     this._super();
-    this.scheduleTask('sync', () => {
+    this.scheduleTask('actions', () => {
       this.set('date', new Date);
     });
   }
@@ -501,7 +501,9 @@ export default Component.extend(DisposableMixin, {
     this.bindEvents();
   },
 
-  willDestroy() {
+  destroy() {
+    this._super(...arguments);
+
     this.unbindEvents();
   },
 

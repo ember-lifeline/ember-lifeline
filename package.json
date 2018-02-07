@@ -1,9 +1,10 @@
 {
   "name": "ember-lifeline",
   "version": "2.0.0",
-  "description":
-    "Ember.js addon for lifecycle aware async tasks and DOM events.",
-  "keywords": ["ember-addon"],
+  "description": "Ember.js addon for lifecycle aware async tasks and DOM events.",
+  "keywords": [
+    "ember-addon"
+  ],
   "license": "MIT",
   "author": "Robert Jackson <me@rwjblue.com>",
   "directories": {
@@ -26,7 +27,8 @@
     ]
   },
   "dependencies": {
-    "ember-cli-babel": "^6.8.2"
+    "ember-cli-babel": "^6.8.2",
+    "ember-weakmap": "^3.1.1"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",

@@ -4,6 +4,8 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
+import { runTask, getTask } from '../utils/run';
+import { runDisposables } from '../utils/disposable';
 
 let _shouldPollOverride;
 function shouldPoll() {
@@ -83,24 +85,7 @@ export default Mixin.create({
    @public
    */
   runTask(taskOrName, timeout = 0) {
-    assert(
-      `Called \`runTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
-
-    let cancelId = run.later(() => {
-      let cancelIndex = pendingTimers.indexOf(cancelId);
-      pendingTimers.splice(cancelIndex, 1);
-
-      let task = getTask(this, taskOrName, 'runTask');
-
-      task.call(this);
-    }, timeout);
-
-    pendingTimers.push(cancelId);
-    return cancelId;
+    return runTask(this, taskOrName, timeout);
   },
 
   /**
@@ -475,8 +460,10 @@ export default Mixin.create({
     cancelPoll(token);
   },
 
-  willDestroy() {
+  destroy() {
     this._super(...arguments);
+
+    runDisposables(this);
 
     cancelBoundTasks(this._pendingTimers, cancelTimer);
     cancelBoundTasks(this._pollerTokens, cancelPoll);
@@ -493,23 +480,6 @@ export function cancelBoundTasks(tasks, cancelFn) {
   for (let i = 0; i < tasks.length; i++) {
     cancelFn(tasks[i]);
   }
-}
-
-export function getTask(instance, taskOrName, taskName) {
-  let type = typeof taskOrName;
-  let task;
-
-  if (type === 'function') {
-    task = taskOrName;
-  } else if (type === 'string' && instance[taskOrName]) {
-    task = instance[taskOrName];
-  } else {
-    throw new TypeError(
-      `You must pass a task function or method name to '${taskName}'.`
-    );
-  }
-
-  return task;
 }
 
 function cancelTimer(cancelId) {
