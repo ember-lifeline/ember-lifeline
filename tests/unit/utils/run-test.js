@@ -1,9 +1,9 @@
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { runTask, getTask } from 'ember-lifeline/utils/run';
+import { runTask, getTask } from 'ember-lifeline/utils/tasks';
 
-module('ember-lifeline/utils/run', {
+module('ember-lifeline/utils/tasks', {
   beforeEach() {
     this.BaseObject = EmberObject.extend();
   },
