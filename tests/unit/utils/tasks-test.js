@@ -1,7 +1,7 @@
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { runTask, getTask } from 'ember-lifeline/utils/tasks';
+import { runTask, scheduleTask, getTask } from 'ember-lifeline/utils/tasks';
 
 module('ember-lifeline/utils/tasks', {
   beforeEach() {
@@ -80,6 +80,45 @@ test('invokes async tasks with delay', function(assert) {
   }, 5);
 
   assert.notOk(hasRun, 'callback should not have run yet');
+});
+
+test('scheduleTask invokes async tasks', function(assert) {
+  assert.expect(3);
+
+  let subject = this.subject();
+  let hasRun = false;
+
+  run(() => {
+    scheduleTask(subject, 'actions', () => {
+      hasRun = true;
+      assert.ok(true, 'callback was called');
+    });
+
+    assert.notOk(hasRun, 'callback should not have run yet');
+  });
+
+  assert.ok(hasRun, 'callback was called');
+});
+
+test('scheduleTask invokes named functions as async tasks', function(assert) {
+  assert.expect(5);
+
+  let subject = this.subject({
+    run(name) {
+      hasRun = true;
+      assert.equal(this, subject, 'context is correct');
+      assert.equal(name, 'foo', 'passed arguments are correct');
+      assert.ok(true, 'callback was called');
+    },
+  });
+  let hasRun = false;
+
+  run(() => {
+    scheduleTask(subject, 'actions', 'run', 'foo');
+    assert.notOk(hasRun, 'callback should not have run yet');
+  });
+
+  assert.ok(hasRun, 'callback was called');
 });
 
 test('getTask returns passed in task function as task', function(assert) {

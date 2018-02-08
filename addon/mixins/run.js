@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
-import { runTask, getTask } from '../utils/tasks';
+import { runTask, scheduleTask, getTask } from '../utils/tasks';
 import { runDisposables } from '../utils/disposable';
 
 let _shouldPollOverride;
@@ -119,8 +119,8 @@ export default Mixin.create({
   },
 
   /**
-   Adds the provided function to the named queue to be executed at the end of the RunLoop.
-   The timer is properly canceled if the object is destroyed before it is invoked.
+   Adds the provided function to the named queue. The timer is properly canceled if the
+   object is destroyed before it is invoked.
 
    Example:
 
@@ -148,27 +148,7 @@ export default Mixin.create({
    @public
    */
   scheduleTask(queueName, taskOrName, ...args) {
-    assert(
-      `Called \`scheduleTask\` without a string as the first argument on ${this}.`,
-      typeof queueName === 'string'
-    );
-    assert(
-      `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`,
-      queueName !== 'afterRender'
-    );
-    assert(
-      `Called \`scheduleTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let task = getTask(this, taskOrName, 'scheduleTask');
-
-    let cancelId = run.schedule(queueName, this, task, ...args);
-
-    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
-    pendingTimers.push(cancelId);
-
-    return cancelId;
+    return scheduleTask(this, queueName, taskOrName, ...args);
   },
 
   /**

@@ -50,13 +50,7 @@ const registeredTimers = new WeakMap();
 export function runTask(obj, taskOrName, timeout = 0) {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
-  let timers = registeredTimers.get(obj);
-
-  if (!timers) {
-    registeredTimers.set(obj, (timers = []));
-
-    registerDisposable(obj, getTimersDisposable(timers));
-  }
+  let timers = getTimers(obj);
 
   let cancelId = run.later(() => {
     let cancelIndex = timers.indexOf(cancelId);
@@ -71,14 +65,67 @@ export function runTask(obj, taskOrName, timeout = 0) {
   return cancelId;
 }
 
-export function getTask(instance, taskOrName, taskName) {
+/**
+   Adds the provided function to the named queue for the provided object. The timer is
+   properly canceled if the object is destroyed before it is invoked.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     init() {
+       this._super(...arguments);
+       this.scheduleTask('actions', () => {
+         console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
+       })
+     }
+   });
+   ```
+
+   @function scheduleTask
+   @param { Object } obj the instance to register the task for
+   @param { String } queueName the queue to schedule the task into
+   @param { Function | String } taskOrName a function representing the task, or string
+                                           specifying a property representing the task,
+                                           which is run at the provided time specified
+                                           by timeout
+   @param { ...* } args arguments to pass to the task
+   @public
+   */
+export function scheduleTask(obj, queueName, taskOrName, ...args) {
+  assert(
+    `Called \`scheduleTask\` without a string as the first argument on ${obj}.`,
+    typeof queueName === 'string'
+  );
+  assert(
+    `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${obj}.`,
+    queueName !== 'afterRender'
+  );
+  assert(
+    `Called \`scheduleTask\` on destroyed object: ${obj}.`,
+    !obj.isDestroyed
+  );
+
+  let task = getTask(obj, taskOrName, 'scheduleTask');
+  let cancelId = run.schedule(queueName, obj, task, ...args);
+  let timers = getTimers(obj);
+
+  timers.push(cancelId);
+
+  return cancelId;
+}
+
+export function getTask(obj, taskOrName, taskName) {
   let type = typeof taskOrName;
   let task;
 
   if (type === 'function') {
     task = taskOrName;
-  } else if (type === 'string' && instance[taskOrName]) {
-    task = instance[taskOrName];
+  } else if (type === 'string' && obj[taskOrName]) {
+    task = obj[taskOrName];
   } else {
     throw new TypeError(
       `You must pass a task function or method name to '${taskName}'.`
@@ -86,6 +133,18 @@ export function getTask(instance, taskOrName, taskName) {
   }
 
   return task;
+}
+
+function getTimers(obj) {
+  let timers = registeredTimers.get(obj);
+
+  if (!timers) {
+    registeredTimers.set(obj, (timers = []));
+
+    registerDisposable(obj, getTimersDisposable(timers));
+  }
+
+  return timers;
 }
 
 function getTimersDisposable(timers) {
