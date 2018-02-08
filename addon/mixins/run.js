@@ -4,7 +4,13 @@ import { assert } from '@ember/debug';
 import Ember from 'ember';
 import getOrAllocate from '../utils/get-or-allocate';
 import getNextToken from '../utils/get-next-token';
-import { runTask, scheduleTask, getTask } from '../utils/tasks';
+import {
+  runTask,
+  scheduleTask,
+  throttleTask,
+  cancelTask,
+  getTask,
+} from '../utils/tasks';
 import { runDisposables } from '../utils/disposable';
 
 let _shouldPollOverride;
@@ -51,9 +57,7 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
-    this._pendingTimers = undefined;
     this._pendingDebounces = undefined;
-    this._pendingThrottles = undefined;
     this._pollerTokens = undefined;
   },
 
@@ -115,7 +119,7 @@ export default Mixin.create({
    @public
    */
   cancelTask(cancelId) {
-    cancelTimer(cancelId);
+    cancelTask(cancelId);
   },
 
   /**
@@ -267,30 +271,11 @@ export default Mixin.create({
 
    @method throttleTask
    @param { String } name the name of the task to throttle
-   @param { Number } [timeout=5] the time in the future to run the task (defaults to 5ms)
+   @param { Number } [timeout] the time in the future to run the task
    @public
    */
-  throttleTask(name, timeout = 0) {
-    assert(
-      `Called \`throttleTask\` without a string as the first argument on ${this}.`,
-      typeof name === 'string'
-    );
-    assert(
-      `Called \`this.throttleTask('${name}', ${timeout})\` where 'this.${name}' is not a function.`,
-      typeof this[name] === 'function'
-    );
-    assert(
-      `Called \`throttleTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let pendingThrottles = getOrAllocate(this, '_pendingThrottles', Array);
-
-    let cancelId = run.throttle(this, name, timeout);
-
-    pendingThrottles.push(cancelId);
-
-    return cancelId;
+  throttleTask(name, timeout) {
+    return throttleTask(this, name, timeout);
   },
 
   /**
@@ -322,7 +307,7 @@ export default Mixin.create({
    @public
    */
   cancelThrottle(cancelId) {
-    cancelTimer(cancelId);
+    cancelTask(cancelId);
   },
 
   /**
@@ -445,9 +430,7 @@ export default Mixin.create({
 
     runDisposables(this);
 
-    cancelBoundTasks(this._pendingTimers, cancelTimer);
     cancelBoundTasks(this._pollerTokens, cancelPoll);
-    cancelBoundTasks(this._pendingThrottles, cancelTimer);
     cancelDebounces(this._pendingDebounces);
   },
 });
@@ -460,10 +443,6 @@ export function cancelBoundTasks(tasks, cancelFn) {
   for (let i = 0; i < tasks.length; i++) {
     cancelFn(tasks[i]);
   }
-}
-
-function cancelTimer(cancelId) {
-  run.cancel(cancelId);
 }
 
 function cancelPoll(token) {

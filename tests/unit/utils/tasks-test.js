@@ -1,7 +1,13 @@
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { runTask, scheduleTask, getTask } from 'ember-lifeline/utils/tasks';
+import {
+  runTask,
+  scheduleTask,
+  throttleTask,
+  cancelTask,
+  getTask,
+} from 'ember-lifeline/utils/tasks';
 
 module('ember-lifeline/utils/tasks', {
   beforeEach() {
@@ -82,6 +88,28 @@ test('invokes async tasks with delay', function(assert) {
   assert.notOk(hasRun, 'callback should not have run yet');
 });
 
+test('runTask tasks can be canceled', function(assert) {
+  assert.expect(1);
+  let subject = this.subject();
+  let done = assert.async();
+  let hasRun = false;
+
+  let cancelId = runTask(
+    subject,
+    () => {
+      hasRun = true;
+    },
+    5
+  );
+
+  cancelTask(cancelId);
+
+  window.setTimeout(() => {
+    assert.notOk(hasRun, 'callback should have been canceled previously');
+    done();
+  }, 10);
+});
+
 test('scheduleTask invokes async tasks', function(assert) {
   assert.expect(3);
 
@@ -119,6 +147,40 @@ test('scheduleTask invokes named functions as async tasks', function(assert) {
   });
 
   assert.ok(hasRun, 'callback was called');
+});
+
+test('scheduleTask tasks can be canceled', function(assert) {
+  assert.expect(1);
+  let subject = this.subject();
+  let hasRun = false;
+
+  run(() => {
+    let timer = scheduleTask(subject, 'actions', () => {
+      hasRun = true;
+    });
+
+    cancelTask(timer);
+  });
+
+  assert.notOk(hasRun, 'callback should have been canceled previously');
+});
+
+test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
+  let subject = this.subject({
+    doStuff() {},
+  });
+
+  assert.throws(() => {
+    throttleTask(subject, subject.doStuff, 5);
+  }, /without a string as the first argument/);
+});
+
+test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
+  let subject = this.subject();
+
+  assert.throws(() => {
+    throttleTask(subject, 'doStuff', 5);
+  }, /is not a function/);
 });
 
 test('getTask returns passed in task function as task', function(assert) {

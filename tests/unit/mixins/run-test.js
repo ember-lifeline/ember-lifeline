@@ -34,11 +34,10 @@ module('ember-lifeline/mixins/run', {
 });
 
 test('ensures arrays are not eagerly allocated', function(assert) {
-  assert.expect(3);
+  assert.expect(2);
 
   let subject = this.subject();
 
-  assert.notOk(subject._pendingTimers);
   assert.notOk(subject._pendingDebounces);
   assert.notOk(subject._pollerLabels);
 });

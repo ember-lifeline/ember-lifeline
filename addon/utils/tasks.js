@@ -73,14 +73,18 @@ export function runTask(obj, taskOrName, timeout = 0) {
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundTasksMixin from 'web-client/mixins/context-bound-tasks';
+   import { scheduleTask, runDisposables } from 'ember-lifeline';
 
-   export default Component.extend(ContextBoundTasksMixin, {
+   export default Component.extend({
      init() {
        this._super(...arguments);
-       this.scheduleTask('actions', () => {
+       scheduleTask(this, 'actions', () => {
          console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
        })
+     },
+
+     destroy() {
+       runDisposables(this);
      }
    });
    ```
@@ -118,6 +122,88 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
   return cancelId;
 }
 
+/**
+   Runs the function with the provided name immediately, and only once in the time window
+   specified by the timeout argument.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import { throttleTask, runDisposables } from 'ember-lifeline';
+
+   export default Component.extend({
+     logMe() {
+       console.log('This will run once immediately, then only once every 300ms.');
+     },
+
+     click() {
+       throttleTask(this, 'logMe', 300);
+     },
+
+     destroy() {
+       runDisposables(this);
+     }
+   });
+   ```
+
+   @method throttleTask
+   @param { String } name the name of the task to throttle
+   @param { Number } [timeout] the time in the future to run the task
+   @public
+   */
+export function throttleTask(obj, name, timeout = 0) {
+  assert(
+    `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
+    typeof name === 'string'
+  );
+  assert(
+    `Called \`throttleTask('${name}', ${timeout})\` where '${name}' is not a function.`,
+    typeof obj[name] === 'function'
+  );
+  assert(
+    `Called \`throttleTask\` on destroyed object: ${obj}.`,
+    !obj.isDestroyed
+  );
+
+  let timers = getTimers(obj);
+  let cancelId = run.throttle(obj, name, timeout);
+
+  timers.push(cancelId);
+
+  return cancelId;
+}
+
+/**
+   Cancel a previously scheduled task.
+
+   Example:
+
+   ```js
+   import Component from 'ember-component';
+   import { runTask, cancelTask } from 'ember-lifeline';
+
+   export default Component.extend(ContextBoundTasksMixin, {
+     didInsertElement() {
+       this._cancelId = runTask(this, () => {
+         console.log('This runs after 5 seconds if this component is still displayed');
+       }, 5000)
+     },
+
+     disable() {
+        cancelTask(this._cancelId);
+     }
+   });
+   ```
+
+   @method cancelTask
+   @param { Number } cancelId the id returned from the runTask or scheduleTask call
+   @public
+   */
+export function cancelTask(cancelId) {
+  run.cancel(cancelId);
+}
+
 export function getTask(obj, taskOrName, taskName) {
   let type = typeof taskOrName;
   let task;
@@ -150,7 +236,7 @@ function getTimers(obj) {
 function getTimersDisposable(timers) {
   return function() {
     for (let i = 0; i < timers.length; i++) {
-      run.cancel(timers[i]);
+      cancelTask(timers[i]);
     }
   };
 }

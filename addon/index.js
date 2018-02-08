@@ -1,2 +1,2 @@
-export { runTask, scheduleTask } from './utils/tasks';
+export { runTask, scheduleTask, throttleTask, cancelTask } from './utils/tasks';
 export { runDisposables } from './utils/disposable';
