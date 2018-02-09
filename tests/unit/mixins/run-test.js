@@ -206,24 +206,6 @@ test('scheduleTask tasks can be canceled', function(assert) {
   assert.notOk(hasRun, 'callback should have been canceled previously');
 });
 
-test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
-  let subject = this.subject({
-    doStuff() {},
-  });
-
-  assert.throws(() => {
-    subject.throttleTask(subject.doStuff, 5);
-  }, /without a string as the first argument/);
-});
-
-test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
-  let subject = this.subject();
-
-  assert.throws(() => {
-    subject.throttleTask('doStuff', 5);
-  }, /is not a function/);
-});
-
 test('throttleTask can be canceled', function(assert) {
   assert.expect(3);
 

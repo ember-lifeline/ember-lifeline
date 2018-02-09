@@ -8,7 +8,9 @@ import {
   runTask,
   scheduleTask,
   throttleTask,
+  debounceTask,
   cancelTask,
+  cancelDebounce,
   getTask,
 } from '../utils/tasks';
 import { runDisposables } from '../utils/disposable';
@@ -57,7 +59,6 @@ export default Mixin.create({
   init() {
     this._super(...arguments);
 
-    this._pendingDebounces = undefined;
     this._pollerTokens = undefined;
   },
 
@@ -184,36 +185,7 @@ export default Mixin.create({
    @public
    */
   debounceTask(name, ...debounceArgs) {
-    assert(
-      `Called \`debounceTask\` without a string as the first argument on ${this}.`,
-      typeof name === 'string'
-    );
-    assert(
-      `Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`,
-      typeof this[name] === 'function'
-    );
-    assert(
-      `Called \`debounceTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let pendingDebounces = getOrAllocate(this, '_pendingDebounces', Object);
-    let debounce = pendingDebounces[name];
-    let debouncedTask;
-
-    if (!debounce) {
-      debouncedTask = (...args) => {
-        delete pendingDebounces[name];
-        this[name](...args);
-      };
-    } else {
-      debouncedTask = debounce.debouncedTask;
-    }
-
-    // cancelId is new, even if the debounced function was already present
-    let cancelId = run.debounce(this, debouncedTask, ...debounceArgs);
-
-    pendingDebounces[name] = { debouncedTask, cancelId };
+    debounceTask(this, name, ...debounceArgs);
   },
 
   /**
@@ -245,7 +217,7 @@ export default Mixin.create({
    @public
    */
   cancelDebounce(name) {
-    cancelDebounce(this._pendingDebounces, name);
+    cancelDebounce(this, name);
   },
 
   /**
@@ -431,7 +403,6 @@ export default Mixin.create({
     runDisposables(this);
 
     cancelBoundTasks(this._pollerTokens, cancelPoll);
-    cancelDebounces(this._pendingDebounces);
   },
 });
 
@@ -448,21 +419,4 @@ export function cancelBoundTasks(tasks, cancelFn) {
 function cancelPoll(token) {
   delete pollTaskTokens[token];
   delete queuedPollTasks[token];
-}
-
-function cancelDebounce(pendingDebounces, name) {
-  let { cancelId } = pendingDebounces[name];
-  run.cancel(cancelId);
-}
-
-function cancelDebounces(pendingDebounces) {
-  let debounceNames = pendingDebounces && Object.keys(pendingDebounces);
-
-  if (!debounceNames || !debounceNames.length) {
-    return;
-  }
-
-  for (let i = 0; i < debounceNames.length; i++) {
-    cancelDebounce(pendingDebounces, debounceNames[i]);
-  }
 }
