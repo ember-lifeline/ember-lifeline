@@ -4,8 +4,8 @@ import { module, test } from 'qunit';
 import {
   registeredDisposables,
   registerDisposable,
+  runDisposables,
 } from 'ember-lifeline/utils/disposable';
-import { runDisposables } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', {
   beforeEach() {

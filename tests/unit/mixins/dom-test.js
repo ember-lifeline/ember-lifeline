@@ -1,6 +1,5 @@
 /* global Event */
 import { run } from '@ember/runloop';
-
 import { getOwner } from '@ember/application';
 import Component from '@ember/component';
 import Service from '@ember/service';

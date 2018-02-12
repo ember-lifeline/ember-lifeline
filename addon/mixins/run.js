@@ -1,10 +1,5 @@
 import Mixin from '@ember/object/mixin';
-import {
-  runTask,
-  scheduleTask,
-  throttleTask,
-  cancelTask,
-} from '../utils/tasks';
+import { runTask, scheduleTask, throttleTask, cancelTask } from '../run-task';
 import { pollTask, cancelPoll } from '../poll-task';
 import { debounceTask, cancelDebounce } from '../debounce-task';
 import { runDisposables } from '../utils/disposable';

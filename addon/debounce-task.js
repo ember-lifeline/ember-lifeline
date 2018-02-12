@@ -2,7 +2,7 @@ import Ember from 'ember';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import getOrAllocate from './utils/get-or-allocate';
-import { cancelTask } from './utils/tasks';
+import { cancelTask } from './run-task';
 
 const { WeakMap } = Ember;
 
