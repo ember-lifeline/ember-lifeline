@@ -1,48 +1,15 @@
 import Mixin from '@ember/object/mixin';
-import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
-import Ember from 'ember';
-import getOrAllocate from '../utils/get-or-allocate';
-import getNextToken from '../utils/get-next-token';
 import {
   runTask,
   scheduleTask,
   throttleTask,
   debounceTask,
+  pollTask,
   cancelTask,
   cancelDebounce,
-  getTask,
+  cancelPoll,
 } from '../utils/tasks';
 import { runDisposables } from '../utils/disposable';
-
-let _shouldPollOverride;
-function shouldPoll() {
-  if (_shouldPollOverride) {
-    return _shouldPollOverride();
-  }
-
-  // eslint-disable-next-line ember-suave/no-direct-property-access
-  return !Ember.testing;
-}
-
-export function setShouldPoll(callback) {
-  _shouldPollOverride = callback;
-}
-
-let queuedPollTasks = Object.create(null);
-let pollTaskTokens = Object.create(null);
-export function pollTaskFor(token) {
-  assert(
-    `A pollTask with a token of '${token}' was not found.`,
-    pollTaskTokens[token]
-  );
-  assert(
-    `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
-    !!queuedPollTasks[token]
-  );
-
-  return run.join(null, queuedPollTasks[token]);
-}
 
 /**
  ContextBoundTasksMixin provides a mechanism to run tasks (ala `setTimeout` or
@@ -56,12 +23,6 @@ export function pollTaskFor(token) {
  @public
  */
 export default Mixin.create({
-  init() {
-    this._super(...arguments);
-
-    this._pollerTokens = undefined;
-  },
-
   /**
    Runs the provided task function at the specified timeout (defaulting to 0).
    The timer is properly canceled if the object is destroyed before it is invoked.
@@ -342,26 +303,8 @@ export default Mixin.create({
                                            by timeout
    @public
    */
-  pollTask(taskOrName, token = getNextToken()) {
-    let next;
-    let task = getTask(this, taskOrName, 'pollTask');
-    let tick = () => task.call(this, next);
-
-    pollTaskTokens[token] = true;
-
-    getOrAllocate(this, '_pollerTokens', Array).push(token);
-
-    if (shouldPoll()) {
-      next = tick;
-    } else {
-      next = () => {
-        queuedPollTasks[token] = tick;
-      };
-    }
-
-    task.call(this, next);
-
-    return token;
+  pollTask(taskOrName, token) {
+    return pollTask(this, taskOrName, token);
   },
 
   /**
@@ -401,22 +344,5 @@ export default Mixin.create({
     this._super(...arguments);
 
     runDisposables(this);
-
-    cancelBoundTasks(this._pollerTokens, cancelPoll);
   },
 });
-
-export function cancelBoundTasks(tasks, cancelFn) {
-  if (!tasks || !tasks.length) {
-    return;
-  }
-
-  for (let i = 0; i < tasks.length; i++) {
-    cancelFn(tasks[i]);
-  }
-}
-
-function cancelPoll(token) {
-  delete pollTaskTokens[token];
-  delete queuedPollTasks[token];
-}

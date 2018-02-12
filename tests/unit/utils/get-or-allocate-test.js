@@ -1,51 +1,64 @@
+import Ember from 'ember';
 import { module, test } from 'qunit';
 import getOrAllocate from 'ember-lifeline/utils/get-or-allocate';
 
+const { WeakMap } = Ember;
+
 module('ember-lifeline/utils/get-or-allocate', {
   beforeEach() {
-    this.subject = {};
+    this.map = new WeakMap();
+    this.obj = {};
+    this.disposable = () => () => {};
   },
 
   afterEach() {
-    this.subject = null;
+    this.map = null;
+    this.obj = null;
   },
 });
 
-test("allocates an array on object when property doesn't exist", function(assert) {
+test("allocates an array for object when it doesn't exist", function(assert) {
   assert.expect(2);
 
-  getOrAllocate(this.subject, 'foo', Array);
+  getOrAllocate(this.map, this.obj, Array, this.disposable);
 
-  assert.ok(this.subject.foo, 'foo property is defined');
-  assert.equal(this.subject.foo.constructor, Array, 'foo is a array');
+  assert.ok(this.map.get(this.obj), 'value is defined');
+  assert.equal(this.map.get(this.obj).constructor, Array, 'value is a array');
 });
 
-test("allocates an object on object when property doesn't exist", function(assert) {
+test("allocates an object for object when it doesn't exist", function(assert) {
   assert.expect(2);
 
-  getOrAllocate(this.subject, 'foo', Object);
+  getOrAllocate(this.map, this.obj, Object, this.disposable);
 
-  assert.ok(this.subject.foo, 'foo property is defined');
-  assert.equal(this.subject.foo.constructor, Object, 'foo is a object');
+  assert.ok(this.map.get(this.obj), 'value is defined');
+  assert.equal(
+    this.map.get(this.obj).constructor,
+    Object,
+    'value is an object'
+  );
 });
 
-test("allocates an array on object when property doesn't exist and returns value", function(assert) {
+test("allocates an array on object when it doesn't exist and returns value", function(assert) {
   assert.expect(1);
 
-  let property = getOrAllocate(this.subject, 'foo', Array);
+  let value = getOrAllocate(this.map, this.obj, Array, this.disposable);
 
   assert.equal(
-    this.subject.foo,
-    property,
+    this.map.get(this.obj),
+    value,
     'foo property is defined and returned'
   );
 });
 
-test("doesn't allocate property when property already exists", function(assert) {
-  assert.expect(1);
+test("doesn't allocate value when value already exists", function(assert) {
+  assert.expect(2);
 
-  this.subject = { foo: 'bar' };
-  let property = getOrAllocate(this.subject, 'foo', Array);
+  let arr = [];
+  arr.push(1);
+  this.map.set(this.obj, arr);
+  let value = getOrAllocate(this.map, this.obj, Array, this.disposable);
 
-  assert.equal(property, 'bar', 'foo property is defined and returned');
+  assert.equal(arr, value, 'values are equal');
+  assert.equal(this.map.get(this.obj)[0], 1, 'value is defined and returned');
 });

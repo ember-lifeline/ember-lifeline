@@ -3,11 +3,8 @@ import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import wait from 'ember-test-helpers/wait';
 
-import ContextBoundTasksMixin, {
-  setShouldPoll,
-  pollTaskFor,
-  cancelBoundTasks,
-} from 'ember-lifeline/mixins/run';
+import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+import { setShouldPoll, pollTaskFor } from 'ember-lifeline';
 
 module('ember-lifeline/mixins/run', {
   beforeEach() {
@@ -549,51 +546,4 @@ test('pollTask can be manually cleared', function(assert) {
   return wait().then(() => {
     pollTaskFor(token);
   });
-});
-
-test('cancelBoundTasks early returns if tasks is falsey', function(assert) {
-  assert.expect(1);
-
-  let tasks = null;
-  let callCount = 0;
-  let cancelFn = () => {
-    callCount++;
-  };
-
-  cancelBoundTasks(tasks, cancelFn);
-
-  assert.equal(callCount, 0, 'The cancel function should not have been called');
-});
-
-test('cancelBoundTasks early returns if tasks is an empty array', function(assert) {
-  assert.expect(1);
-
-  let tasks = [];
-  let callCount = 0;
-  let cancelFn = () => {
-    callCount++;
-  };
-
-  cancelBoundTasks(tasks, cancelFn);
-
-  assert.equal(callCount, 0, 'The cancel function should not have been called');
-});
-
-test('cancelBoundTasks cancel function is called once for each task', function(assert) {
-  assert.expect(4);
-
-  let tasks = ['one', 'two', 'three'];
-  let callCount = 0;
-  let cancelFn = task => {
-    assert.equal(
-      task,
-      tasks[callCount],
-      'The cancel function receives the correct param'
-    );
-    callCount++;
-  };
-
-  cancelBoundTasks(tasks, cancelFn);
-
-  assert.equal(callCount, 3, 'The cancel function is called 3 times');
 });
