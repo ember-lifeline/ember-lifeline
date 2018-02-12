@@ -3,12 +3,10 @@ import {
   runTask,
   scheduleTask,
   throttleTask,
-  debounceTask,
-  pollTask,
   cancelTask,
-  cancelDebounce,
-  cancelPoll,
 } from '../utils/tasks';
+import { pollTask, cancelPoll } from '../poll-task';
+import { debounceTask, cancelDebounce } from '../debounce-task';
 import { runDisposables } from '../utils/disposable';
 
 /**

@@ -1,4 +1,4 @@
-export function getTask(obj, taskOrName, taskName) {
+export default function getTask(obj, taskOrName, taskName) {
   let type = typeof taskOrName;
   let task;
 

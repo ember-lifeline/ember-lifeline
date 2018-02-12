@@ -5,11 +5,9 @@ import {
   runTask,
   scheduleTask,
   throttleTask,
-  debounceTask,
   cancelTask,
-  cancelDebounce,
-  getTask,
 } from 'ember-lifeline/utils/tasks';
+import { debounceTask, cancelDebounce } from 'ember-lifeline';
 
 module('ember-lifeline/utils/tasks', {
   beforeEach() {
@@ -233,32 +231,4 @@ test('debounceTask can be canceled', function(assert) {
     assert.equal(runCount, 0, 'should not have run');
     done();
   }, 10);
-});
-
-test('getTask returns passed in task function as task', function(assert) {
-  assert.expect(1);
-
-  let task = () => {};
-
-  assert.equal(task, getTask(null, task, 'foo'), 'tasks are equal');
-});
-
-test('getTask returns passed in task from the instance', function(assert) {
-  assert.expect(1);
-
-  let instance = { fooTask: () => {} };
-
-  assert.equal(
-    instance.fooTask,
-    getTask(instance, 'fooTask', 'foo'),
-    'tasks are equal'
-  );
-});
-
-test('getTask throws when task not found', function(assert) {
-  assert.expect(1);
-
-  assert.throws(() => {
-    getTask({}, null, 'foo');
-  }, /You must pass a task function or method name to 'foo'./);
 });
