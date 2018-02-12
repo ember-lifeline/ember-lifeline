@@ -202,33 +202,6 @@ test('pollTask cannot advance a poll that has not been scheduled', function(asse
   return wait();
 });
 
-test('pollTask does not leak when destroyed', function(assert) {
-  assert.expect(3);
-  let subject = this.subject();
-
-  let token = pollTask(subject, next => {
-    runTask(subject, next);
-  });
-
-  run(subject, 'destroy');
-
-  assert.throws(() => {
-    pollTaskFor(token);
-  }, `A pollTask with a token of ${token} was not found`);
-
-  subject = this.subject({ force: true });
-
-  token = pollTask(subject, next => {
-    assert.ok(true, 'pollTask was called');
-    runTask(subject, next, 5);
-  });
-
-  // ensure that pending pollTask's are not running
-  return wait().then(() => {
-    pollTaskFor(token);
-  });
-});
-
 test('pollTask can be manually cleared', function(assert) {
   assert.expect(3);
   let subject = this.subject();
