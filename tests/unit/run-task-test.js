@@ -6,7 +6,8 @@ import {
   scheduleTask,
   throttleTask,
   cancelTask,
-} from 'ember-lifeline/run-task';
+  runDisposables,
+} from 'ember-lifeline';
 
 module('ember-lifeline/run-task', {
   beforeEach() {
@@ -14,7 +15,7 @@ module('ember-lifeline/run-task', {
   },
 
   afterEach() {
-    run(this.subject(), 'destroy');
+    runDisposables(this.obj);
   },
 
   subject() {
@@ -29,12 +30,12 @@ module('ember-lifeline/run-task', {
 test('invokes async tasks', function(assert) {
   assert.expect(2);
 
-  let subject = this.subject();
+  this.obj = this.subject();
   let done = assert.async();
   let hasRun = false;
 
   runTask(
-    subject,
+    this.obj,
     () => {
       hasRun = true;
       assert.ok(true, 'callback was called');
@@ -49,29 +50,29 @@ test('invokes async tasks', function(assert) {
 test('invokes named functions as async tasks', function(assert) {
   assert.expect(3);
   let done = assert.async();
-  let subject = this.subject({
+  let obj = (this.obj = this.subject({
     run() {
       hasRun = true;
-      assert.equal(this, subject, 'context is correct');
+      assert.equal(this, obj, 'context is correct');
       assert.ok(true, 'callback was called');
       done();
     },
-  });
+  }));
   let hasRun = false;
 
-  runTask(subject, 'run', 0);
+  runTask(this.obj, 'run', 0);
 
   assert.notOk(hasRun, 'callback should not have run yet');
 });
 
 test('invokes async tasks with delay', function(assert) {
   assert.expect(3);
-  let subject = this.subject();
+  this.obj = this.subject();
   let done = assert.async();
   let hasRun = false;
 
   runTask(
-    subject,
+    this.obj,
     () => {
       hasRun = true;
       assert.ok(true, 'callback was called');
@@ -89,12 +90,12 @@ test('invokes async tasks with delay', function(assert) {
 
 test('runTask tasks can be canceled', function(assert) {
   assert.expect(1);
-  let subject = this.subject();
+  this.obj = this.subject();
   let done = assert.async();
   let hasRun = false;
 
   let cancelId = runTask(
-    subject,
+    this.obj,
     () => {
       hasRun = true;
     },
@@ -112,11 +113,11 @@ test('runTask tasks can be canceled', function(assert) {
 test('scheduleTask invokes async tasks', function(assert) {
   assert.expect(3);
 
-  let subject = this.subject();
+  this.obj = this.subject();
   let hasRun = false;
 
   run(() => {
-    scheduleTask(subject, 'actions', () => {
+    scheduleTask(this.obj, 'actions', () => {
       hasRun = true;
       assert.ok(true, 'callback was called');
     });
@@ -130,18 +131,18 @@ test('scheduleTask invokes async tasks', function(assert) {
 test('scheduleTask invokes named functions as async tasks', function(assert) {
   assert.expect(5);
 
-  let subject = this.subject({
+  let obj = (this.obj = this.subject({
     run(name) {
       hasRun = true;
-      assert.equal(this, subject, 'context is correct');
+      assert.equal(this, obj, 'context is correct');
       assert.equal(name, 'foo', 'passed arguments are correct');
       assert.ok(true, 'callback was called');
     },
-  });
+  }));
   let hasRun = false;
 
   run(() => {
-    scheduleTask(subject, 'actions', 'run', 'foo');
+    scheduleTask(this.obj, 'actions', 'run', 'foo');
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
@@ -150,11 +151,11 @@ test('scheduleTask invokes named functions as async tasks', function(assert) {
 
 test('scheduleTask tasks can be canceled', function(assert) {
   assert.expect(1);
-  let subject = this.subject();
+  this.obj = this.subject();
   let hasRun = false;
 
   run(() => {
-    let timer = scheduleTask(subject, 'actions', () => {
+    let timer = scheduleTask(this.obj, 'actions', () => {
       hasRun = true;
     });
 
@@ -165,19 +166,19 @@ test('scheduleTask tasks can be canceled', function(assert) {
 });
 
 test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
-  let subject = this.subject({
+  this.obj = this.subject({
     doStuff() {},
   });
 
   assert.throws(() => {
-    throttleTask(subject, subject.doStuff, 5);
+    throttleTask(this.obj, this.obj.doStuff, 5);
   }, /without a string as the first argument/);
 });
 
 test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
-  let subject = this.subject();
+  this.obj = this.subject();
 
   assert.throws(() => {
-    throttleTask(subject, 'doStuff', 5);
+    throttleTask(this.obj, 'doStuff', 5);
   }, /is not a function/);
 });

@@ -1,7 +1,6 @@
 import EmberObject from '@ember/object';
-import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { debounceTask, cancelDebounce } from 'ember-lifeline';
+import { debounceTask, cancelDebounce, runDisposables } from 'ember-lifeline';
 
 module('ember-lifeline/debounce-task', {
   beforeEach() {
@@ -9,7 +8,7 @@ module('ember-lifeline/debounce-task', {
   },
 
   afterEach() {
-    run(this.subject(), 'destroy');
+    runDisposables(this.obj);
   },
 
   subject() {
@@ -27,17 +26,17 @@ test('debounceTask runs tasks', function(assert) {
   let done = assert.async();
   let runCount = 0;
   let runArg;
-  let subject = this.subject({
+  let obj = (this.obj = this.subject({
     doStuff(arg) {
       runCount++;
-      assert.equal(this, subject, 'context is correct');
+      assert.equal(this, obj, 'context is correct');
       runArg = arg;
     },
-  });
+  }));
 
-  debounceTask(subject, 'doStuff', 'arg1', 5);
-  debounceTask(subject, 'doStuff', 'arg2', 5);
-  debounceTask(subject, 'doStuff', 'arg3', 5);
+  debounceTask(this.obj, 'doStuff', 'arg1', 5);
+  debounceTask(this.obj, 'doStuff', 'arg2', 5);
+  debounceTask(this.obj, 'doStuff', 'arg3', 5);
 
   assert.equal(runCount, 0, 'should not have run');
 
@@ -53,15 +52,15 @@ test('debounceTask can be canceled', function(assert) {
   assert.expect(2);
 
   let runCount = 0;
-  let subject = this.subject({
+  this.obj = this.subject({
     doStuff() {
       runCount++;
     },
   });
 
-  debounceTask(subject, 'doStuff', 5);
-  debounceTask(subject, 'doStuff', 5);
-  cancelDebounce(subject, 'doStuff');
+  debounceTask(this.obj, 'doStuff', 5);
+  debounceTask(this.obj, 'doStuff', 5);
+  cancelDebounce(this.obj, 'doStuff');
 
   assert.equal(runCount, 0, 'should not have run');
 

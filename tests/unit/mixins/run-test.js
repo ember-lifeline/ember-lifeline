@@ -533,7 +533,7 @@ test('pollTask can be manually cleared', function(assert) {
 
   assert.throws(() => {
     pollTaskFor(token);
-  }, `A pollTask with a label of '${token}' was not found`);
+  }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
 
   subject = this.subject({ force: true });
 

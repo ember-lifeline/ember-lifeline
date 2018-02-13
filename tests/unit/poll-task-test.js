@@ -3,12 +3,13 @@ import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import wait from 'ember-test-helpers/wait';
 import {
+  runTask,
   pollTask,
   cancelPoll,
   pollTaskFor,
   setShouldPoll,
-} from 'ember-lifeline/poll-task';
-import { runTask } from 'ember-lifeline/run-task';
+  runDisposables,
+} from 'ember-lifeline';
 
 module('ember-lifeline/poll-task', {
   beforeEach() {
@@ -16,7 +17,7 @@ module('ember-lifeline/poll-task', {
   },
 
   afterEach() {
-    run(this.subject(), 'destroy');
+    runDisposables(this.obj);
     setShouldPoll(null);
   },
 
@@ -37,16 +38,16 @@ module('ember-lifeline/poll-task', {
 test('pollTask provides ability to poll with callback provided', function(assert) {
   assert.expect(2);
   setShouldPoll(() => true);
-  let subject = this.subject();
+  this.obj = this.subject();
   let calledTimes = 0;
 
-  pollTask(subject, next => {
+  pollTask(this.obj, next => {
     calledTimes++;
 
     if (calledTimes === 5) {
       assert.ok(true, 'polled successfully');
     } else {
-      runTask(subject, next, 5);
+      runTask(this.obj, next, 5);
     }
   });
 
@@ -60,20 +61,20 @@ test('pollTask provides ability to poll with method provided', function(assert) 
   assert.expect(3);
   setShouldPoll(() => true);
   let calledTimes = 0;
-  let subject = this.subject({
+  let obj = (this.obj = this.subject({
     run(next) {
       calledTimes++;
 
       if (calledTimes === 5) {
-        assert.equal(this, subject, 'context is correct');
+        assert.equal(this, obj, 'context is correct');
         assert.ok(true, 'polled successfully');
       } else {
-        runTask(subject, next, 5);
+        runTask(obj, next, 5);
       }
     },
-  });
+  }));
 
-  pollTask(subject, 'run');
+  pollTask(this.obj, 'run');
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -83,29 +84,29 @@ test('pollTask provides ability to poll with method provided', function(assert) 
 
 test('pollTask calls callback once in testing mode', function(assert) {
   assert.expect(2);
-  let subject = this.subject();
+  let obj = (this.obj = this.subject());
   let calledTimes = 0;
 
-  pollTask(subject, next => {
+  pollTask(this.obj, next => {
     calledTimes++;
 
     if (calledTimes > 1) {
       assert.ok(false, 'should not be called more than once');
     }
 
-    runTask(subject, next, 5);
+    runTask(obj, next, 5);
   });
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
   // test string form
-  subject.run = function(next) {
+  this.obj.run = function(next) {
     calledTimes++;
 
-    runTask(subject, next, 5);
+    runTask(obj, next, 5);
   };
 
-  pollTask(subject, 'run');
+  pollTask(this.obj, 'run');
   assert.equal(calledTimes, 2, 'pollTask executed with method name properly');
 
   // ensure that pending pollTask's are not running
@@ -114,17 +115,17 @@ test('pollTask calls callback once in testing mode', function(assert) {
 
 test('pollTask next tick can be incremented via test helper with callback', function(assert) {
   assert.expect(2);
-  let subject = this.subject();
+  this.obj = this.subject();
   let calledTimes = 0;
 
-  let token = pollTask(subject, next => {
+  let token = pollTask(this.obj, next => {
     calledTimes++;
 
     if (calledTimes > 2) {
       assert.ok(false, 'should not be called more than twice');
     }
 
-    runTask(subject, next, 5);
+    runTask(this.obj, next, 5);
   });
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
@@ -146,7 +147,7 @@ test('pollTask next tick can be incremented via test helper with callback', func
 test('pollTask next tick can be incremented via test helper with method name', function(assert) {
   assert.expect(2);
   let calledTimes = 0;
-  let subject = this.subject({
+  let obj = (this.obj = this.subject({
     run(next) {
       calledTimes++;
 
@@ -154,11 +155,11 @@ test('pollTask next tick can be incremented via test helper with method name', f
         assert.ok(false, 'should not be called more than twice');
       }
 
-      runTask(subject, next, 5);
+      runTask(obj, next, 5);
     },
-  });
+  }));
 
-  let token = pollTask(subject, 'run');
+  let token = pollTask(this.obj, 'run');
 
   assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -179,10 +180,10 @@ test('pollTask next tick can be incremented via test helper with method name', f
 test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
   assert.expect(3);
 
-  let subject = this.subject();
+  this.obj = this.subject();
   let calledTimes = 0;
 
-  let token = pollTask(subject, () => {
+  let token = pollTask(this.obj, () => {
     calledTimes++;
 
     if (calledTimes > 2) {
@@ -204,23 +205,23 @@ test('pollTask cannot advance a poll that has not been scheduled', function(asse
 
 test('pollTask can be manually cleared', function(assert) {
   assert.expect(3);
-  let subject = this.subject();
+  this.obj = this.subject();
 
-  let token = pollTask(subject, next => {
-    runTask(subject, next);
+  let token = pollTask(this.obj, next => {
+    runTask(this.obj, next);
   });
 
   cancelPoll(token);
 
   assert.throws(() => {
     pollTaskFor(token);
-  }, `A pollTask with a label of '${token}' was not found`);
+  }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
 
-  subject = this.subject({ force: true });
+  this.obj = this.subject({ force: true });
 
-  token = pollTask(subject, next => {
+  token = pollTask(this.obj, next => {
     assert.ok(true, 'pollTask was called');
-    runTask(subject, next, 5);
+    runTask(this.obj, next, 5);
   });
 
   // ensure that pending pollTask's are not running
