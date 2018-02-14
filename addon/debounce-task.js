@@ -1,8 +1,7 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
-import getOrAllocate from './utils/get-or-allocate';
-import { cancelTask } from './run-task';
+import { registerDisposable } from './utils/disposable';
 
 const { WeakMap } = Ember;
 
@@ -62,12 +61,14 @@ export function debounceTask(obj, name, ...debounceArgs) {
     !obj.isDestroyed
   );
 
-  let pendingDebounces = getOrAllocate(
-    registeredDebounces,
-    obj,
-    Object,
-    getDebouncesDisposable
-  );
+  let pendingDebounces = registeredDebounces.get(obj);
+
+  if (!pendingDebounces) {
+    pendingDebounces = {};
+    registeredDebounces.set(obj, pendingDebounces);
+    registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
+  }
+
   let debounce = pendingDebounces[name];
   let debouncedTask;
 
@@ -142,7 +143,7 @@ function getDebouncesDisposable(debounces) {
     for (let i = 0; i < debounceNames.length; i++) {
       let { cancelId } = debounces[debounceNames[i]];
 
-      cancelTask(cancelId);
+      run.cancel(cancelId);
     }
   };
 }

@@ -1,8 +1,8 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
-import getOrAllocate from './utils/get-or-allocate';
 import getTask from './utils/get-task';
+import { registerDisposable } from './utils/disposable';
 
 const { WeakMap } = Ember;
 
@@ -105,9 +105,16 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
   let task = getTask(obj, taskOrName, 'pollTask');
   let tick = () => task.call(obj, next);
 
-  getOrAllocate(registeredPollers, obj, Array, getPollersDisposable).push(
-    token
-  );
+  let pollers = registeredPollers.get(obj);
+
+  if (!pollers) {
+    pollers = [];
+    registeredPollers.set(obj, pollers);
+
+    registerDisposable(obj, getPollersDisposable(pollers));
+  }
+
+  pollers.push(token);
 
   if (shouldPoll()) {
     next = tick;

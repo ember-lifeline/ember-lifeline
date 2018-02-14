@@ -1,8 +1,8 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
-import getOrAllocate from './utils/get-or-allocate';
 import getTask from './utils/get-task';
+import { registerDisposable } from './utils/disposable';
 
 const { WeakMap } = Ember;
 
@@ -51,8 +51,7 @@ const registeredTimers = new WeakMap();
 export function runTask(obj, taskOrName, timeout = 0) {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
-  let timers = getOrAllocate(registeredTimers, obj, Array, getTimersDisposable);
-
+  let timers = getTimers(obj);
   let cancelId = run.later(() => {
     let cancelIndex = timers.indexOf(cancelId);
     timers.splice(cancelIndex, 1);
@@ -116,7 +115,7 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
 
   let task = getTask(obj, taskOrName, 'scheduleTask');
   let cancelId = run.schedule(queueName, obj, task, ...args);
-  let timers = getOrAllocate(registeredTimers, obj, Array, getTimersDisposable);
+  let timers = getTimers(obj);
 
   timers.push(cancelId);
 
@@ -168,7 +167,7 @@ export function throttleTask(obj, name, timeout = 0) {
     !obj.isDestroyed
   );
 
-  let timers = getOrAllocate(registeredTimers, obj, Array, getTimersDisposable);
+  let timers = getTimers(obj);
   let cancelId = run.throttle(obj, name, timeout);
 
   timers.push(cancelId);
@@ -216,4 +215,16 @@ function getTimersDisposable(timers) {
       cancelTask(timers[i]);
     }
   };
+}
+
+function getTimers(obj) {
+  let timers = registeredTimers.get(obj);
+
+  if (!timers) {
+    timers = [];
+    registeredTimers.set(obj, timers);
+    registerDisposable(obj, getTimersDisposable(timers));
+  }
+
+  return timers;
 }
