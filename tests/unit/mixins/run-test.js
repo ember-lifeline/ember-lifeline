@@ -3,11 +3,8 @@ import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import wait from 'ember-test-helpers/wait';
 
-import ContextBoundTasksMixin, {
-  setShouldPoll,
-  pollTaskFor,
-  cancelBoundTasks,
-} from 'ember-lifeline/mixins/run';
+import ContextBoundTasksMixin from 'ember-lifeline/mixins/run';
+import { setShouldPoll, pollTaskFor } from 'ember-lifeline';
 
 module('ember-lifeline/mixins/run', {
   beforeEach() {
@@ -34,11 +31,10 @@ module('ember-lifeline/mixins/run', {
 });
 
 test('ensures arrays are not eagerly allocated', function(assert) {
-  assert.expect(3);
+  assert.expect(2);
 
   let subject = this.subject();
 
-  assert.notOk(subject._pendingTimers);
   assert.notOk(subject._pendingDebounces);
   assert.notOk(subject._pollerLabels);
 });
@@ -205,24 +201,6 @@ test('scheduleTask tasks can be canceled', function(assert) {
   });
 
   assert.notOk(hasRun, 'callback should have been canceled previously');
-});
-
-test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
-  let subject = this.subject({
-    doStuff() {},
-  });
-
-  assert.throws(() => {
-    subject.throttleTask(subject.doStuff, 5);
-  }, /without a string as the first argument/);
-});
-
-test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
-  let subject = this.subject();
-
-  assert.throws(() => {
-    subject.throttleTask('doStuff', 5);
-  }, /is not a function/);
 });
 
 test('throttleTask can be canceled', function(assert) {
@@ -555,7 +533,7 @@ test('pollTask can be manually cleared', function(assert) {
 
   assert.throws(() => {
     pollTaskFor(token);
-  }, `A pollTask with a label of '${token}' was not found`);
+  }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
 
   subject = this.subject({ force: true });
 
@@ -568,51 +546,4 @@ test('pollTask can be manually cleared', function(assert) {
   return wait().then(() => {
     pollTaskFor(token);
   });
-});
-
-test('cancelBoundTasks early returns if tasks is falsey', function(assert) {
-  assert.expect(1);
-
-  let tasks = null;
-  let callCount = 0;
-  let cancelFn = () => {
-    callCount++;
-  };
-
-  cancelBoundTasks(tasks, cancelFn);
-
-  assert.equal(callCount, 0, 'The cancel function should not have been called');
-});
-
-test('cancelBoundTasks early returns if tasks is an empty array', function(assert) {
-  assert.expect(1);
-
-  let tasks = [];
-  let callCount = 0;
-  let cancelFn = () => {
-    callCount++;
-  };
-
-  cancelBoundTasks(tasks, cancelFn);
-
-  assert.equal(callCount, 0, 'The cancel function should not have been called');
-});
-
-test('cancelBoundTasks cancel function is called once for each task', function(assert) {
-  assert.expect(4);
-
-  let tasks = ['one', 'two', 'three'];
-  let callCount = 0;
-  let cancelFn = task => {
-    assert.equal(
-      task,
-      tasks[callCount],
-      'The cancel function receives the correct param'
-    );
-    callCount++;
-  };
-
-  cancelBoundTasks(tasks, cancelFn);
-
-  assert.equal(callCount, 3, 'The cancel function is called 3 times');
 });

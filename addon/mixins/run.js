@@ -1,40 +1,8 @@
 import Mixin from '@ember/object/mixin';
-import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
-import Ember from 'ember';
-import getOrAllocate from '../utils/get-or-allocate';
-import getNextToken from '../utils/get-next-token';
-import { runTask, getTask } from '../utils/run';
+import { runTask, scheduleTask, throttleTask, cancelTask } from '../run-task';
+import { pollTask, cancelPoll } from '../poll-task';
+import { debounceTask, cancelDebounce } from '../debounce-task';
 import { runDisposables } from '../utils/disposable';
-
-let _shouldPollOverride;
-function shouldPoll() {
-  if (_shouldPollOverride) {
-    return _shouldPollOverride();
-  }
-
-  // eslint-disable-next-line ember-suave/no-direct-property-access
-  return !Ember.testing;
-}
-
-export function setShouldPoll(callback) {
-  _shouldPollOverride = callback;
-}
-
-let queuedPollTasks = Object.create(null);
-let pollTaskTokens = Object.create(null);
-export function pollTaskFor(token) {
-  assert(
-    `A pollTask with a token of '${token}' was not found.`,
-    pollTaskTokens[token]
-  );
-  assert(
-    `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
-    !!queuedPollTasks[token]
-  );
-
-  return run.join(null, queuedPollTasks[token]);
-}
 
 /**
  ContextBoundTasksMixin provides a mechanism to run tasks (ala `setTimeout` or
@@ -48,15 +16,6 @@ export function pollTaskFor(token) {
  @public
  */
 export default Mixin.create({
-  init() {
-    this._super(...arguments);
-
-    this._pendingTimers = undefined;
-    this._pendingDebounces = undefined;
-    this._pendingThrottles = undefined;
-    this._pollerTokens = undefined;
-  },
-
   /**
    Runs the provided task function at the specified timeout (defaulting to 0).
    The timer is properly canceled if the object is destroyed before it is invoked.
@@ -115,12 +74,12 @@ export default Mixin.create({
    @public
    */
   cancelTask(cancelId) {
-    cancelTimer(cancelId);
+    cancelTask(cancelId);
   },
 
   /**
-   Adds the provided function to the named queue to be executed at the end of the RunLoop.
-   The timer is properly canceled if the object is destroyed before it is invoked.
+   Adds the provided function to the named queue. The timer is properly canceled if the
+   object is destroyed before it is invoked.
 
    Example:
 
@@ -148,27 +107,7 @@ export default Mixin.create({
    @public
    */
   scheduleTask(queueName, taskOrName, ...args) {
-    assert(
-      `Called \`scheduleTask\` without a string as the first argument on ${this}.`,
-      typeof queueName === 'string'
-    );
-    assert(
-      `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${this}.`,
-      queueName !== 'afterRender'
-    );
-    assert(
-      `Called \`scheduleTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let task = getTask(this, taskOrName, 'scheduleTask');
-
-    let cancelId = run.schedule(queueName, this, task, ...args);
-
-    let pendingTimers = getOrAllocate(this, '_pendingTimers', Array);
-    pendingTimers.push(cancelId);
-
-    return cancelId;
+    return scheduleTask(this, queueName, taskOrName, ...args);
   },
 
   /**
@@ -200,36 +139,7 @@ export default Mixin.create({
    @public
    */
   debounceTask(name, ...debounceArgs) {
-    assert(
-      `Called \`debounceTask\` without a string as the first argument on ${this}.`,
-      typeof name === 'string'
-    );
-    assert(
-      `Called \`this.debounceTask('${name}', ...)\` where 'this.${name}' is not a function.`,
-      typeof this[name] === 'function'
-    );
-    assert(
-      `Called \`debounceTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let pendingDebounces = getOrAllocate(this, '_pendingDebounces', Object);
-    let debounce = pendingDebounces[name];
-    let debouncedTask;
-
-    if (!debounce) {
-      debouncedTask = (...args) => {
-        delete pendingDebounces[name];
-        this[name](...args);
-      };
-    } else {
-      debouncedTask = debounce.debouncedTask;
-    }
-
-    // cancelId is new, even if the debounced function was already present
-    let cancelId = run.debounce(this, debouncedTask, ...debounceArgs);
-
-    pendingDebounces[name] = { debouncedTask, cancelId };
+    debounceTask(this, name, ...debounceArgs);
   },
 
   /**
@@ -261,7 +171,7 @@ export default Mixin.create({
    @public
    */
   cancelDebounce(name) {
-    cancelDebounce(this._pendingDebounces, name);
+    cancelDebounce(this, name);
   },
 
   /**
@@ -287,30 +197,11 @@ export default Mixin.create({
 
    @method throttleTask
    @param { String } name the name of the task to throttle
-   @param { Number } [timeout=5] the time in the future to run the task (defaults to 5ms)
+   @param { Number } [timeout] the time in the future to run the task
    @public
    */
-  throttleTask(name, timeout = 0) {
-    assert(
-      `Called \`throttleTask\` without a string as the first argument on ${this}.`,
-      typeof name === 'string'
-    );
-    assert(
-      `Called \`this.throttleTask('${name}', ${timeout})\` where 'this.${name}' is not a function.`,
-      typeof this[name] === 'function'
-    );
-    assert(
-      `Called \`throttleTask\` on destroyed object: ${this}.`,
-      !this.isDestroyed
-    );
-
-    let pendingThrottles = getOrAllocate(this, '_pendingThrottles', Array);
-
-    let cancelId = run.throttle(this, name, timeout);
-
-    pendingThrottles.push(cancelId);
-
-    return cancelId;
+  throttleTask(name, timeout) {
+    return throttleTask(this, name, timeout);
   },
 
   /**
@@ -342,7 +233,7 @@ export default Mixin.create({
    @public
    */
   cancelThrottle(cancelId) {
-    cancelTimer(cancelId);
+    cancelTask(cancelId);
   },
 
   /**
@@ -405,26 +296,8 @@ export default Mixin.create({
                                            by timeout
    @public
    */
-  pollTask(taskOrName, token = getNextToken()) {
-    let next;
-    let task = getTask(this, taskOrName, 'pollTask');
-    let tick = () => task.call(this, next);
-
-    pollTaskTokens[token] = true;
-
-    getOrAllocate(this, '_pollerTokens', Array).push(token);
-
-    if (shouldPoll()) {
-      next = tick;
-    } else {
-      next = () => {
-        queuedPollTasks[token] = tick;
-      };
-    }
-
-    task.call(this, next);
-
-    return token;
+  pollTask(taskOrName, token) {
+    return pollTask(this, taskOrName, token);
   },
 
   /**
@@ -464,46 +337,5 @@ export default Mixin.create({
     this._super(...arguments);
 
     runDisposables(this);
-
-    cancelBoundTasks(this._pendingTimers, cancelTimer);
-    cancelBoundTasks(this._pollerTokens, cancelPoll);
-    cancelBoundTasks(this._pendingThrottles, cancelTimer);
-    cancelDebounces(this._pendingDebounces);
   },
 });
-
-export function cancelBoundTasks(tasks, cancelFn) {
-  if (!tasks || !tasks.length) {
-    return;
-  }
-
-  for (let i = 0; i < tasks.length; i++) {
-    cancelFn(tasks[i]);
-  }
-}
-
-function cancelTimer(cancelId) {
-  run.cancel(cancelId);
-}
-
-function cancelPoll(token) {
-  delete pollTaskTokens[token];
-  delete queuedPollTasks[token];
-}
-
-function cancelDebounce(pendingDebounces, name) {
-  let { cancelId } = pendingDebounces[name];
-  run.cancel(cancelId);
-}
-
-function cancelDebounces(pendingDebounces) {
-  let debounceNames = pendingDebounces && Object.keys(pendingDebounces);
-
-  if (!debounceNames || !debounceNames.length) {
-    return;
-  }
-
-  for (let i = 0; i < debounceNames.length; i++) {
-    cancelDebounce(pendingDebounces, debounceNames[i]);
-  }
-}
