@@ -42,19 +42,6 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     testedOptions: { passive: false },
   },
 ].forEach(({ testName, testedOptions }) => {
-  test(`${testName} ensures arrays are not eagerly allocated`, function(assert) {
-    assert.expect(1);
-
-    this.register(
-      'template:components/under-test',
-      hbs`<span class="foo"></span>`
-    );
-    this.render(hbs`{{under-test}}`);
-    let subject = this.componentInstance;
-
-    assert.notOk(subject._listeners);
-  });
-
   test(`${testName} adds event listener to child element`, function(assert) {
     assert.expect(4);
 
@@ -68,6 +55,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let calls = 0;
     let hadRunloop = null;
     let handledEvent = null;
+
     subject.addEventListener(
       '.foo',
       'click',
@@ -91,15 +79,43 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     );
   });
 
-  /*
-   * app/views/manager/highlighter.js uses a second argument to the drag
-   * handler, "delta". It is unclear if this value comes from a jQuery library
-   * or where else. Before this test can be removed one should be certain
-   * the codebase only contains uses of addEventListener expecting a single
-   * event argument.
-   *
-   */
-  test(`${testName} adds jquery event listener to child element with multiple handler args`, async function(assert) {
+  test(`${testName} adds event listener to component's element when not providing element`, function(assert) {
+    assert.expect(4);
+
+    this.register(
+      'template:components/under-test',
+      hbs`<span class="foo"></span>`
+    );
+    this.render(hbs`{{under-test}}`);
+    let subject = this.componentInstance;
+
+    let calls = 0;
+    let hadRunloop = null;
+    let handledEvent = null;
+
+    subject.addEventListener(
+      'click',
+      event => {
+        calls++;
+        hadRunloop = !!run.currentRunLoop;
+        handledEvent = event;
+      },
+      testedOptions
+    );
+
+    subject.element.dispatchEvent(new Event('click'));
+
+    assert.equal(calls, 1, 'callback was called');
+    assert.ok(hadRunloop, 'callback was called in runloop');
+    assert.ok(handledEvent.target, 'callback passed a target');
+    assert.equal(
+      handledEvent.target.className,
+      'ember-view',
+      'target has the expected class'
+    );
+  });
+
+  test(`${testName} adds event listener to child element with multiple handler args`, async function(assert) {
     assert.expect(4);
 
     this.register(
@@ -112,6 +128,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let calls = 0;
     let hadRunloop = null;
     let handledArgs = null;
+
     subject.addEventListener(
       '.foo',
       'drag',
@@ -151,6 +168,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let hadRunloop = null;
     let handledEvent = null;
     let element = find('.foo');
+
     subject.addEventListener(
       element,
       'click',
@@ -215,6 +233,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     let calls = 0;
     let hadRunloop = null;
     let handledEvent = null;
+
     subject.addEventListener(
       find('.foo'),
       'click',
@@ -309,6 +328,7 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     assert.expect(2);
 
     let testContext = this;
+
     this.register(
       'component:under-test-a',
       Component.extend(ContextBoundEventListenersMixin, {
@@ -331,14 +351,13 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     this.render(hbs`{{under-test-a}}{{under-test-b}}<span class="foo"></span>`);
 
     let { subjectA, subjectB } = this;
-
     let target = find('.foo');
-
     let assertScope = scope => {
       return function() {
         assert.equal(this, scope);
       };
     };
+
     subjectA.addEventListener(
       target,
       'click',
@@ -367,11 +386,11 @@ moduleForComponent('ember-lifeline/mixins/dom', {
     );
     this.render(hbs`{{under-test}}`);
     let subject = this.componentInstance;
-
     let calls = 0;
     let listener = () => {
       calls++;
     };
+
     subject.addEventListener('.foo', 'click', listener, testedOptions);
 
     subject.removeEventListener('.foo', 'click', listener, testedOptions);

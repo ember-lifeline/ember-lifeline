@@ -5,6 +5,13 @@ import { registerDisposable } from './utils/disposable';
 
 const { WeakMap } = Ember;
 
+/**
+ * A map of instances/listeners that allows us to
+ * store listener references per instance.
+ *
+ * @private
+ *
+ */
 const eventListeners = new WeakMap();
 
 const PASSIVE_SUPPORTED = (() => {
@@ -92,6 +99,14 @@ export function addEventListener(obj, selector, eventName, _callback, options) {
     'Must provide an element (not a DOM selector) when calling addEventListener outside of component instance.',
     obj.isComponent || typeof selector !== 'string'
   );
+
+  // If no element is provided, we assume we're adding the event listener to the component's element. This
+  // addresses use cases where we want to bind events like `scroll` to the component's root element.
+  if (obj.isComponent && typeof eventName === 'function') {
+    _callback = eventName;
+    eventName = selector;
+    selector = obj.element;
+  }
 
   let element = findElement(obj.element, selector);
   let callback = run.bind(obj, _callback);

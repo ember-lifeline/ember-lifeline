@@ -6,9 +6,6 @@ import { runDisposables } from '../utils/disposable';
  ContextBoundEventListenersMixin provides a mechanism to attach event listeners
  with runloops and automatic removal when the host object is removed from DOM.
 
- These capabilities are very commonly needed, so this mixin is by default
- included into all `Ember.View` and `Ember.Component` instances.
-
  @class ContextBoundEventListenersMixin
  @public
  */
