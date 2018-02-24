@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
 
 const { WeakMap } = Ember;
@@ -84,31 +83,7 @@ const INDEX = {
    @param { Function } _callback the callback to run for that event
    @public
    */
-export function addEventListener(obj, selector, eventName, _callback, options) {
-  assert(
-    'Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
-    !obj.isComponent || obj.tagName !== '' || typeof selector !== 'string'
-  );
-  assert(
-    'Called addEventListener with a css selector before the component was rendered',
-    !obj.isComponent ||
-      typeof selector !== 'string' ||
-      obj._currentState === obj._states.inDOM
-  );
-  assert(
-    'Must provide an element (not a DOM selector) when calling addEventListener outside of component instance.',
-    obj.isComponent || typeof selector !== 'string'
-  );
-
-  // If no element is provided, we assume we're adding the event listener to the component's element. This
-  // addresses use cases where we want to bind events like `scroll` to the component's root element.
-  if (obj.isComponent && typeof eventName === 'function') {
-    _callback = eventName;
-    eventName = selector;
-    selector = obj.element;
-  }
-
-  let element = findElement(obj.element, selector);
+export function addEventListener(obj, element, eventName, _callback, options) {
   let callback = run.bind(obj, _callback);
 
   let listeners = getEventListeners(obj);
@@ -130,17 +105,11 @@ export function addEventListener(obj, selector, eventName, _callback, options) {
    */
 export function removeEventListener(
   obj,
-  selector,
+  element,
   eventName,
   callback,
   options
 ) {
-  assert(
-    'Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
-    obj.tagName !== '' || typeof selector !== 'string'
-  );
-
-  let element = findElement(obj.element, selector);
   let listeners = getEventListeners(obj);
 
   if (listeners.length === 0) {
@@ -196,22 +165,4 @@ function getEventListeners(obj) {
   }
 
   return listeners;
-}
-
-function findElement(contextElement, selector) {
-  let selectorType = typeof selector;
-  let element;
-
-  if (selectorType === 'string') {
-    element = contextElement.querySelector(selector);
-  } else if (selector.nodeType || selector === window) {
-    element = selector;
-  }
-
-  assert(
-    `Called addEventListener with selector not found in DOM: ${selector}`,
-    !!element
-  );
-
-  return element;
 }
