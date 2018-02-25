@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import resolver from './helpers/resolver';
 import QUnit from 'qunit';
-import { setResolver } from 'ember-qunit';
+import { setResolver } from '@ember/test-helpers';
 import { start } from 'ember-cli-qunit';
 
 setResolver(resolver);

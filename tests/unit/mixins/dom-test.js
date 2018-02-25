@@ -41,14 +41,14 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       testedOptions: { passive: false },
     },
   ].forEach(({ testName, testedOptions }) => {
-    test(`${testName} adds event listener to child element`, function(assert) {
+    test(`${testName} adds event listener to child element`, async function(assert) {
       assert.expect(4);
 
       this.owner.register(
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      render(hbs`{{under-test}}`);
+      await render(hbs`{{under-test}}`);
       let subject = this.componentInstance;
 
       let calls = 0;
@@ -78,14 +78,14 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       );
     });
 
-    test(`${testName} adds event listener to component's element when not providing element`, function(assert) {
+    test(`${testName} adds event listener to component's element when not providing element`, async function(assert) {
       assert.expect(4);
 
       this.owner.register(
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      render(hbs`{{under-test}}`);
+      await render(hbs`{{under-test}}`);
       let subject = this.componentInstance;
 
       let calls = 0;
@@ -121,7 +121,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      render(hbs`{{under-test}}`);
+      await render(hbs`{{under-test}}`);
       let subject = this.componentInstance;
 
       let calls = 0;
@@ -158,7 +158,9 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       assert.expect(5);
 
       this.set('show', true);
-      render(hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`);
+      await render(
+        hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`
+      );
       let subject = this.componentInstance;
 
       let ranCallback = 0;
@@ -197,10 +199,10 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       assert.equal(ranCallback, 1, 'callback was not called a second time');
     });
 
-    test(`${testName} throws when there is no element to attach to`, function(assert) {
+    test(`${testName} throws when there is no element to attach to`, async function(assert) {
       assert.expect(1);
 
-      render(hbs`{{under-test}}`);
+      await render(hbs`{{under-test}}`);
       let subject = this.componentInstance;
 
       assert.throws(() => {
@@ -222,7 +224,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       assert.expect(5);
 
       this.set('show', true);
-      render(
+      await render(
         hbs`{{#if show}}{{under-test tagName=""}}{{/if}}<span class="foo"></span>`
       );
       let subject = this.componentInstance;
@@ -262,10 +264,10 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       assert.equal(calls, 1, 'callback was not called again');
     });
 
-    test(`${testName} throws when using a string selector in a tagless component`, function(assert) {
+    test(`${testName} throws when using a string selector in a tagless component`, async function(assert) {
       assert.expect(1);
 
-      render(hbs`{{under-test tagName=""}}<span class="foo"></span>`);
+      await render(hbs`{{under-test tagName=""}}<span class="foo"></span>`);
       let subject = this.componentInstance;
 
       assert.throws(() => {
@@ -273,7 +275,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       }, /Must provide an element/);
     });
 
-    test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, function(assert) {
+    test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, async function(assert) {
       assert.expect(2);
 
       let testContext = this;
@@ -297,7 +299,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       );
 
       this.set('showA', true);
-      render(
+      await render(
         hbs`{{#if showA}}{{under-test-a}}{{/if}}{{under-test-b}}<span class="foo"></span>`
       );
 
@@ -321,7 +323,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       assert.equal(calls, 3, 'one more callback called for remaining context');
     });
 
-    test(`${testName} listeners are called with correct scope`, function(assert) {
+    test(`${testName} listeners are called with correct scope`, async function(assert) {
       assert.expect(2);
 
       let testContext = this;
@@ -345,7 +347,9 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         })
       );
 
-      render(hbs`{{under-test-a}}{{under-test-b}}<span class="foo"></span>`);
+      await render(
+        hbs`{{under-test-a}}{{under-test-b}}<span class="foo"></span>`
+      );
 
       let { subjectA, subjectB } = this;
       let target = find('.foo');
@@ -381,7 +385,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      render(hbs`{{under-test}}`);
+      await render(hbs`{{under-test}}`);
       let subject = this.componentInstance;
       let calls = 0;
       let listener = () => {
@@ -412,7 +416,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         : this.owner._lookupFactory(serviceName);
       let subject = factory.create();
 
-      render(hbs`<span class="foo"></span>`);
+      await render(hbs`<span class="foo"></span>`);
 
       let calls = 0;
       let hadRunloop = null;
