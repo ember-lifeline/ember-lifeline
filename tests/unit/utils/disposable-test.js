@@ -7,116 +7,116 @@ import {
   runDisposables,
 } from 'ember-lifeline/utils/disposable';
 
-module('ember-lifeline/utils/disposable', {
-  beforeEach() {
+module('ember-lifeline/utils/disposable', function(hooks) {
+  hooks.beforeEach(function() {
     this.subject = EmberObject.create({
       destroy() {
         runDisposables(this);
       },
     });
-  },
+  });
 
-  afterEach() {
+  hooks.afterEach(function() {
     run(this.subject, 'destroy');
-  },
-});
+  });
 
-test('registerDisposable asserts params are not present', function(assert) {
-  assert.expect(2);
+  test('registerDisposable asserts params are not present', function(assert) {
+    assert.expect(2);
 
-  assert.throws(function() {
-    registerDisposable();
-  }, /Called `registerDisposable` where `obj` is not an object/);
+    assert.throws(function() {
+      registerDisposable();
+    }, /Called `registerDisposable` where `obj` is not an object/);
 
-  assert.throws(function() {
-    registerDisposable({}, null);
-  }, /Called `registerDisposable` where `dispose` is not a function/);
-});
+    assert.throws(function() {
+      registerDisposable({}, null);
+    }, /Called `registerDisposable` where `dispose` is not a function/);
+  });
 
-test('registerDisposable correctly allocates array if not allocated', function(assert) {
-  assert.expect(2);
+  test('registerDisposable correctly allocates array if not allocated', function(assert) {
+    assert.expect(2);
 
-  assert.equal(registeredDisposables.get(this.subject), undefined);
+    assert.equal(registeredDisposables.get(this.subject), undefined);
 
-  registerDisposable(this.subject, function() {});
+    registerDisposable(this.subject, function() {});
 
-  assert.equal(registeredDisposables.get(this.subject).constructor, Array);
-});
+    assert.equal(registeredDisposables.get(this.subject).constructor, Array);
+  });
 
-test('registerDisposable adds disposable to disposables', function(assert) {
-  assert.expect(1);
+  test('registerDisposable adds disposable to disposables', function(assert) {
+    assert.expect(1);
 
-  let dispose = () => {};
+    let dispose = () => {};
 
-  registerDisposable(this.subject, dispose);
+    registerDisposable(this.subject, dispose);
 
-  assert.equal(
-    registeredDisposables.get(this.subject)[0],
-    dispose,
-    'dispose function is added to _registeredDisposables'
-  );
-});
+    assert.equal(
+      registeredDisposables.get(this.subject)[0],
+      dispose,
+      'dispose function is added to _registeredDisposables'
+    );
+  });
 
-test('registerDisposable adds unique disposable to disposables', function(assert) {
-  assert.expect(2);
+  test('registerDisposable adds unique disposable to disposables', function(assert) {
+    assert.expect(2);
 
-  let dispose = () => {};
+    let dispose = () => {};
 
-  registerDisposable(this.subject, dispose);
+    registerDisposable(this.subject, dispose);
 
-  assert.equal(
-    dispose,
-    registeredDisposables.get(this.subject)[0],
-    'disposable is returned'
-  );
+    assert.equal(
+      dispose,
+      registeredDisposables.get(this.subject)[0],
+      'disposable is returned'
+    );
 
-  let otherDisposable = registerDisposable(this.subject, dispose);
+    let otherDisposable = registerDisposable(this.subject, dispose);
 
-  assert.notEqual(dispose, otherDisposable, 'disposable returned is unique');
-});
+    assert.notEqual(dispose, otherDisposable, 'disposable returned is unique');
+  });
 
-test('runDisposables runs all disposables when destroying', function(assert) {
-  assert.expect(2);
+  test('runDisposables runs all disposables when destroying', function(assert) {
+    assert.expect(2);
 
-  let callCount = 0;
+    let callCount = 0;
 
-  let dispose = () => {
-    callCount++;
-  };
-  let disposeTheSecond = () => {
-    callCount++;
-  };
+    let dispose = () => {
+      callCount++;
+    };
+    let disposeTheSecond = () => {
+      callCount++;
+    };
 
-  registerDisposable(this.subject, dispose);
-  registerDisposable(this.subject, disposeTheSecond);
+    registerDisposable(this.subject, dispose);
+    registerDisposable(this.subject, disposeTheSecond);
 
-  assert.equal(callCount, 0, 'two disposables are registered');
+    assert.equal(callCount, 0, 'two disposables are registered');
 
-  runDisposables(this.subject);
+    runDisposables(this.subject);
 
-  assert.equal(callCount, 2, 'no disposables are registered');
-});
+    assert.equal(callCount, 2, 'no disposables are registered');
+  });
 
-test('destroy integration runs all disposables when destroying', function(assert) {
-  assert.expect(2);
+  test('destroy integration runs all disposables when destroying', function(assert) {
+    assert.expect(2);
 
-  let callCount = 0;
+    let callCount = 0;
 
-  let dispose = () => {
-    callCount++;
-  };
-  let disposeTheSecond = () => {
-    callCount++;
-  };
+    let dispose = () => {
+      callCount++;
+    };
+    let disposeTheSecond = () => {
+      callCount++;
+    };
 
-  registerDisposable(this.subject, dispose);
-  registerDisposable(this.subject, disposeTheSecond);
+    registerDisposable(this.subject, dispose);
+    registerDisposable(this.subject, disposeTheSecond);
 
-  registeredDisposables.get(this.subject);
+    registeredDisposables.get(this.subject);
 
-  assert.equal(callCount, 0, 'two disposables are registered');
+    assert.equal(callCount, 0, 'two disposables are registered');
 
-  run(this.subject, 'destroy');
+    run(this.subject, 'destroy');
 
-  assert.equal(callCount, 2, 'no disposables are registered');
+    assert.equal(callCount, 2, 'no disposables are registered');
+  });
 });
