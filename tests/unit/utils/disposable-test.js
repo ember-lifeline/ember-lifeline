@@ -9,7 +9,7 @@ import {
 
 module('ember-lifeline/utils/disposable', function(hooks) {
   hooks.beforeEach(function() {
-    this.subject = EmberObject.create({
+    this.obj = EmberObject.create({
       destroy() {
         runDisposables(this);
       },
@@ -17,7 +17,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
   });
 
   hooks.afterEach(function() {
-    run(this.subject, 'destroy');
+    run(this.obj, 'destroy');
   });
 
   test('registerDisposable asserts params are not present', function(assert) {
@@ -35,11 +35,11 @@ module('ember-lifeline/utils/disposable', function(hooks) {
   test('registerDisposable correctly allocates array if not allocated', function(assert) {
     assert.expect(2);
 
-    assert.equal(registeredDisposables.get(this.subject), undefined);
+    assert.equal(registeredDisposables.get(this.obj), undefined);
 
-    registerDisposable(this.subject, function() {});
+    registerDisposable(this.obj, function() {});
 
-    assert.equal(registeredDisposables.get(this.subject).constructor, Array);
+    assert.equal(registeredDisposables.get(this.obj).constructor, Array);
   });
 
   test('registerDisposable adds disposable to disposables', function(assert) {
@@ -47,10 +47,10 @@ module('ember-lifeline/utils/disposable', function(hooks) {
 
     let dispose = () => {};
 
-    registerDisposable(this.subject, dispose);
+    registerDisposable(this.obj, dispose);
 
     assert.equal(
-      registeredDisposables.get(this.subject)[0],
+      registeredDisposables.get(this.obj)[0],
       dispose,
       'dispose function is added to _registeredDisposables'
     );
@@ -61,15 +61,15 @@ module('ember-lifeline/utils/disposable', function(hooks) {
 
     let dispose = () => {};
 
-    registerDisposable(this.subject, dispose);
+    registerDisposable(this.obj, dispose);
 
     assert.equal(
       dispose,
-      registeredDisposables.get(this.subject)[0],
+      registeredDisposables.get(this.obj)[0],
       'disposable is returned'
     );
 
-    let otherDisposable = registerDisposable(this.subject, dispose);
+    let otherDisposable = registerDisposable(this.obj, dispose);
 
     assert.notEqual(dispose, otherDisposable, 'disposable returned is unique');
   });
@@ -86,12 +86,12 @@ module('ember-lifeline/utils/disposable', function(hooks) {
       callCount++;
     };
 
-    registerDisposable(this.subject, dispose);
-    registerDisposable(this.subject, disposeTheSecond);
+    registerDisposable(this.obj, dispose);
+    registerDisposable(this.obj, disposeTheSecond);
 
     assert.equal(callCount, 0, 'two disposables are registered');
 
-    runDisposables(this.subject);
+    runDisposables(this.obj);
 
     assert.equal(callCount, 2, 'no disposables are registered');
   });
@@ -108,14 +108,14 @@ module('ember-lifeline/utils/disposable', function(hooks) {
       callCount++;
     };
 
-    registerDisposable(this.subject, dispose);
-    registerDisposable(this.subject, disposeTheSecond);
+    registerDisposable(this.obj, dispose);
+    registerDisposable(this.obj, disposeTheSecond);
 
-    registeredDisposables.get(this.subject);
+    registeredDisposables.get(this.obj);
 
     assert.equal(callCount, 0, 'two disposables are registered');
 
-    run(this.subject, 'destroy');
+    run(this.obj, 'destroy');
 
     assert.equal(callCount, 2, 'no disposables are registered');
   });

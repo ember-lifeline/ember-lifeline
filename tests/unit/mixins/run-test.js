@@ -11,42 +11,33 @@ module('ember-lifeline/mixins/run', function(hooks) {
   hooks.beforeEach(function() {
     this.BaseObject = EmberObject.extend(ContextBoundTasksMixin);
 
-    this.subject = function({ force } = {}) {
-      if (force && this._subject) {
-        run(this._subject, 'destroy');
-        this._subject = null;
+    this.getComponent = function({ force } = {}) {
+      if (force && this._component) {
+        run(this._component, 'destroy');
+        this._component = null;
       }
 
-      if (this._subject) {
-        return this._subject;
+      if (this._component) {
+        return this._component;
       }
 
-      return (this._subject = this.BaseObject.create(...arguments));
+      return (this._component = this.BaseObject.create(...arguments));
     };
   });
 
   hooks.afterEach(function() {
-    run(this.subject(), 'destroy');
+    run(this.getComponent(), 'destroy');
     setShouldPoll(null);
-  });
-
-  test('ensures arrays are not eagerly allocated', function(assert) {
-    assert.expect(2);
-
-    let subject = this.subject();
-
-    assert.notOk(subject._pendingDebounces);
-    assert.notOk(subject._pollerLabels);
   });
 
   test('invokes async tasks', function(assert) {
     assert.expect(2);
 
-    let subject = this.subject();
+    let component = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
-    subject.runTask(() => {
+    component.runTask(() => {
       hasRun = true;
       assert.ok(true, 'callback was called');
       done();
@@ -58,28 +49,28 @@ module('ember-lifeline/mixins/run', function(hooks) {
   test('invokes named functions as async tasks', function(assert) {
     assert.expect(3);
     let done = assert.async();
-    let subject = this.subject({
+    let component = this.getComponent({
       run() {
         hasRun = true;
-        assert.equal(this, subject, 'context is correct');
+        assert.equal(this, component, 'context is correct');
         assert.ok(true, 'callback was called');
         done();
       },
     });
     let hasRun = false;
 
-    subject.runTask('run', 0);
+    component.runTask('run', 0);
 
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
   test('invokes async tasks with delay', function(assert) {
     assert.expect(3);
-    let subject = this.subject();
+    let component = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
-    subject.runTask(() => {
+    component.runTask(() => {
       hasRun = true;
       assert.ok(true, 'callback was called');
       done();
@@ -94,17 +85,17 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('cancels tasks added with `runTask`', function(assert) {
     assert.expect(2);
-    let subject = this.subject();
+    let component = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
-    subject.runTask(() => {
+    component.runTask(() => {
       hasRun = true;
       assert.ok(false, 'callback was called');
     }, 0);
 
     assert.notOk(hasRun, 'callback should not have run yet');
-    run(subject, 'destroy');
+    run(component, 'destroy');
 
     window.setTimeout(() => {
       assert.notOk(hasRun, 'callback should not have run yet');
@@ -114,15 +105,15 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('runTask tasks can be canceled', function(assert) {
     assert.expect(1);
-    let subject = this.subject();
+    let component = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
-    let cancelId = subject.runTask(() => {
+    let cancelId = component.runTask(() => {
       hasRun = true;
     }, 5);
 
-    subject.cancelTask(cancelId);
+    component.cancelTask(cancelId);
 
     window.setTimeout(() => {
       assert.notOk(hasRun, 'callback should have been canceled previously');
@@ -133,11 +124,11 @@ module('ember-lifeline/mixins/run', function(hooks) {
   test('scheduleTask invokes async tasks', function(assert) {
     assert.expect(3);
 
-    let subject = this.subject();
+    let component = this.getComponent();
     let hasRun = false;
 
     run(() => {
-      subject.scheduleTask('actions', () => {
+      component.scheduleTask('actions', () => {
         hasRun = true;
         assert.ok(true, 'callback was called');
       });
@@ -151,10 +142,10 @@ module('ember-lifeline/mixins/run', function(hooks) {
   test('scheduleTask invokes named functions as async tasks', function(assert) {
     assert.expect(5);
 
-    let subject = this.subject({
+    let component = this.getComponent({
       run(name) {
         hasRun = true;
-        assert.equal(this, subject, 'context is correct');
+        assert.equal(this, component, 'context is correct');
         assert.equal(name, 'foo', 'passed arguments are correct');
         assert.ok(true, 'callback was called');
       },
@@ -162,7 +153,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     let hasRun = false;
 
     run(() => {
-      subject.scheduleTask('actions', 'run', 'foo');
+      component.scheduleTask('actions', 'run', 'foo');
       assert.notOk(hasRun, 'callback should not have run yet');
     });
 
@@ -171,17 +162,17 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('cancels tasks added with `scheduleTask`', function(assert) {
     assert.expect(2);
-    let subject = this.subject();
+    let component = this.getComponent();
     let hasRun = false;
 
     run(() => {
-      subject.scheduleTask('actions', () => {
+      component.scheduleTask('actions', () => {
         hasRun = true;
         assert.ok(false, 'callback was called');
       });
 
       assert.notOk(hasRun, 'callback should not have run yet');
-      run(subject, 'destroy');
+      run(component, 'destroy');
     });
 
     assert.notOk(hasRun, 'callback should not have run yet');
@@ -189,15 +180,15 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('scheduleTask tasks can be canceled', function(assert) {
     assert.expect(1);
-    let subject = this.subject();
+    let component = this.getComponent();
     let hasRun = false;
 
     run(() => {
-      let timer = subject.scheduleTask('actions', () => {
+      let timer = component.scheduleTask('actions', () => {
         hasRun = true;
       });
 
-      subject.cancelTask(timer);
+      component.cancelTask(timer);
     });
 
     assert.notOk(hasRun, 'callback should have been canceled previously');
@@ -208,16 +199,16 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     let done = assert.async();
     let runCount = 0;
-    let subject = this.subject({
+    let component = this.getComponent({
       doStuff() {
         runCount++;
-        assert.equal(this, subject, 'context is correct');
+        assert.equal(this, component, 'context is correct');
       },
     });
 
-    let cancelId = subject.throttleTask('doStuff', 5, false);
-    subject.cancelThrottle(cancelId);
-    subject.throttleTask('doStuff', 5, false);
+    let cancelId = component.throttleTask('doStuff', 5, false);
+    component.cancelThrottle(cancelId);
+    component.throttleTask('doStuff', 5, false);
 
     window.setTimeout(() => {
       assert.equal(
@@ -232,11 +223,11 @@ module('ember-lifeline/mixins/run', function(hooks) {
   test('No error should be thrown by QUnit (throttles should be cleaned up)', function(assert) {
     assert.expect(0);
 
-    let subject = this.subject({
+    let component = this.getComponent({
       doStuff() {},
     });
 
-    subject.throttleTask('doStuff', 5);
+    component.throttleTask('doStuff', 5);
   });
 
   test('debounceTask runs tasks', function(assert) {
@@ -245,17 +236,17 @@ module('ember-lifeline/mixins/run', function(hooks) {
     let done = assert.async();
     let runCount = 0;
     let runArg;
-    let subject = this.subject({
+    let component = this.getComponent({
       doStuff(arg) {
         runCount++;
-        assert.equal(this, subject, 'context is correct');
+        assert.equal(this, component, 'context is correct');
         runArg = arg;
       },
     });
 
-    subject.debounceTask('doStuff', 'arg1', 5);
-    subject.debounceTask('doStuff', 'arg2', 5);
-    subject.debounceTask('doStuff', 'arg3', 5);
+    component.debounceTask('doStuff', 'arg1', 5);
+    component.debounceTask('doStuff', 'arg2', 5);
+    component.debounceTask('doStuff', 'arg3', 5);
 
     assert.equal(runCount, 0, 'should not have run');
 
@@ -271,15 +262,15 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.expect(2);
 
     let runCount = 0;
-    let subject = this.subject({
+    let component = this.getComponent({
       doStuff() {
         runCount++;
       },
     });
 
-    subject.debounceTask('doStuff', 5);
-    subject.debounceTask('doStuff', 5);
-    run(subject, 'destroy');
+    component.debounceTask('doStuff', 5);
+    component.debounceTask('doStuff', 5);
+    run(component, 'destroy');
 
     assert.equal(runCount, 0, 'should not have run');
 
@@ -294,15 +285,15 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.expect(2);
 
     let runCount = 0;
-    let subject = this.subject({
+    let component = this.getComponent({
       doStuff() {
         runCount++;
       },
     });
 
-    subject.debounceTask('doStuff', 5);
-    subject.debounceTask('doStuff', 5);
-    subject.cancelDebounce('doStuff');
+    component.debounceTask('doStuff', 5);
+    component.debounceTask('doStuff', 5);
+    component.cancelDebounce('doStuff');
 
     assert.equal(runCount, 0, 'should not have run');
 
@@ -313,36 +304,36 @@ module('ember-lifeline/mixins/run', function(hooks) {
   });
 
   test('debounceTask triggers an assertion when a string is not the first argument', function(assert) {
-    let subject = this.subject({
+    let component = this.getComponent({
       doStuff() {},
     });
 
     assert.throws(() => {
-      subject.debounceTask(subject.doStuff, 5);
+      component.debounceTask(component.doStuff, 5);
     }, /without a string as the first argument/);
   });
 
   test('debounceTask triggers an assertion the function name provided does not exist on the object', function(assert) {
-    let subject = this.subject();
+    let component = this.getComponent();
 
     assert.throws(() => {
-      subject.debounceTask('doStuff', 5);
+      component.debounceTask('doStuff', 5);
     }, /is not a function/);
   });
 
   test('pollTask provides ability to poll with callback provided', function(assert) {
     assert.expect(2);
     setShouldPoll(() => true);
-    let subject = this.subject();
+    let component = this.getComponent();
     let calledTimes = 0;
 
-    subject.pollTask(next => {
+    component.pollTask(next => {
       calledTimes++;
 
       if (calledTimes === 5) {
         assert.ok(true, 'polled successfully');
       } else {
-        subject.runTask(next, 5);
+        component.runTask(next, 5);
       }
     });
 
@@ -356,20 +347,20 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.expect(3);
     setShouldPoll(() => true);
     let calledTimes = 0;
-    let subject = this.subject({
+    let component = this.getComponent({
       run(next) {
         calledTimes++;
 
         if (calledTimes === 5) {
-          assert.equal(this, subject, 'context is correct');
+          assert.equal(this, component, 'context is correct');
           assert.ok(true, 'polled successfully');
         } else {
-          subject.runTask(next, 5);
+          component.runTask(next, 5);
         }
       },
     });
 
-    subject.pollTask('run');
+    component.pollTask('run');
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -379,29 +370,29 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('pollTask calls callback once in testing mode', function(assert) {
     assert.expect(2);
-    let subject = this.subject();
+    let component = this.getComponent();
     let calledTimes = 0;
 
-    subject.pollTask(next => {
+    component.pollTask(next => {
       calledTimes++;
 
       if (calledTimes > 1) {
         assert.ok(false, 'should not be called more than once');
       }
 
-      subject.runTask(next, 5);
+      component.runTask(next, 5);
     });
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
     // test string form
-    subject.run = function(next) {
+    component.run = function(next) {
       calledTimes++;
 
-      subject.runTask(next, 5);
+      component.runTask(next, 5);
     };
 
-    subject.pollTask('run');
+    component.pollTask('run');
     assert.equal(calledTimes, 2, 'pollTask executed with method name properly');
 
     // ensure that pending pollTask's are not running
@@ -410,17 +401,17 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('pollTask next tick can be incremented via test helper with callback', function(assert) {
     assert.expect(2);
-    let subject = this.subject();
+    let component = this.getComponent();
     let calledTimes = 0;
 
-    let token = subject.pollTask(next => {
+    let token = component.pollTask(next => {
       calledTimes++;
 
       if (calledTimes > 2) {
         assert.ok(false, 'should not be called more than twice');
       }
 
-      subject.runTask(next, 5);
+      component.runTask(next, 5);
     });
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
@@ -442,7 +433,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
   test('pollTask next tick can be incremented via test helper with method name', function(assert) {
     assert.expect(2);
     let calledTimes = 0;
-    let subject = this.subject({
+    let component = this.getComponent({
       run(next) {
         calledTimes++;
 
@@ -450,11 +441,11 @@ module('ember-lifeline/mixins/run', function(hooks) {
           assert.ok(false, 'should not be called more than twice');
         }
 
-        subject.runTask(next, 5);
+        component.runTask(next, 5);
       },
     });
 
-    let token = subject.pollTask('run');
+    let token = component.pollTask('run');
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -475,10 +466,10 @@ module('ember-lifeline/mixins/run', function(hooks) {
   test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
     assert.expect(3);
 
-    let subject = this.subject();
+    let component = this.getComponent();
     let calledTimes = 0;
 
-    let token = subject.pollTask(() => {
+    let token = component.pollTask(() => {
       calledTimes++;
 
       if (calledTimes > 2) {
@@ -500,23 +491,23 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('pollTask does not leak when destroyed', function(assert) {
     assert.expect(3);
-    let subject = this.subject();
+    let component = this.getComponent();
 
-    let token = subject.pollTask(next => {
-      subject.runTask(next);
+    let token = component.pollTask(next => {
+      component.runTask(next);
     });
 
-    run(subject, 'destroy');
+    run(component, 'destroy');
 
     assert.throws(() => {
       pollTaskFor(token);
     }, `A pollTask with a token of ${token} was not found`);
 
-    subject = this.subject({ force: true });
+    component = this.getComponent({ force: true });
 
-    token = subject.pollTask(next => {
+    token = component.pollTask(next => {
       assert.ok(true, 'pollTask was called');
-      subject.runTask(next, 5);
+      component.runTask(next, 5);
     });
 
     // ensure that pending pollTask's are not running
@@ -527,23 +518,23 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
   test('pollTask can be manually cleared', function(assert) {
     assert.expect(3);
-    let subject = this.subject();
+    let component = this.getComponent();
 
-    let token = subject.pollTask(next => {
-      subject.runTask(next);
+    let token = component.pollTask(next => {
+      component.runTask(next);
     });
 
-    subject.cancelPoll(token);
+    component.cancelPoll(token);
 
     assert.throws(() => {
       pollTaskFor(token);
     }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
 
-    subject = this.subject({ force: true });
+    component = this.getComponent({ force: true });
 
-    token = subject.pollTask(next => {
+    token = component.pollTask(next => {
       assert.ok(true, 'pollTask was called');
-      subject.runTask(next, 5);
+      component.runTask(next, 5);
     });
 
     // ensure that pending pollTask's are not running

@@ -13,12 +13,12 @@ module('ember-lifeline/run-task', function(hooks) {
   hooks.beforeEach(function() {
     this.BaseObject = EmberObject.extend();
 
-    this.subject = function() {
-      if (this._subject) {
-        return this._subject;
+    this.getComponent = function() {
+      if (this._component) {
+        return this._component;
       }
 
-      return (this._subject = this.BaseObject.create(...arguments));
+      return (this._component = this.BaseObject.create(...arguments));
     };
   });
 
@@ -29,7 +29,7 @@ module('ember-lifeline/run-task', function(hooks) {
   test('invokes async tasks', function(assert) {
     assert.expect(2);
 
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
@@ -49,7 +49,7 @@ module('ember-lifeline/run-task', function(hooks) {
   test('invokes named functions as async tasks', function(assert) {
     assert.expect(3);
     let done = assert.async();
-    let obj = (this.obj = this.subject({
+    let obj = (this.obj = this.getComponent({
       run() {
         hasRun = true;
         assert.equal(this, obj, 'context is correct');
@@ -66,7 +66,7 @@ module('ember-lifeline/run-task', function(hooks) {
 
   test('invokes async tasks with delay', function(assert) {
     assert.expect(3);
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
@@ -89,7 +89,7 @@ module('ember-lifeline/run-task', function(hooks) {
 
   test('runTask tasks can be canceled', function(assert) {
     assert.expect(1);
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let done = assert.async();
     let hasRun = false;
 
@@ -112,7 +112,7 @@ module('ember-lifeline/run-task', function(hooks) {
   test('scheduleTask invokes async tasks', function(assert) {
     assert.expect(3);
 
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let hasRun = false;
 
     run(() => {
@@ -130,7 +130,7 @@ module('ember-lifeline/run-task', function(hooks) {
   test('scheduleTask invokes named functions as async tasks', function(assert) {
     assert.expect(5);
 
-    let obj = (this.obj = this.subject({
+    let obj = (this.obj = this.getComponent({
       run(name) {
         hasRun = true;
         assert.equal(this, obj, 'context is correct');
@@ -150,7 +150,7 @@ module('ember-lifeline/run-task', function(hooks) {
 
   test('scheduleTask tasks can be canceled', function(assert) {
     assert.expect(1);
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let hasRun = false;
 
     run(() => {
@@ -165,7 +165,7 @@ module('ember-lifeline/run-task', function(hooks) {
   });
 
   test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
-    this.obj = this.subject({
+    this.obj = this.getComponent({
       doStuff() {},
     });
 
@@ -175,7 +175,7 @@ module('ember-lifeline/run-task', function(hooks) {
   });
 
   test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
-    this.obj = this.subject();
+    this.obj = this.getComponent();
 
     assert.throws(() => {
       throttleTask(this.obj, 'doStuff', 5);

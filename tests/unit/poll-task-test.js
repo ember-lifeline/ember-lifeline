@@ -16,17 +16,17 @@ module('ember-lifeline/poll-task', function(hooks) {
   hooks.beforeEach(function() {
     this.BaseObject = EmberObject.extend();
 
-    this.subject = function({ force } = {}) {
-      if (force && this._subject) {
-        run(this._subject, 'destroy');
-        this._subject = null;
+    this.getComponent = function({ force } = {}) {
+      if (force && this._component) {
+        run(this._component, 'destroy');
+        this._component = null;
       }
 
-      if (this._subject) {
-        return this._subject;
+      if (this._component) {
+        return this._component;
       }
 
-      return (this._subject = this.BaseObject.create(...arguments));
+      return (this._component = this.BaseObject.create(...arguments));
     };
   });
 
@@ -38,7 +38,7 @@ module('ember-lifeline/poll-task', function(hooks) {
   test('pollTask provides ability to poll with callback provided', function(assert) {
     assert.expect(2);
     setShouldPoll(() => true);
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let calledTimes = 0;
 
     pollTask(this.obj, next => {
@@ -61,7 +61,7 @@ module('ember-lifeline/poll-task', function(hooks) {
     assert.expect(3);
     setShouldPoll(() => true);
     let calledTimes = 0;
-    let obj = (this.obj = this.subject({
+    let obj = (this.obj = this.getComponent({
       run(next) {
         calledTimes++;
 
@@ -84,7 +84,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask calls callback once in testing mode', function(assert) {
     assert.expect(2);
-    let obj = (this.obj = this.subject());
+    let obj = (this.obj = this.getComponent());
     let calledTimes = 0;
 
     pollTask(this.obj, next => {
@@ -115,7 +115,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask next tick can be incremented via test helper with callback', function(assert) {
     assert.expect(2);
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let calledTimes = 0;
 
     let token = pollTask(this.obj, next => {
@@ -147,7 +147,7 @@ module('ember-lifeline/poll-task', function(hooks) {
   test('pollTask next tick can be incremented via test helper with method name', function(assert) {
     assert.expect(2);
     let calledTimes = 0;
-    let obj = (this.obj = this.subject({
+    let obj = (this.obj = this.getComponent({
       run(next) {
         calledTimes++;
 
@@ -180,7 +180,7 @@ module('ember-lifeline/poll-task', function(hooks) {
   test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
     assert.expect(3);
 
-    this.obj = this.subject();
+    this.obj = this.getComponent();
     let calledTimes = 0;
 
     let token = pollTask(this.obj, () => {
@@ -205,7 +205,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask can be manually cleared', function(assert) {
     assert.expect(3);
-    this.obj = this.subject();
+    this.obj = this.getComponent();
 
     let token = pollTask(this.obj, next => {
       runTask(this.obj, next);
@@ -217,7 +217,7 @@ module('ember-lifeline/poll-task', function(hooks) {
       pollTaskFor(token);
     }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
 
-    this.obj = this.subject({ force: true });
+    this.obj = this.getComponent({ force: true });
 
     token = pollTask(this.obj, next => {
       assert.ok(true, 'pollTask was called');

@@ -6,12 +6,12 @@ module('ember-lifeline/debounce-task', function(hooks) {
   hooks.beforeEach(function() {
     this.BaseObject = EmberObject.extend();
 
-    this.subject = function() {
-      if (this._subject) {
-        return this._subject;
+    this.getComponent = function() {
+      if (this._component) {
+        return this._component;
       }
 
-      return (this._subject = this.BaseObject.create(...arguments));
+      return (this._component = this.BaseObject.create(...arguments));
     };
   });
 
@@ -25,7 +25,7 @@ module('ember-lifeline/debounce-task', function(hooks) {
     let done = assert.async();
     let runCount = 0;
     let runArg;
-    let obj = (this.obj = this.subject({
+    let obj = (this.obj = this.getComponent({
       doStuff(arg) {
         runCount++;
         assert.equal(this, obj, 'context is correct');
@@ -51,7 +51,7 @@ module('ember-lifeline/debounce-task', function(hooks) {
     assert.expect(2);
 
     let runCount = 0;
-    this.obj = this.subject({
+    this.obj = this.getComponent({
       doStuff() {
         runCount++;
       },
