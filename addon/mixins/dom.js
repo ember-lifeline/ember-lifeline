@@ -108,9 +108,9 @@ export default Mixin.create({
   },
 
   destroy() {
-    this._super(...arguments);
-
     runDisposables(this);
+
+    this._super(...arguments);
   },
 });
 

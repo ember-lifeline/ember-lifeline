@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { assert } from '@ember/debug';
 import { run } from '@ember/runloop';
 import { registerDisposable } from './utils/disposable';
 
@@ -84,8 +85,13 @@ const INDEX = {
    @public
    */
 export function addEventListener(obj, element, eventName, _callback, options) {
-  let callback = run.bind(obj, _callback);
+  assert('Must provide a DOM element when using addEventListener', !!element);
+  assert(
+    'Must provide an element (not a DOM selector) when using addEventListener.',
+    element instanceof Element
+  );
 
+  let callback = run.bind(obj, _callback);
   let listeners = getEventListeners(obj);
 
   if (!PASSIVE_SUPPORTED) {
@@ -110,6 +116,15 @@ export function removeEventListener(
   callback,
   options
 ) {
+  assert(
+    'Must provide a DOM element when using removeEventListener',
+    !!element
+  );
+  assert(
+    'Must provide an element (not a DOM selector) when using removeEventListener.',
+    element instanceof Element
+  );
+
   let listeners = getEventListeners(obj);
 
   if (listeners.length === 0) {
