@@ -6,9 +6,13 @@ import hbs from 'htmlbars-inline-precompile';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, triggerEvent } from '@ember/test-helpers';
-import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+import {
+  runDisposables,
+  addEventListener,
+  removeEventListener,
+} from 'ember-lifeline';
 
-module('ember-lifeline/mixins/dom', function(hooks) {
+module('ember-lifeline/dom-event-listeners', function(hooks) {
   setupRenderingTest(hooks);
 
   hooks.beforeEach(function() {
@@ -17,10 +21,16 @@ module('ember-lifeline/mixins/dom', function(hooks) {
 
     this.owner.register(
       name,
-      Component.extend(ContextBoundEventListenersMixin, {
+      Component.extend({
         init() {
           this._super(...arguments);
           testContext.componentInstance = this;
+        },
+
+        destroy() {
+          this._super(...arguments);
+
+          runDisposables(this);
         },
       })
     );
@@ -49,13 +59,15 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       );
       await render(hbs`{{under-test}}`);
       let component = this.componentInstance;
+      let childElement = find('.foo');
 
       let calls = 0;
       let hadRunloop = null;
       let handledEvent = null;
 
-      component.addEventListener(
-        '.foo',
+      addEventListener(
+        component,
+        childElement,
         'click',
         event => {
           calls++;
@@ -77,42 +89,6 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       );
     });
 
-    test(`${testName} adds event listener to component's element when not providing element`, async function(assert) {
-      assert.expect(4);
-
-      this.owner.register(
-        'template:components/under-test',
-        hbs`<span class="foo"></span>`
-      );
-      await render(hbs`{{under-test}}`);
-      let component = this.componentInstance;
-
-      let calls = 0;
-      let hadRunloop = null;
-      let handledEvent = null;
-
-      component.addEventListener(
-        'click',
-        event => {
-          calls++;
-          hadRunloop = !!run.currentRunLoop;
-          handledEvent = event;
-        },
-        testedOptions
-      );
-
-      component.element.dispatchEvent(new Event('click'));
-
-      assert.equal(calls, 1, 'callback was called');
-      assert.ok(hadRunloop, 'callback was called in runloop');
-      assert.ok(handledEvent.target, 'callback passed a target');
-      assert.equal(
-        handledEvent.target.className,
-        'ember-view',
-        'target has the expected class'
-      );
-    });
-
     test(`${testName} adds event listener to child element with multiple handler args`, async function(assert) {
       assert.expect(4);
 
@@ -122,13 +98,15 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       );
       await render(hbs`{{under-test}}`);
       let component = this.componentInstance;
+      let childElement = component.element.querySelector('.foo');
 
       let calls = 0;
       let hadRunloop = null;
       let handledArgs = null;
 
-      component.addEventListener(
-        '.foo',
+      addEventListener(
+        component,
+        childElement,
         'drag',
         (...args) => {
           calls++;
@@ -166,7 +144,8 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       let handledEvent = null;
       let element = find('.foo');
 
-      component.addEventListener(
+      addEventListener(
+        component,
         element,
         'click',
         event => {
@@ -197,80 +176,39 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       assert.equal(ranCallback, 1, 'callback was not called a second time');
     });
 
-    test(`${testName} throws when there is no element to attach to`, async function(assert) {
-      assert.expect(1);
+    test(`${testName} throws when called with incorrect arguments`, async function(assert) {
+      assert.expect(4);
 
       await render(hbs`{{under-test}}`);
       let component = this.componentInstance;
 
       assert.throws(() => {
-        component.addEventListener('.foo', 'click', () => {}, testedOptions);
-      }, /Called \w+ with selector not found in DOM: .foo/);
-    });
-
-    test(`${testName} throws when attached before rendering`, function(assert) {
-      assert.expect(1);
-
-      let component = this.Component.create();
+        addEventListener(component, null, 'click', () => {}, testedOptions);
+      }, /Must provide a DOM element/);
 
       assert.throws(() => {
-        component.addEventListener('.foo', 'click', () => {}, testedOptions);
-      }, /Called \w+ with a css selector before the component was rendered/);
-    });
-
-    test(`${testName} adds event listener to non-child element in tagless component`, async function(assert) {
-      assert.expect(5);
-
-      this.set('show', true);
-      await render(
-        hbs`{{#if show}}{{under-test tagName=""}}{{/if}}<span class="foo"></span>`
-      );
-      let component = this.componentInstance;
-
-      let calls = 0;
-      let hadRunloop = null;
-      let handledEvent = null;
-
-      component.addEventListener(
-        find('.foo'),
-        'click',
-        event => {
-          calls++;
-          hadRunloop = !!run.currentRunLoop;
-          handledEvent = event;
-        },
-        testedOptions
-      );
-
-      await triggerEvent('.foo', 'click');
-
-      assert.equal(calls, 1, 'callback was called');
-      assert.ok(hadRunloop, 'callback was called in runloop');
-      assert.ok(!!handledEvent.target, 'callback passed a target');
-      assert.equal(
-        handledEvent.target.className,
-        'foo',
-        'target has the expected class'
-      );
-
-      this.set('show', false);
-
-      // Trigger the event on the non-child element again, after the component
-      // is removed from DOM. The listener should not fire this time.
-      await triggerEvent('.foo', 'click');
-
-      assert.equal(calls, 1, 'callback was not called again');
-    });
-
-    test(`${testName} throws when using a string selector in a tagless component`, async function(assert) {
-      assert.expect(1);
-
-      await render(hbs`{{under-test tagName=""}}<span class="foo"></span>`);
-      let component = this.componentInstance;
+        addEventListener(component, {}, 'click', () => {}, testedOptions);
+      }, /Must provide an element \(not a DOM selector\)/);
 
       assert.throws(() => {
-        component.addEventListener('.foo', 'click', () => {}, testedOptions);
-      }, /Must provide an element/);
+        addEventListener(
+          component,
+          component.element,
+          null,
+          () => {},
+          testedOptions
+        );
+      }, /Must provide an eventName that specifies the event type/);
+
+      assert.throws(() => {
+        addEventListener(
+          component,
+          component.element,
+          'click',
+          null,
+          testedOptions
+        );
+      }, /Must provide a callback to run for the given event name/);
     });
 
     test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, async function(assert) {
@@ -279,19 +217,29 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       let testContext = this;
       this.owner.register(
         'component:under-test-a',
-        Component.extend(ContextBoundEventListenersMixin, {
+        Component.extend({
           init() {
             this._super(...arguments);
             testContext.subjectA = this;
+          },
+          destroy() {
+            this._super(...arguments);
+
+            runDisposables(this);
           },
         })
       );
       this.owner.register(
         'component:under-test-b',
-        Component.extend(ContextBoundEventListenersMixin, {
+        Component.extend({
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
+          },
+          destroy() {
+            this._super(...arguments);
+
+            runDisposables(this);
           },
         })
       );
@@ -309,8 +257,8 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       let callback = () => {
         calls++;
       };
-      subjectA.addEventListener(target, 'click', callback, testedOptions);
-      subjectB.addEventListener(target, 'click', callback, testedOptions);
+      addEventListener(subjectA, target, 'click', callback, testedOptions);
+      addEventListener(subjectB, target, 'click', callback, testedOptions);
 
       target.click();
       assert.equal(calls, 2, 'two callbacks called');
@@ -328,19 +276,29 @@ module('ember-lifeline/mixins/dom', function(hooks) {
 
       this.owner.register(
         'component:under-test-a',
-        Component.extend(ContextBoundEventListenersMixin, {
+        Component.extend({
           init() {
             this._super(...arguments);
             testContext.subjectA = this;
+          },
+          destroy() {
+            this._super(...arguments);
+
+            runDisposables(this);
           },
         })
       );
       this.owner.register(
         'component:under-test-b',
-        Component.extend(ContextBoundEventListenersMixin, {
+        Component.extend({
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
+          },
+          destroy() {
+            this._super(...arguments);
+
+            runDisposables(this);
           },
         })
       );
@@ -357,13 +315,15 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         };
       };
 
-      subjectA.addEventListener(
+      addEventListener(
+        subjectA,
         target,
         'click',
         assertScope(subjectA),
         testedOptions
       );
-      subjectB.addEventListener(
+      addEventListener(
+        subjectB,
         target,
         'click',
         assertScope(subjectB),
@@ -389,10 +349,11 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       let listener = () => {
         calls++;
       };
+      let element = find('.foo');
 
-      component.addEventListener('.foo', 'click', listener, testedOptions);
+      addEventListener(component, element, 'click', listener, testedOptions);
 
-      component.removeEventListener('.foo', 'click', listener, testedOptions);
+      removeEventListener(component, element, 'click', listener, testedOptions);
 
       await triggerEvent(component.element.firstChild, 'click');
 
@@ -406,20 +367,27 @@ module('ember-lifeline/mixins/dom', function(hooks) {
 
       this.owner.register(
         'service:under-test',
-        Service.extend(ContextBoundEventListenersMixin)
+        Service.extend({
+          destroy() {
+            runDisposables(this);
+
+            this._super(...arguments);
+          },
+        })
       );
 
       let factory = this.owner.factoryFor
         ? this.owner.factoryFor(serviceName)
         : this.owner._lookupFactory(serviceName);
-      let component = factory.create();
+      let service = factory.create();
 
       await render(hbs`<span class="foo"></span>`);
 
       let calls = 0;
       let hadRunloop = null;
       let handledEvent = null;
-      component.addEventListener(
+      addEventListener(
+        service,
         find('.foo'),
         'click',
         event => {
@@ -441,7 +409,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         'target has the expected class'
       );
 
-      run(() => component.destroy()); // Listeners should be removed when the service is destroyed
+      run(() => service.destroy()); // Listeners should be removed when the service is destroyed
 
       await triggerEvent('.foo', 'click');
 
@@ -450,26 +418,6 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         1,
         'callback is not called again once the instance is destroyed'
       );
-    });
-
-    test(`${testName} throws when a css selector is passed in from a service instance`, async function(assert) {
-      assert.expect(1);
-
-      let serviceName = 'service:under-test';
-
-      this.owner.register(
-        'service:under-test',
-        Service.extend(ContextBoundEventListenersMixin)
-      );
-
-      let factory = this.owner.factoryFor
-        ? this.owner.factoryFor(serviceName)
-        : this.owner._lookupFactory(serviceName);
-      let component = factory.create();
-
-      assert.throws(() => {
-        component.addEventListener('.foo', 'click', () => {}, testedOptions);
-      }, /Must provide an element/);
     });
   });
 
@@ -482,13 +430,16 @@ module('ember-lifeline/mixins/dom', function(hooks) {
     );
     await render(hbs`{{under-test}}`);
     let component = this.componentInstance;
+    let outer = find('.outer');
+    let inner = find('.inner');
 
     let outerCalls = 0;
-    component.addEventListener('.outer', 'click', () => outerCalls++);
+    addEventListener(component, outer, 'click', () => outerCalls++);
 
     let innerCalls = 0;
-    component.addEventListener(
-      '.inner',
+    addEventListener(
+      component,
+      inner,
       'click',
       e => {
         innerCalls++;
@@ -521,7 +472,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
     };
     let element = find('.foo');
 
-    component.addEventListener('.foo', 'click', listener, { once: true });
+    addEventListener(component, element, 'click', listener, { once: true });
 
     await triggerEvent(element, 'click');
     assert.equal(calls, 1, 'callback was called once');

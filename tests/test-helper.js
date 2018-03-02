@@ -1,10 +1,11 @@
 import Ember from 'ember';
-import resolver from './helpers/resolver';
 import QUnit from 'qunit';
-import { setResolver } from 'ember-qunit';
+import Application from '../app';
+import config from '../config/environment';
+import { setApplication } from '@ember/test-helpers';
 import { start } from 'ember-cli-qunit';
 
-setResolver(resolver);
+setApplication(Application.create(config.APP));
 start();
 
 const TESTS_WITH_LEAKY_ASYNC = [];
