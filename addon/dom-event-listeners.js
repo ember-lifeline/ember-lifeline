@@ -152,19 +152,19 @@ function assertArguments(element, eventName, callback) {
   assert('Must provide a callback to run for the given event name', !!callback);
 }
 
-function getEventListenersDisposable(eventListeners) {
+function getEventListenersDisposable(listeners) {
   return function() {
-    if (eventListeners !== undefined) {
+    if (listeners !== undefined) {
       /* Drop non-passive event listeners */
-      for (let i = 0; i < eventListeners.length; i += LISTENER_ITEM_LENGTH) {
-        let element = eventListeners[i + INDEX.ELEMENT];
-        let eventName = eventListeners[i + INDEX.EVENT_NAME];
-        let callback = eventListeners[i + INDEX.CALLBACK];
-        let options = eventListeners[i + INDEX.OPTIONS];
+      for (let i = 0; i < listeners.length; i += LISTENER_ITEM_LENGTH) {
+        let element = listeners[i + INDEX.ELEMENT];
+        let eventName = listeners[i + INDEX.EVENT_NAME];
+        let callback = listeners[i + INDEX.CALLBACK];
+        let options = listeners[i + INDEX.OPTIONS];
 
         element.removeEventListener(eventName, callback, options);
       }
-      eventListeners.length = 0;
+      listeners.length = 0;
     }
   };
 }
