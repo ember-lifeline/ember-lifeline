@@ -80,32 +80,28 @@ const INDEX = {
    @method addEventListener
    @param { Object } obj the instance to attach the listener for
    @param { String } selector the DOM selector or element
-   @param { String } _eventName the event name to listen for
-   @param { Function } _callback the callback to run for that event
+   @param { String } eventName the event name to listen for
+   @param { Function } callback the callback to run for that event
    @public
    */
-export function addEventListener(obj, element, eventName, _callback, options) {
-  assert('Must provide a DOM element when using addEventListener', !!element);
-  assert(
-    'Must provide an element (not a DOM selector) when using addEventListener.',
-    element instanceof Element
-  );
+export function addEventListener(obj, element, eventName, callback, options) {
+  assertArguments(element, eventName, callback);
 
-  let callback = run.bind(obj, _callback);
+  let _callback = run.bind(obj, callback);
   let listeners = getEventListeners(obj);
 
   if (!PASSIVE_SUPPORTED) {
     options = undefined;
   }
 
-  element.addEventListener(eventName, callback, options);
-  listeners.push(element, eventName, callback, _callback, options);
+  element.addEventListener(eventName, _callback, options);
+  listeners.push(element, eventName, _callback, callback, options);
 }
 
 /**
    @param { Object } obj the instance to remove the listener for
    @param { String } selector the DOM selector or element
-   @param { String } _eventName the event name to listen for
+   @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
    @public
    */
@@ -116,14 +112,7 @@ export function removeEventListener(
   callback,
   options
 ) {
-  assert(
-    'Must provide a DOM element when using removeEventListener',
-    !!element
-  );
-  assert(
-    'Must provide an element (not a DOM selector) when using removeEventListener.',
-    element instanceof Element
-  );
+  assertArguments(element, eventName, callback);
 
   let listeners = getEventListeners(obj);
 
@@ -153,6 +142,16 @@ export function removeEventListener(
   }
 }
 
+function assertArguments(element, eventName, callback) {
+  assert('Must provide a DOM element', !!element);
+  assert('Must provide an element (not a DOM selector)', !!element.nodeType);
+  assert(
+    'Must provide an eventName that specifies the event type',
+    !!eventName
+  );
+  assert('Must provide a callback to run for the given event name', !!callback);
+}
+
 function getEventListenersDisposable(eventListeners) {
   return function() {
     if (eventListeners !== undefined) {
@@ -173,7 +172,7 @@ function getEventListenersDisposable(eventListeners) {
 function getEventListeners(obj) {
   let listeners = eventListeners.get(obj);
 
-  if (!listeners) {
+  if (listeners === undefined) {
     listeners = [];
     eventListeners.set(obj, listeners);
     registerDisposable(obj, getEventListenersDisposable(listeners));

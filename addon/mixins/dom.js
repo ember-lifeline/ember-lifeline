@@ -75,6 +75,7 @@ export default Mixin.create({
     // If no element is provided, we assume we're adding the event listener to the component's element. This
     // addresses use cases where we want to bind events like `scroll` to the component's root element.
     if (this.isComponent && typeof eventName === 'function') {
+      options = callback;
       callback = eventName;
       eventName = selector;
       element = this.element;

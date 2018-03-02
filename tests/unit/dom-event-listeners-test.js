@@ -176,15 +176,39 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       assert.equal(ranCallback, 1, 'callback was not called a second time');
     });
 
-    test(`${testName} throws when there is no element to attach to`, async function(assert) {
-      assert.expect(1);
+    test(`${testName} throws when called with incorrect arguments`, async function(assert) {
+      assert.expect(4);
 
       await render(hbs`{{under-test}}`);
       let component = this.componentInstance;
 
       assert.throws(() => {
         addEventListener(component, null, 'click', () => {}, testedOptions);
-      }, /Must provide a DOM element when using addEventListener/);
+      }, /Must provide a DOM element/);
+
+      assert.throws(() => {
+        addEventListener(component, {}, 'click', () => {}, testedOptions);
+      }, /Must provide an element \(not a DOM selector\)/);
+
+      assert.throws(() => {
+        addEventListener(
+          component,
+          component.element,
+          null,
+          () => {},
+          testedOptions
+        );
+      }, /Must provide an eventName that specifies the event type/);
+
+      assert.throws(() => {
+        addEventListener(
+          component,
+          component.element,
+          'click',
+          null,
+          testedOptions
+        );
+      }, /Must provide a callback to run for the given event name/);
     });
 
     test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, async function(assert) {
