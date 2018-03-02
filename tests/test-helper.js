@@ -12,18 +12,14 @@ const TESTS_WITH_LEAKY_ASYNC = [];
 const { run } = Ember;
 
 QUnit.testStart(() => {
-  performance.mark('test-start');
   Ember.testing = true;
 });
 
 QUnit.testDone(({ module, name }) => {
-  performance.mark('test-end');
   if (run.hasScheduledTimers()) {
     TESTS_WITH_LEAKY_ASYNC.push(`${module}: ${name}`);
     run.cancelTimers();
   }
-
-  performance.measure('test', 'test-start', 'test-end');
 
   Ember.testing = false;
 });
