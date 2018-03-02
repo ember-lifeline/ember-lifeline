@@ -164,7 +164,7 @@ function getEventListenersDisposable(eventListeners) {
 
         element.removeEventListener(eventName, callback, options);
       }
-      eventListeners = undefined;
+      eventListeners.length = 0;
     }
   };
 }
