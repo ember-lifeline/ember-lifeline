@@ -1,4 +1,12 @@
 
+v2.1.0 / 2018-03-03
+==================
+
+  * Instance arrays for tracking task and event dependencies for objects deprecated in favor of using
+    WeakMaps to track the association and eventual tear down of resources
+  * APIs expanded to include functional counterparts
+  * Mixin surface area reduced in favor of delegating to functional equivalent
+
 v2.0.0 / 2017-11-16
 ==================
 
