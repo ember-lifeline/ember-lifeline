@@ -5,6 +5,7 @@ import {
   registeredDisposables,
   registerDisposable,
   runDisposables,
+  hasRunAllDisposables,
 } from 'ember-lifeline/utils/disposable';
 
 module('ember-lifeline/utils/disposable', function(hooks) {
@@ -118,5 +119,25 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     run(this.obj, 'destroy');
 
     assert.equal(callCount, 2, 'no disposables are registered');
+  });
+
+  test('hasRunAllDisposables returns false if all disposables have not run', function(assert) {
+    assert.expect(1);
+
+    registerDisposable(this.obj, () => {});
+
+    assert.equal(hasRunAllDisposables(), false, 'disposables have not run');
+  });
+
+  test('hasRunAllDisposables returns true if all disposables have run', function(assert) {
+    assert.expect(2);
+
+    registerDisposable(this.obj, () => {});
+
+    assert.notOk(hasRunAllDisposables(), 'disposables have not run');
+
+    run(this.obj, 'destroy');
+
+    assert.ok(hasRunAllDisposables(), 'disposables have run');
   });
 });

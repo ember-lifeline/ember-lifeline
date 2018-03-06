@@ -3,6 +3,8 @@ import { assert } from '@ember/debug';
 
 const { WeakMap } = Ember;
 
+let totalRegisteredDisposables = 0;
+
 /**
  * A map of instances/array of disposables. Only exported for
  * testing purposes.
@@ -36,6 +38,7 @@ export function registerDisposable(obj, dispose) {
   let disposables = getRegisteredDisposables(obj);
 
   disposables.push(dispose);
+  totalRegisteredDisposables++;
 }
 
 /**
@@ -55,7 +58,21 @@ export function runDisposables(obj) {
 
   for (let i = 0; i < disposables.length; i++) {
     disposables[i]();
+    totalRegisteredDisposables--;
   }
+}
+
+/**
+  Checks whether all registered disposables have been run or not.
+
+  Run means that each disposable has been executed via the `runDisposables`
+  function against an object instance.
+
+  @public
+  @returns {boolean} `true` if all disposables are run, `false` otherwise
+*/
+export function hasRunAllDisposables() {
+  return totalRegisteredDisposables === 0;
 }
 
 function getRegisteredDisposables(obj) {

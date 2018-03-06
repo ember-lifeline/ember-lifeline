@@ -40,6 +40,10 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       : this.owner._lookupFactory(name);
   });
 
+  hooks.afterEach(function() {
+    runDisposables(this.componentInstance);
+  });
+
   [
     {
       testName: 'addEventListener(_,_,_,undefined)',
@@ -267,6 +271,9 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
 
       target.click();
       assert.equal(calls, 3, 'one more callback called for remaining context');
+
+      run(subjectA, 'destroy');
+      run(subjectB, 'destroy');
     });
 
     test(`${testName} listeners are called with correct scope`, async function(assert) {
@@ -330,7 +337,10 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         testedOptions
       );
 
-      target.click();
+      await triggerEvent(target, 'click');
+
+      run(subjectA, 'destroy');
+      run(subjectB, 'destroy');
     });
 
     test(`${testName.replace(
@@ -418,6 +428,8 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         1,
         'callback is not called again once the instance is destroyed'
       );
+
+      run(service, 'destroy');
     });
   });
 
