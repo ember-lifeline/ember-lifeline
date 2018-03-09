@@ -36,6 +36,10 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     );
   });
 
+  hooks.after(function() {
+    _setRegisteredDisposables(new WeakMap());
+  });
+
   test('registerDisposable asserts params are not present', function(assert) {
     assert.expect(4);
 
