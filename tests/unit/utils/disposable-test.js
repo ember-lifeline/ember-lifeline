@@ -2,26 +2,48 @@ import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
 import {
-  registeredDisposables,
   registerDisposable,
   runDisposables,
-} from 'ember-lifeline/utils/disposable';
+  _setRegisteredDisposables,
+} from 'ember-lifeline';
 
 module('ember-lifeline/utils/disposable', function(hooks) {
   hooks.beforeEach(function() {
-    this.obj = EmberObject.create({
+    this.obj = EmberObject.extend({
       destroy() {
         runDisposables(this);
+
+        this._super(...arguments);
       },
-    });
+    }).create();
+
+    this.registeredDisposables = new Map();
+
+    _setRegisteredDisposables(this.registeredDisposables);
   });
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function(assert) {
     run(this.obj, 'destroy');
+
+    let retainedObjects = [...this.registeredDisposables.keys()].map(o =>
+      o.toString()
+    );
+
+    assert.deepEqual(
+      retainedObjects,
+      [],
+      'Registered disposables should be empty'
+    );
+
+    _setRegisteredDisposables(new WeakMap());
+  });
+
+  hooks.after(function() {
+    _setRegisteredDisposables(new WeakMap());
   });
 
   test('registerDisposable asserts params are not present', function(assert) {
-    assert.expect(2);
+    assert.expect(4);
 
     assert.throws(function() {
       registerDisposable();
@@ -30,34 +52,41 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     assert.throws(function() {
       registerDisposable({}, null);
     }, /Called `registerDisposable` where `dispose` is not a function/);
+
+    registerDisposable(this.obj, () => {});
+    run(this.obj, 'destroy');
+
+    assert.throws(function() {
+      registerDisposable(this.obj, () => {});
+    }, /Called `registerDisposable` on a destroyed object/);
   });
 
   test('registerDisposable correctly allocates array if not allocated', function(assert) {
-    assert.expect(2);
+    assert.expect(3);
 
-    assert.equal(registeredDisposables.get(this.obj), undefined);
+    assert.equal(this.registeredDisposables.get(this.obj), undefined);
 
     registerDisposable(this.obj, function() {});
 
-    assert.equal(registeredDisposables.get(this.obj).constructor, Array);
+    assert.equal(this.registeredDisposables.get(this.obj).constructor, Array);
   });
 
   test('registerDisposable adds disposable to disposables', function(assert) {
-    assert.expect(1);
+    assert.expect(2);
 
     let dispose = () => {};
 
     registerDisposable(this.obj, dispose);
 
     assert.equal(
-      registeredDisposables.get(this.obj)[0],
+      this.registeredDisposables.get(this.obj)[0],
       dispose,
       'dispose function is added to _registeredDisposables'
     );
   });
 
   test('registerDisposable adds unique disposable to disposables', function(assert) {
-    assert.expect(2);
+    assert.expect(3);
 
     let dispose = () => {};
 
@@ -65,7 +94,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
 
     assert.equal(
       dispose,
-      registeredDisposables.get(this.obj)[0],
+      this.registeredDisposables.get(this.obj)[0],
       'disposable is returned'
     );
 
@@ -75,7 +104,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
   });
 
   test('runDisposables runs all disposables when destroying', function(assert) {
-    assert.expect(2);
+    assert.expect(3);
 
     let callCount = 0;
 
@@ -97,7 +126,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
   });
 
   test('destroy integration runs all disposables when destroying', function(assert) {
-    assert.expect(2);
+    assert.expect(3);
 
     let callCount = 0;
 
@@ -111,7 +140,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     registerDisposable(this.obj, dispose);
     registerDisposable(this.obj, disposeTheSecond);
 
-    registeredDisposables.get(this.obj);
+    this.registeredDisposables.get(this.obj);
 
     assert.equal(callCount, 0, 'two disposables are registered');
 

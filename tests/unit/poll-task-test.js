@@ -14,7 +14,11 @@ import { settled } from '@ember/test-helpers';
 
 module('ember-lifeline/poll-task', function(hooks) {
   hooks.beforeEach(function() {
-    this.BaseObject = EmberObject.extend();
+    this.BaseObject = EmberObject.extend({
+      destroy() {
+        runDisposables(this);
+      },
+    });
 
     this.getComponent = function({ force } = {}) {
       if (force && this._component) {
@@ -31,7 +35,7 @@ module('ember-lifeline/poll-task', function(hooks) {
   });
 
   hooks.afterEach(function() {
-    runDisposables(this.obj);
+    run(this.obj, 'destroy');
     setShouldPoll(null);
   });
 

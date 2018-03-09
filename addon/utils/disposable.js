@@ -9,7 +9,18 @@ const { WeakMap } = Ember;
  *
  * @public
  */
-export const registeredDisposables = new WeakMap();
+let registeredDisposables = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether disposables have all been called.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredDisposables(mapForTesting) {
+  registeredDisposables = mapForTesting;
+}
 
 /**
  * Registers a new disposable function to run for an instance. Will
@@ -31,6 +42,10 @@ export function registerDisposable(obj, dispose) {
   assert(
     'Called `registerDisposable` where `dispose` is not a function',
     typeof dispose === 'function'
+  );
+  assert(
+    'Called `registerDisposable` on a destroyed object',
+    !obj.isDestroying
   );
 
   let disposables = getRegisteredDisposables(obj);
