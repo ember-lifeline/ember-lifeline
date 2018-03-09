@@ -34,6 +34,8 @@ module('ember-lifeline/utils/disposable', function(hooks) {
       [],
       'Registered disposables should be empty'
     );
+
+    _setRegisteredDisposables(new WeakMap());
   });
 
   hooks.after(function() {
