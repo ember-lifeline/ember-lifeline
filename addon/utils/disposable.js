@@ -3,15 +3,24 @@ import { assert } from '@ember/debug';
 
 const { WeakMap } = Ember;
 
-let totalRegisteredDisposables = 0;
-
 /**
  * A map of instances/array of disposables. Only exported for
  * testing purposes.
  *
  * @public
  */
-export const registeredDisposables = new WeakMap();
+let registeredDisposables = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether disposables have all been called.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredDisposables(mapForTesting) {
+  registeredDisposables = mapForTesting;
+}
 
 /**
  * Registers a new disposable function to run for an instance. Will
@@ -34,11 +43,14 @@ export function registerDisposable(obj, dispose) {
     'Called `registerDisposable` where `dispose` is not a function',
     typeof dispose === 'function'
   );
+  assert(
+    'Called `registerDisposable` on a destroyed object',
+    !obj.isDestroying
+  );
 
   let disposables = getRegisteredDisposables(obj);
 
   disposables.push(dispose);
-  totalRegisteredDisposables++;
 }
 
 /**
@@ -58,21 +70,7 @@ export function runDisposables(obj) {
 
   for (let i = 0; i < disposables.length; i++) {
     disposables[i]();
-    totalRegisteredDisposables--;
   }
-}
-
-/**
-  Checks whether all registered disposables have been run or not.
-
-  Run means that each disposable has been executed via the `runDisposables`
-  function against an object instance.
-
-  @public
-  @returns {boolean} `true` if all disposables are run, `false` otherwise
-*/
-export function hasRunAllDisposables() {
-  return totalRegisteredDisposables === 0;
 }
 
 function getRegisteredDisposables(obj) {
