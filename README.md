@@ -44,7 +44,7 @@ Additionally, lifeline exposes a primative, `disposables`, that allows you to en
 
 :warning: When importing and using lifeline's functions, it's imperative that you additionally import and call `runDisposables` during your object's `destroy` method. This ensures lifeline will correctly dispose of any remaining async work.
 
-```
+```js
 import Component from '@ember/component';
 import { runTask, runDisposables } from 'ember-lifeline';
 
@@ -81,9 +81,8 @@ be lazy in development but is disabled in tests and harms performance), a
 runloop must be added around a callstack. For example:
 
 ```js
-import Ember from 'ember';
-
-const { Component, run } = Ember;
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 
 export default Component.extend({
   init() {
@@ -107,9 +106,8 @@ timeout to the lifecycle of the context object*. If the example above is
 re-written to use `Ember.run.later`...
 
 ```js
-import Ember from 'ember';
-
-const { Component, run } = Ember;
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 
 export default Component.extend({
   init() {
@@ -128,9 +126,8 @@ a number of unexpected errors. To fix this, the codebase is littered
 with checks for `isDestroyed` state on objects retained after destruction:
 
 ```js
-import Ember from 'ember';
-
-const { Component, run } = Ember;
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 
 export default Component.extend({
   init() {
@@ -152,10 +149,8 @@ the task is also cancelled.
 Using `runTask`, the above can be written as:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { runTask, runDisposables } from 'ember-lifeline';
-
-const { Component } = Ember;
 
 export default Component.extend({
   init() {
@@ -187,9 +182,8 @@ Like `runTask`, `scheduleTask` avoids common pitfalls of deferred work.
 *`Ember.run.schedule` does not bind the scheduled work to the lifecycle of the context object*.
 
 ```js
-import Ember from 'ember';
-
-const { Component, run } = Ember;
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 
 export default Component.extend({
   init() {
@@ -207,9 +201,8 @@ as a number of unexpected errors. Fixing this issue requires checks for
 `isDestroyed` state on objects retained after destruction:
 
 ```js
-import Ember from 'ember';
-
-const { Component, run } = Ember;
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 
 export default Component.extend({
   init() {
@@ -231,10 +224,8 @@ cancelled.
 Using `scheduleTask`, the above can be written as:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { scheduleTask, runDisposables } from 'ember-lifeline';
-
-const { Component } = Ember;
 
 export default Component.extend({
   init() {
@@ -282,10 +273,8 @@ component, it will only report the time if you have stopped clicking
 for 500ms:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { debounceTask, runDisposables } from 'ember-lifeline';
-
-const { Component } = Ember;
 
 export default Component.extend({
   click() {
@@ -319,10 +308,8 @@ work itself is always run immediately. Regardless even just for
 consistency the API of `throttleTask` is presented:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { throttleTask, runDisposables } from 'ember-lifeline';
-
-const { Component } = Ember;
 
 export default Component.extend({
   click() {
@@ -352,10 +339,8 @@ enables the throttle function to use the arguments in the state they are in
 at the time the task is executed:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { throttleTask, runDisposables } from 'ember-lifeline';
-
-const { Component } = Ember;
 
 export default Component.extend({
   click(evt) {
@@ -396,7 +381,7 @@ and performance problems. Instead, you should be scheduling new work
 *after* the previous work was done. For example:
 
 ```js
-import Component from 'ember-component';
+import Component from '@ember/component';
 import { runTask, runDisposables } from 'ember-lifeline';
 
 export default Component.extend({
@@ -429,7 +414,7 @@ production. Typically, this is done something like:
 
 ```js
 import Ember from 'ember';
-import Component from 'ember-component';
+import Component from '@ember/component';
 import { runTask, runDisposables } from 'ember-lifeline';
 
 export default Component.extend({
@@ -463,12 +448,12 @@ This is where `pollTask` really shines. You could rewrite the above example to u
 like this:
 
 ```js
-import Component from 'ember-component';
-import injectService from 'ember-service/inject';
+import Component from '@ember/component';
+import { inject } from '@ember/service';
 import { runTask, pollTask, runDisposables } from 'ember-lifeline';
 
 export default Component.extend({
-  time: injectService(),
+  time: inject(),
 
   init() {
     this._super(...arguments);
@@ -505,7 +490,7 @@ functionality, use the provided `pollTaskFor` helper:
 import moduleForComponent from 'ember-qunit';
 import wait from 'ember-test-helpers/wait';
 import { pollTaskFor } from 'ember-lifeline';
-import Service from 'ember-service';
+import Service from '@ember/service';
 
 let fakeNow;
 moduleForComponent('updating-time', {
@@ -562,10 +547,9 @@ It's common to see code written to explicitly unbind event handlers from externa
 
 ```js
 // app/components/foo-bar.js
-import Ember from 'ember';
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 import DOMish from 'some-external-library';
-
-const { run } = Ember;
 
 export default Component.extend({
   init() {
@@ -600,11 +584,10 @@ This not only adds verbosity to code, but also requires that you symetrically te
 
 ```js
 // app/components/foo-bar.js
-import Ember from 'ember';
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 import { registerDisposable, runDisposables } from 'ember-lifeline';
 import DOMish from 'some-external-library';
-
-const { run } = Ember;
 
 export default Component.extend({
   init() {
@@ -658,9 +641,8 @@ this case to the detachment of that component from the DOM
 an event listener to the window in Ember:
 
 ```js
-import Ember from 'ember';
-
-const { Component, run } = Ember;
+import Component from '@ember/component';
+import { run } from '@ember/runloop';
 
 export default Component.extend({
   didInsertElement() {
@@ -682,10 +664,8 @@ This verbosity, and the need to do so many things right by hand, is very
 unfortunate. With `addEventListener` the above example can be re-written as:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { addEventListener } from 'ember-lifeline';
-
-const { Component } = Ember;
 
 export default Component.extend({
   didInsertElement() {
