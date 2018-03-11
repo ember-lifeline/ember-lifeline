@@ -13,8 +13,8 @@ development than traditional server-side web development.
 
 It is good to note that this isn't something inherent to just Ember. Any
 single-page app framework or solution (Angular, React, Vue, Backbone...)
-must deal this lifecycles of objects, and specifically with how async
-tasks can be bounded by a lifecycle.
+must deal with this lifecycle of objects, and specifically with how async
+tasks can be entangled with a lifecycle.
 
 There is a fantastic Ember addon, [ember-concurrency](http://ember-concurrency.com/)
 that solves these problems in a very exciting and simple way. It is largely
@@ -33,7 +33,7 @@ about the weird parts of working in a long-lived app.
 
 ## Usage
 
-Ember Lifeline supports a functional API that enables entanglement - _the association of async behavior to object instances_. This allows you to write code in your classes that can be automatically cleaned up for you when the object is destroyed.
+Ember Lifeline supports a functional API that enables entanglement - _the association of async behavior to object instances_. This allows you to write async code in your classes that can be automatically cleaned up for you when the object is destroyed.
 
 The API is divided into two main parts:
 
