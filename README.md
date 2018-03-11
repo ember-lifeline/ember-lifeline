@@ -59,7 +59,7 @@ export default Component.extend({
 })
 ```
 
-When using the mixin, this is implemented for you.
+Lifeline provides [mixins](#mixins) that conveniently implement `destroy`, correctly calling `runDisposables`.
 
 Lifeline also exposes a QUnit test helper to ensure you've correctly implemented `runDisposables` within your objects. Please see the [Testing](#testing) section below.
 
@@ -458,6 +458,7 @@ export default Component.extend({
   init() {
     this._super(...arguments);
 
+    // you can optionally provide a user defined token as a third argument
     this._pollToken = pollTask(this, 'updateTime');
   },
 
@@ -519,6 +520,7 @@ test('updating-time updates', function(assert) {
   return wait()
     .then(() => {
       fakeNow = new Date(2017);
+      // you can optionally provide a user defined token
       pollTaskFor(this._pollToken);
 
       return wait();
@@ -529,10 +531,7 @@ test('updating-time updates', function(assert) {
 });
 ```
 
-A couple of helpful assertions are provided with the `pollTask` functionality:
-
-* A given `token` can only be used once. If the same `token` is used a second time, an error will be thrown.
-* If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
+Note: If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
 
 
 ### `registerDisposable`
@@ -580,7 +579,7 @@ export default Component.extend({
 });
 ```
 
-This not only adds verbosity to code, but also requires that you symetrically tear down any bindings you setup. By utilizing the `registerDisposable` API, `ember-lifeline` will ensure your registered disposable function will run when the object is destroyed, provided you call `runDisposables` in your `destroy` method.
+This not only adds verbosity to code, but also requires that you symetrically tear down any bindings you setup. By utilizing the `registerDisposable` API, `ember-lifeline` will ensure your registered disposable function will run when the object is destroyed, provided that you call `runDisposables` during your objects destruction.
 
 ```js
 // app/components/foo-bar.js
@@ -736,8 +735,9 @@ import { setupTest } from 'ember-qunit';
 import setupLifelineValidation from 'ember-lifeline/test-support';
 
 module('module', function(hooks) {
-  setupLifelineValidation(hooks);
+  setupLifelineValidation(hooks); // should be called before other setup functions
   setupTest(hooks);
+  setupRenderingTest(hooks);
 
   test('test', function(assert) {
     ...
