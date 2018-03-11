@@ -6,7 +6,7 @@ import hbs from 'htmlbars-inline-precompile';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, triggerEvent } from '@ember/test-helpers';
-import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+import { ContextBoundEventListenersMixin } from 'ember-lifeline';
 
 module('ember-lifeline/mixins/dom', function(hooks) {
   setupRenderingTest(hooks);

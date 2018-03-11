@@ -20,11 +20,12 @@ export default Mixin.create({
    ```js
    // app/components/foo-bar.js
    import Ember from 'ember';
+   import DisposableMixin from 'ember-lifeline';
    import DOMish from 'some-external-library';
 
    const { run } = Ember;
 
-   export default Component.extend({
+   export default Component.extend(DisposableMixin, {
      init() {
        this.DOMish = new DOMish();
 

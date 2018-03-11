@@ -8,6 +8,6 @@ export {
   _setRegisteredDisposables,
 } from './utils/disposable';
 
-export { ContextBoundTasksMixin } from './mixins/run';
-export { ContextBoundEventListenersMixin } from './mixins/dom';
-export { DisposableMixin } from './mixins/disposable';
+export { default as ContextBoundTasksMixin } from './mixins/run';
+export { default as ContextBoundEventListenersMixin } from './mixins/dom';
+export { default as DisposableMixin } from './mixins/disposable';

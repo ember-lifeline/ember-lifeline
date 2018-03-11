@@ -73,7 +73,7 @@ export function pollTaskFor(token) {
 
    ```js
    import wait from 'ember-test-helpers/wait';
-   import { pollTaskFor } from 'ember-lifeline/mixins/run';
+   import { pollTaskFor } from 'ember-lifeline';
 
    //...snip...
 

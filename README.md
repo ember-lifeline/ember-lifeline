@@ -22,7 +22,7 @@ inspired by [RxJS](http://reactivex.io/) and the Observable pattern, both of
 which concern themselves with creating life-cycle-free
 async that, in practice, tend to be hard for developers to learn.
 
-This addon introduces several utility methods to help manage async, object
+This addon introduces several functional utility methods to help manage async, object
 lifecycles, and the Ember runloop. These tools should provide a simple developer
 experience that allows engineers to focus on the business domain, and think less
 about the weird parts of working in a long-lived app.
@@ -31,17 +31,43 @@ about the weird parts of working in a long-lived app.
 
     ember install ember-lifeline
 
-To use any of the below mentioned methods in your component, route or service, you will have to import and apply one or both of these mixins to your class:
-* `ember-lifeline/mixins/run` for using any of the *Task methods
-* `ember-lifeline/mixins/dom` for using `addEventListener`
-* `ember-lifeline/mixins/disposable` for using `registerDisposable` and `runDisposable`
-
 ## Usage
+
+Ember Lifeline supports a functional API that enables entanglement - _the association of async behavior to object instances_. This allows you to write code in your classes that can be automatically cleaned up for you when the object is destroyed.
+
+The API is divided into two main parts:
+
+- Run loop entanglement
+- DOM event handler entanglement
+
+Additionally, lifeline exposes a primative, `disposables`, that allows you to entangle functionality of your choosing.
+
+:warning: When importing and using lifeline's functions, it's imperative that you additionally import and call `runDisposables` during your object's `destroy` method. This ensures lifeline will correctly dispose of any remaining async work.
+
+```
+import Component from '@ember/component';
+import { runTask, runDisposables } from 'ember-lifeline';
+
+export default Component.extend({
+  // use `runTask` method somewhere in this component
+
+  destroy() {
+    runDisposables(this); // ensure that lifeline will clean up any remaining async work
+
+    this._super(...arguments);
+  }
+})
+```
+
+When using the mixin, this is implemented for you.
+
+Lifeline also exposes a QUnit test helper to ensure you've correctly implemented `runDisposables` within your objects. Please see the [Testing](#testing) section below.
+
+### Run loop entanglement via `*Task` functions
 
 ### `runTask`
 
-**tl;dr Call `this.runTask(fn, timeout)` on any component, route, or service to
-schedule work.**
+**tl;dr Call `runTask(obj, fn, timeout)` on any object to schedule work.**
 
 Use `runTask` where you might use `setTimeout`, `setInterval`, or
 `Ember.run.later`.
@@ -61,7 +87,7 @@ const { Component, run } = Ember;
 
 export default Component.extend({
   init() {
-    this._super();
+    this._super(...arguments);
     window.setTimeout(() => {
       run(() => {
         this.set('date', new Date);
@@ -87,7 +113,7 @@ const { Component, run } = Ember;
 
 export default Component.extend({
   init() {
-    this._super();
+    this._super(...arguments);
     run.later(() => {
       this.set('date', new Date);
     }, 500);
@@ -108,7 +134,7 @@ const { Component, run } = Ember;
 
 export default Component.extend({
   init() {
-    this._super();
+    this._super(...arguments);
     run.later(() => {
       // First, check if this object is even valid
       if (this.isDestroyed) { return; }
@@ -127,27 +153,32 @@ Using `runTask`, the above can be written as:
 
 ```js
 import Ember from 'ember';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { runTask, runDisposables } from 'ember-lifeline';
 
 const { Component } = Ember;
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   init() {
-    this._super();
-    this.runTask(() => {
+    this._super(...arguments);
+    runTask(this, () => {
       this.set('date', new Date);
     }, 500);
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
 
-And no need to worry about cancellation or the `isDestroyed` status of the
-object itself.
+Once you've ensured your object calls `runDisposables` in its `destroy` method, there's no need to worry about cancellation or the `isDestroyed` status of the object itself.
+
 
 ### `scheduleTask`
 
-**tl;dr Call `this.scheduleTask(queueName, fnOrMethodName, args*)` on any component, route,
-or service to schedule work on the run loop.**
+**tl;dr Call `scheduleTask(obj, queueName, fnOrMethodName, args*)` on any object to schedule work on the run loop.**
 
 Use `scheduleTask` where you might use `Ember.run.schedule`.
 
@@ -162,7 +193,7 @@ const { Component, run } = Ember;
 
 export default Component.extend({
   init() {
-    this._super();
+    this._super(...arguments);
     run.schedule('actions', this, () => {
       this.set('date', new Date);
     });
@@ -182,7 +213,7 @@ const { Component, run } = Ember;
 
 export default Component.extend({
   init() {
-    this._super();
+    this._super(...arguments);
     run.schedule('actions', this, () => {
       // First, check if this object is even valid
       if (this.isDestroyed) { return; }
@@ -201,16 +232,22 @@ Using `scheduleTask`, the above can be written as:
 
 ```js
 import Ember from 'ember';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { scheduleTask, runDisposables } from 'ember-lifeline';
 
 const { Component } = Ember;
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   init() {
-    this._super();
-    this.scheduleTask('actions', () => {
+    this._super(...arguments);
+    scheduleTask(this, 'actions', () => {
       this.set('date', new Date);
     });
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -220,10 +257,10 @@ export default Component.extend(RunMixin, {
 Scheduling work on the `afterRender` queue has well known, negative performance implications.
 Therefore, *`scheduleTask` is prohibited from scheduling work on the `afterRender` queue.*
 
+
 ### `debounceTask`
 
-**tl;dr Call `this.debounceTask(methodName, args*, wait, immediate)` on any component, route,
-or service to debounce work.**
+**tl;dr Call `debounceTask(obj, methodName, args*, wait, immediate)` on any object to debounce work.**
 
 Debouncing is a common async pattern often used to manage user input. When a
 task is debounced with a timeout of 100ms, it first schedules the work for
@@ -246,16 +283,23 @@ for 500ms:
 
 ```js
 import Ember from 'ember';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { debounceTask, runDisposables } from 'ember-lifeline';
 
 const { Component } = Ember;
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   click() {
-    this.debounceTask('reportTime', 500);
+    debounceTask(this, 'reportTime', 500);
   },
+
   reportTime() {
     this.set('time', new Date());
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -263,10 +307,10 @@ export default Component.extend(RunMixin, {
 However if the component is destroyed, any pending debounce task will be
 cancelled.
 
+
 ### `throttleTask`
 
-**tl;dr Call `this.throttleTask(methodName, args*, spacing, immediate)` on any component, route,
-or service to throttle work.**
+**tl;dr Call `throttleTask(obj, methodName, args*, spacing, immediate)` on any object to throttle work.**
 
 When a task is throttled, it is executed immediately. For the length of the
 timeout, additional throttle calls are ignored. Again, like debounce, throttle
@@ -276,16 +320,23 @@ consistency the API of `throttleTask` is presented:
 
 ```js
 import Ember from 'ember';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { throttleTask, runDisposables } from 'ember-lifeline';
 
 const { Component } = Ember;
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   click() {
-    this.throttleTask('reportTime', 500);
+    throttleTask(this, 'reportTime', 500);
   },
+
   reportTime() {
     this.set('time', new Date());
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -302,18 +353,25 @@ at the time the task is executed:
 
 ```js
 import Ember from 'ember';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { throttleTask, runDisposables } from 'ember-lifeline';
 
 const { Component } = Ember;
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   click(evt) {
     this._evt = evt;
-    this.throttleTask('updateClickedEl', 500);
+    throttleTask(this, 'updateClickedEl', 500);
   },
+
   updateClickedEl() {
     this.set('lastClickedEl', this._evt.target);
     this._evt = null;
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -321,10 +379,9 @@ export default Component.extend(RunMixin, {
 
 ### `pollTask`
 
-**tl;dr call `this.pollTask(fn [, token])` on any component, route, or service to setup
-polling.**
+**tl;dr call `pollTask(obj, fn [, token])` on any object to setup polling.**
 
-Use `pollTask` where you might reach for recursive `this.runTask(fn, ms)`, `Ember.run.later`, `setTimeout`, and/or `setInterval`.
+Use `pollTask` where you might reach for recursive `runTask(obj, fn, ms)`, `Ember.run.later`, `setTimeout`, and/or `setInterval`.
 
 When using recursive `runTask` or `run.later` invocations causes tests to pause forever. This is due to the fact
 that the Ember testing helpers automatically wait for all scheduled tasks in the run loop to finish before
@@ -340,9 +397,9 @@ and performance problems. Instead, you should be scheduling new work
 
 ```js
 import Component from 'ember-component';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { runTask, runDisposables } from 'ember-lifeline';
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   init() {
     this._super(...arguments);
     this.updateTime();
@@ -350,7 +407,13 @@ export default Component.extend(RunMixin, {
 
   updateTime() {
     this.set('date', new Date());
-    this.runTask(() => this.updateTime(), 20);
+    runTask(this, () => this.updateTime(), 20);
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -367,9 +430,9 @@ production. Typically, this is done something like:
 ```js
 import Ember from 'ember';
 import Component from 'ember-component';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { runTask, runDisposables } from 'ember-lifeline';
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   init() {
     this._super(...arguments);
     this.updateTime();
@@ -379,8 +442,14 @@ export default Component.extend(RunMixin, {
     this.set('date', new Date());
 
     if (!Ember.testing) {
-      this.runTask(() => this.updateTime(), 20);
+      runTask(this, () => this.updateTime(), 20);
     }
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -396,22 +465,28 @@ like this:
 ```js
 import Component from 'ember-component';
 import injectService from 'ember-service/inject';
-import RunMixin from 'ember-lifeline/mixins/run';
+import { runTask, pollTask, runDisposables } from 'ember-lifeline';
 
-export default Component.extend(RunMixin, {
+export default Component.extend({
   time: injectService(),
 
   init() {
     this._super(...arguments);
 
-    this.pollTask('updateTime', 'updating-time#updateTime');
+    this._pollToken = pollTask(this, 'updateTime');
   },
 
   updateTime(next) {
     let time = this.get('time');
     this.set('date', time.now());
 
-    this.runTask(next, 20);
+    runTask(this, next, 20);
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
@@ -427,9 +502,9 @@ tests that are not related to the polling behavior to continue uninterrupted. To
 functionality, use the provided `pollTaskFor` helper:
 
 ```js
-import moduleForComponent from 'ember-lifeline/tests/helpers/module-for-component';
+import moduleForComponent from 'ember-qunit';
 import wait from 'ember-test-helpers/wait';
-import { pollTaskFor } from 'ember-lifeline/mixins/run';
+import { pollTaskFor } from 'ember-lifeline';
 import Service from 'ember-service';
 
 let fakeNow;
@@ -459,7 +534,7 @@ test('updating-time updates', function(assert) {
   return wait()
     .then(() => {
       fakeNow = new Date(2017);
-      pollTaskFor('updating-time#updateTime');
+      pollTaskFor(this._pollToken);
 
       return wait();
     })
@@ -474,9 +549,10 @@ A couple of helpful assertions are provided with the `pollTask` functionality:
 * A given `token` can only be used once. If the same `token` is used a second time, an error will be thrown.
 * If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
 
+
 ### `registerDisposable`
 
-**tl;dr call `this.registerDisposable(fn)` on any component, route, or service to register a function you want to run when the object is destroyed.**
+**tl;dr call `registerDisposable(obj, fn)` on any object to register a function you want to run when the object is destroying.**
 
 Use `registerDisposable` as a replacement for explictly disposing of any externally managed resources. A disposable is a function that disposes of resources that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any resources when the Ember object is destroyed.
 
@@ -487,12 +563,11 @@ It's common to see code written to explicitly unbind event handlers from externa
 ```js
 // app/components/foo-bar.js
 import Ember from 'ember';
-import DisposableMixin from 'ember-lifeline/mixins/disposable';
 import DOMish from 'some-external-library';
 
 const { run } = Ember;
 
-export default Component.extend(DisposableMixin, {
+export default Component.extend({
   init() {
     this._super(...arguments);
 
@@ -521,17 +596,17 @@ export default Component.extend(DisposableMixin, {
 });
 ```
 
-This not only adds verbosity to code, but also requires that you symetrically tear down any bindings you setup. By utilizing the `registerDisposable` API, `ember-lifeline` will ensure your registered disposable function will run when the object is destroyed.
+This not only adds verbosity to code, but also requires that you symetrically tear down any bindings you setup. By utilizing the `registerDisposable` API, `ember-lifeline` will ensure your registered disposable function will run when the object is destroyed, provided you call `runDisposables` in your `destroy` method.
 
 ```js
 // app/components/foo-bar.js
 import Ember from 'ember';
-import DisposableMixin from 'ember-lifeline/mixins/disposable';
+import { registerDisposable, runDisposables } from 'ember-lifeline';
 import DOMish from 'some-external-library';
 
 const { run } = Ember;
 
-export default Component.extend(DisposableMixin, {
+export default Component.extend({
   init() {
     this._super(...arguments);
 
@@ -540,11 +615,17 @@ export default Component.extend(DisposableMixin, {
     this.bindEvents();
   },
 
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
+  }
+
   bindEvents() {
     let onFoo = run.bind(this.respondToDomEvent);
     this.DOMish.on('foo', onFoo);
 
-    this.domFooToken = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
+    this.domFooToken = registerDisposable(this, () => this.DOMish.off('foo', onFoo));
   },
 
   respondToDOMEvent() {
@@ -562,50 +643,16 @@ interface IDisposable {
 }
 ```
 
-You can explicity run the disposable without waiting for the object's destruction.**
-
-```js
-  // app/components/foo-bar.js
-  import DOMish from 'some-external-library';
-  import DisposableMixin from 'ember-lifeline/mixins/disposable';
-  import Ember from 'ember';
-
-  const { run } = Ember;
-
-  export default Component.extend(DisposableMixin, {
-    init() {
-      this.DOMish = new DOMish();
-
-      this.bindEvents();
-    },
-
-    bindEvents() {
-      let onFoo = run.bind(this.respondToDomEvent);
-      this.DOMish.on('foo', onFoo);
-
-      this.domFooDisposable = this.registerDisposable(() => this.DOMish.off('foo', onFoo));
-    },
-
-    respondToDOMEvent() {
-      // do something
-    },
-
-    actions: {
-      cancelDOM() {
-        this.domFooDisposable.dispose();
-      }
-    }
-  });
-  ```
+### DOM event handler entanglement
 
 ### `addEventListener`
 
-**tl;dr call `this.addEventListener(element, eventName, fn, options)` on a
+**tl;dr call `addEventListener(obj, element, eventName, fn, options)` on a
 component or route to add a DOM event listener that will be automatically
 removed when the component is un-rendered.**
 
 Event listeners pose similar but different challenges. They likewise must have a
-runloop added around their callback, and are pinned to an object's lifecycle, in
+runloop added around their callback, and are entangled with an object's lifecycle, in
 this case to the detachment of that component from the DOM
 (`willDestroyElement`). For example this is an idiomatic and correct way to add
 an event listener to the window in Ember:
@@ -617,7 +664,7 @@ const { Component, run } = Ember;
 
 export default Component.extend({
   didInsertElement() {
-    this._super();
+    this._super(...arguments);
     $(window).on(`scroll.${this.elementId}`, (e) => {
       run(() => {
         this.set('windowScrollOffset', e.clientY);
@@ -626,7 +673,7 @@ export default Component.extend({
   },
   willDestroyElement() {
     $(window).off(`scroll.${this.elementId}`);
-    this._super();
+    this._super(...arguments);
   }
 });
 ```
@@ -636,38 +683,47 @@ unfortunate. With `addEventListener` the above example can be re-written as:
 
 ```js
 import Ember from 'ember';
-import DomMixin from 'ember-lifeline/mixins/dom';
+import { addEventListener } from 'ember-lifeline';
 
 const { Component } = Ember;
 
-export default Component.extend(DomMixin, {
+export default Component.extend({
   didInsertElement() {
-    this._super();
-    this.addEventListener(window, 'scroll', (e) => {
+    this._super(...arguments);
+    addEventListener(this, window, 'scroll', (e) => {
       this.set('windowScrollOffset', e.clientY);
     });
+  },
+
+  destroy() {
+    runDisposables(this);
+
+    this._super(...arguments);
   }
 });
 ```
 
-`addEventListener` will provide the runloop and automatically remove the
-listener when `willDestroyElement` is called. `addEventListener` provides
-several ways to specify an element:
+`addEventListener` will provide the runloop and remove the
+listener when `destroy` is called, provided `runDisposables` is called.
+`addEventListener` provides several ways to specify an element:
 
 ```js
 // Attach to an element inside this component
-this.addEventListener('.someClass', 'scroll', fn);
+addEventListener(this, '.someClass', 'scroll', fn);
+
+// Attach to the component's element itself
+addEventListener(this, 'scroll', fn);
 
 // Attach to a DOM node
-this.addEventListener(document.body, 'click', fn);
+addEventListener(this, document.body, 'click', fn);
 
 // Attach to window
-this.addEventListener(window, 'scroll', fn);
+addEventListener(this, window, 'scroll', fn);
 ```
 
 ### `removeEventListener`
 
-**tl;dr call `this.removeEventListener(element, eventName, fn, options)` on a
+**tl;dr call `removeEventListener(obj, element, eventName, fn, options)` on a
 component or route to actively remove a DOM event listener previously added by a
 call to `addEventListener`.**
 
@@ -676,6 +732,40 @@ destroyed, there might be cases where you want to actively remove an existing ev
 lifecycle, for example when temporarily dealing with high volume events like `scroll` or `mousemove`.
 
 Be sure to pass the identical arguments used when calling `addEventListener`!
+
+### Mixins
+
+Ember lifeline also provides mixins, which extend the object's methods to include lifeline's functions.
+
+To use any of the above mentioned functions in your component, route or service, simply import and apply one or all of these mixins to your class:
+
+`ContextBoundTasksMixin` for using any of the *Task methods
+`ContextBoundEventListenersMixin` for using addEventListener
+`DisposableMixin` for using registerDisposable and runDisposable
+
+### Testing
+
+Lifeline's entire purpose is to help ensure you've entangled and ultimately disposed of any outstanding async work in your applications. To help ensure this has occurred, and that you don't have any remaining queued async work, a test helper is provided which will assert that all async is disposed of.
+
+To use the helper using the new ember-qunit module syntax:
+
+```js
+// test-helper.js
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
+import setupLifelineValidation from 'ember-lifeline/test-support';
+
+module('module', function(hooks) {
+  setupLifelineValidation(hooks);
+  setupTest(hooks);
+
+  test('test', function(assert) {
+    ...
+  })
+})
+```
+
+If a failure occurs, lifeline will output an array containing the module names that were the cause of the async leakage.
 
 ## Credit
 
