@@ -1,5 +1,5 @@
 
-v2.1.0 / 2018-03-03
+v3.0.0 / 2018-03-12
 ==================
 
   * Instance arrays for tracking task and event dependencies for objects deprecated in favor of using
