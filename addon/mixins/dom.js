@@ -19,7 +19,7 @@ export default Mixin.create({
 
    ```js
    import Component from 'ember-component';
-   import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+   import ContextBoundEventListenersMixin from 'ember-lifeline';
 
    export default Component.extend(ContextBoundEventListenersMixin, {
      didInsertElement() {
@@ -37,7 +37,7 @@ export default Mixin.create({
 
    ```js
    import Service from 'ember-service';
-   import ContextBoundEventListenersMixin from 'ember-lifeline/mixins/dom';
+   import ContextBoundEventListenersMixin from 'ember-lifeline';
 
    export default Service.extend(ContextBoundEventListenersMixin, {
      init() {
