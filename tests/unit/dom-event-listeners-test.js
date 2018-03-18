@@ -177,7 +177,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     });
 
     test(`${testName} throws when called with incorrect arguments`, async function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
       await render(hbs`{{under-test}}`);
       let component = this.componentInstance;
@@ -187,7 +187,11 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       }, /Must provide a DOM element/);
 
       assert.throws(() => {
-        addEventListener(component, {}, 'click', () => {}, testedOptions);
+        addEventListener(component, '.el', 'click', () => {}, testedOptions);
+      }, /Must provide an element \(not a DOM selector\)/);
+
+      assert.throws(() => {
+        addEventListener(component, () => {}, 'click', () => {}, testedOptions);
       }, /Must provide an element \(not a DOM selector\)/);
 
       assert.throws(() => {
@@ -479,5 +483,23 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
 
     await triggerEvent(element, 'click');
     assert.equal(calls, 1, 'callback was called once');
+  });
+
+  test('addEventListener to window', async function(assert) {
+    assert.expect(1);
+
+    this.owner.register('template:components/under-test', hbs`<span></span>`);
+    await render(hbs`{{under-test}}`);
+    let component = this.componentInstance;
+
+    let calls = 0;
+    let listener = () => {
+      calls++;
+    };
+
+    addEventListener(component, window, 'click', listener);
+
+    await triggerEvent(window, 'click');
+    assert.equal(calls, 1, 'callback was called');
   });
 });

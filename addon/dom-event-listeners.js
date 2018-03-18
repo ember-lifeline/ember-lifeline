@@ -144,7 +144,13 @@ export function removeEventListener(
 
 function assertArguments(element, eventName, callback) {
   assert('Must provide a DOM element', !!element);
-  assert('Must provide an element (not a DOM selector)', !!element.nodeType);
+  assert(
+    'Must provide an element (not a DOM selector)',
+    typeof element !== 'string' &&
+      typeof element !== 'function' &&
+      element !== null &&
+      element !== undefined
+  );
   assert(
     'Must provide an eventName that specifies the event type',
     !!eventName
