@@ -123,7 +123,7 @@ export function debounceTask(obj, name, ...debounceArgs) {
 export function cancelDebounce(obj, name) {
   let pendingDebounces = registeredDebounces.get(obj);
 
-  if (pendingDebounces === undefined) {
+  if (pendingDebounces === undefined || pendingDebounces[name] === undefined) {
     return;
   }
 

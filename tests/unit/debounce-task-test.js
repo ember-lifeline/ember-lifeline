@@ -68,4 +68,33 @@ module('ember-lifeline/debounce-task', function(hooks) {
       done();
     }, 10);
   });
+
+  test('cancelDebounce does not throw an error if the debounced task was never run', function(assert) {
+    assert.expect(1);
+
+    this.obj = this.getComponent({
+      doStuff() {},
+    });
+
+    cancelDebounce(this.obj, 'doStuff');
+
+    assert.ok(true, 'should not have thrown an error');
+  });
+
+  test('cancelDebounce does not throw an error if the debounced task is no longer pending', function(assert) {
+    let done = assert.async();
+    assert.expect(1);
+
+    this.obj = this.getComponent({
+      doStuff() {},
+    });
+
+    debounceTask(this.obj, 'doStuff', 5);
+
+    window.setTimeout(() => {
+      cancelDebounce(this.obj, 'doStuff');
+      assert.ok(true, 'should not have thrown an error');
+      done();
+    }, 10);
+  });
 });
