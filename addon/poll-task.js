@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
+import { settled } from '@ember/test-helpers';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
@@ -37,7 +38,9 @@ export function pollTaskFor(token) {
     !!queuedPollTasks[token]
   );
 
-  return run.join(null, queuedPollTasks[token]);
+  run.join(null, queuedPollTasks[token]);
+
+  return settled();
 }
 
 /**
