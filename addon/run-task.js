@@ -115,7 +115,7 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
 
   let task = getTask(obj, taskOrName, 'scheduleTask');
   let timers = getTimers(obj);
-  var cancelId;
+  let cancelId;
   let taskWrapper = (...taskArgs) => {
     // clean up
     let index = timers.indexOf(cancelId);
@@ -123,7 +123,7 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
       timers.splice(index, 1);
     }
     task.call(obj, ...taskArgs);
-  }
+  };
   cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
 
   timers.push(cancelId);
@@ -162,7 +162,7 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
    @param { Number } [timeout] the time in the future to run the task
    @public
    */
-export function throttleTask(obj, name, timeout = 0) {
+export function throttleTask(obj, taskOrName, timeout = 0) {
   assert(
     `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
     typeof name === 'string'
@@ -177,7 +177,7 @@ export function throttleTask(obj, name, timeout = 0) {
   );
 
   let timers = getTimers(obj);
-  var cancelId;
+  let cancelId;
   let task = getTask(obj, taskOrName, 'throttleTask');
   let taskWrapper = (...taskArgs) => {
     let index = timers.indexOf(cancelId);
@@ -185,7 +185,7 @@ export function throttleTask(obj, name, timeout = 0) {
       timers.splice(index, 1);
     }
     task.call(obj, ...taskArgs);
-  }
+  };
   cancelId = run.throttle(obj, taskWrapper, timeout);
 
   timers.push(cancelId);
