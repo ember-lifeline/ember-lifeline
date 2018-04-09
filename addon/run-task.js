@@ -54,10 +54,10 @@ export function runTask(obj, taskOrName, timeout = 0) {
   let timers = getTimers(obj);
   let cancelId = run.later(() => {
     let cancelIndex = timers.indexOf(cancelId);
-    timers.splice(cancelIndex, 1);
-
+    if (cancelIndex >= 0) {
+      timers.splice(cancelIndex, 1);
+    }
     let task = getTask(obj, taskOrName, 'runTask');
-
     task.call(obj);
   }, timeout);
 
@@ -114,8 +114,21 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
   );
 
   let task = getTask(obj, taskOrName, 'scheduleTask');
-  let cancelId = run.schedule(queueName, obj, task, ...args);
   let timers = getTimers(obj);
+  var cancelId;
+  let taskWrapper = (...taskArgs) => {
+    try {
+      task.call(obj, ...taskArgs);
+    }
+    finally {
+      // clean up
+      let index = timers.indexOf(cancelId);
+      if (index >= 0) {
+        timers.splice(index, 1);
+      }
+    }
+  }
+  cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
 
   timers.push(cancelId);
 
@@ -168,7 +181,16 @@ export function throttleTask(obj, name, timeout = 0) {
   );
 
   let timers = getTimers(obj);
-  let cancelId = run.throttle(obj, name, timeout);
+  var cancelId;
+  let task = getTask(obj, taskOrName, 'throttleTask');
+  let taskWrapper = (...taskArgs) => {
+    let index = timers.indexOf(cancelId);
+    if (index >= 0) {
+      timers.splice(index, 1);
+    }
+    task.call(obj, ...taskArgs);
+  }
+  cancelId = run.throttle(obj, taskWrapper, timeout);
 
   timers.push(cancelId);
 
@@ -207,12 +229,18 @@ export function throttleTask(obj, name, timeout = 0) {
    */
 export function cancelTask(cancelId) {
   run.cancel(cancelId);
+  // TODO remove the id from the array of cancelIds in registeredTimers so we don't get a leak
+  // but we need to know the object to get the timers array...
 }
 
 function getTimersDisposable(timers) {
   return function() {
-    for (let i = 0; i < timers.length; i++) {
-      cancelTask(timers[i]);
+    // clear the timers array first to avoid painters algorithm
+    // when cancelTask tries to clean up the cancelId from the
+    // timers array
+    let deletedCancelIds = timers.splice(0, timers.length);
+    for (let i = 0; i < deletedCancelIds.length; i++) {
+      cancelTask(deletedCancelIds[i]);
     }
   };
 }
