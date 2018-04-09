@@ -117,16 +117,12 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
   let timers = getTimers(obj);
   var cancelId;
   let taskWrapper = (...taskArgs) => {
-    try {
-      task.call(obj, ...taskArgs);
+    // clean up
+    let index = timers.indexOf(cancelId);
+    if (index >= 0) {
+      timers.splice(index, 1);
     }
-    finally {
-      // clean up
-      let index = timers.indexOf(cancelId);
-      if (index >= 0) {
-        timers.splice(index, 1);
-      }
-    }
+    task.call(obj, ...taskArgs);
   }
   cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
 
