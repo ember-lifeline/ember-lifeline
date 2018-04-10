@@ -164,21 +164,35 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.notOk(hasRun, 'callback should have been canceled previously');
   });
 
-  test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
+  test('throttleTask does not trigger an assertion when a function is the first argument', function(assert) {
+    this.obj = this.getComponent({
+      doStuff() {},
+    });
+
+    let succeeded = true;
+    try {
+      throttleTask(this.obj, this.obj.doStuff, 5);
+    } catch (err) {
+      succeeded = false;
+    }
+    assert.ok(succeeded);
+  });
+
+  test('throttleTask triggers an assertion when something other than a method name or function is the first argument', function(assert) {
     this.obj = this.getComponent({
       doStuff() {},
     });
 
     assert.throws(() => {
-      throttleTask(this.obj, this.obj.doStuff, 5);
-    }, /without a string as the first argument/);
+      throttleTask(this.obj, 7, 5);
+    }, /a task function or method name/);
   });
 
-  test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
+  test('throttleTask triggers an assertion when the function name provided does not exist on the object', function(assert) {
     this.obj = this.getComponent();
 
     assert.throws(() => {
       throttleTask(this.obj, 'doStuff', 5);
-    }, /is not a function/);
+    }, /does not resolve to a valid function/);
   });
 });

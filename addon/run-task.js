@@ -164,14 +164,6 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
    */
 export function throttleTask(obj, taskOrName, timeout = 0) {
   assert(
-    `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
-    typeof name === 'string'
-  );
-  assert(
-    `Called \`throttleTask('${name}', ${timeout})\` where '${name}' is not a function.`,
-    typeof obj[name] === 'function'
-  );
-  assert(
     `Called \`throttleTask\` on destroyed object: ${obj}.`,
     !obj.isDestroyed
   );
@@ -179,12 +171,16 @@ export function throttleTask(obj, taskOrName, timeout = 0) {
   let timers = getTimers(obj);
   let cancelId;
   let task = getTask(obj, taskOrName, 'throttleTask');
-  let taskWrapper = (...taskArgs) => {
+  assert(
+    `Called \`throttleTask('${taskOrName}', ${timeout})\` where task or name '${taskOrName}' does not map to a function.`,
+    typeof task === 'function'
+  );
+  let taskWrapper = () => {
     let index = timers.indexOf(cancelId);
     if (index >= 0) {
       timers.splice(index, 1);
     }
-    task.call(obj, ...taskArgs);
+    task.call(obj);
   };
   cancelId = run.throttle(obj, taskWrapper, timeout);
 
