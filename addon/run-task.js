@@ -13,7 +13,18 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-const registeredTimers = new WeakMap();
+let registeredTimers = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether the timers set is empty.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredTimers(mapForTesting) {
+  registeredTimers = mapForTesting;
+}
 
 /**
    Registers and runs the provided task function for the provided object at the specified
@@ -51,17 +62,14 @@ const registeredTimers = new WeakMap();
 export function runTask(obj, taskOrName, timeout = 0) {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
+  let task = getTask(obj, taskOrName, 'runTask');
   let timers = getTimers(obj);
   let cancelId = run.later(() => {
-    let cancelIndex = timers.indexOf(cancelId);
-    timers.splice(cancelIndex, 1);
-
-    let task = getTask(obj, taskOrName, 'runTask');
-
+    timers.delete(cancelId);
     task.call(obj);
   }, timeout);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
   return cancelId;
 }
 
@@ -114,10 +122,15 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
   );
 
   let task = getTask(obj, taskOrName, 'scheduleTask');
-  let cancelId = run.schedule(queueName, obj, task, ...args);
   let timers = getTimers(obj);
+  let cancelId;
+  let taskWrapper = (...taskArgs) => {
+    timers.delete(cancelId);
+    task.call(obj, ...taskArgs);
+  };
+  cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
 
   return cancelId;
 }
@@ -170,7 +183,7 @@ export function throttleTask(obj, name, timeout = 0) {
   let timers = getTimers(obj);
   let cancelId = run.throttle(obj, name, timeout);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
 
   return cancelId;
 }
@@ -205,15 +218,24 @@ export function throttleTask(obj, name, timeout = 0) {
    @param { Number } cancelId the id returned from the runTask or scheduleTask call
    @public
    */
-export function cancelTask(cancelId) {
+export function cancelTask(obj, cancelId) {
+  // TODO: remove this older API on next major version
+  if (cancelId === undefined) {
+    run.cancel(obj);
+    return;
+  }
+
   run.cancel(cancelId);
+  let timers = registeredTimers.get(obj);
+  timers.delete(cancelId);
 }
 
 function getTimersDisposable(timers) {
   return function() {
-    for (let i = 0; i < timers.length; i++) {
-      cancelTask(timers[i]);
-    }
+    timers.forEach(cancelId => {
+      cancelTask(cancelId);
+    });
+    timers.clear();
   };
 }
 
@@ -221,7 +243,7 @@ function getTimers(obj) {
   let timers = registeredTimers.get(obj);
 
   if (!timers) {
-    timers = [];
+    timers = new Set();
     registeredTimers.set(obj, timers);
     registerDisposable(obj, getTimersDisposable(timers));
   }
