@@ -13,7 +13,18 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-const registeredTimers = new WeakMap();
+let registeredTimers = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether the timers set is empty.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredTimers(mapForTesting) {
+  registeredTimers = mapForTesting;
+}
 
 /**
    Registers and runs the provided task function for the provided object at the specified

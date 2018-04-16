@@ -7,6 +7,7 @@ import {
   throttleTask,
   cancelTask,
   runDisposables,
+  _setRegisteredTimers,
 } from 'ember-lifeline';
 
 module('ember-lifeline/run-task', function(hooks) {
@@ -48,6 +49,7 @@ module('ember-lifeline/run-task', function(hooks) {
 
   test('invokes named functions as async tasks', function(assert) {
     assert.expect(3);
+
     let done = assert.async();
     let obj = (this.obj = this.getComponent({
       run() {
@@ -66,6 +68,7 @@ module('ember-lifeline/run-task', function(hooks) {
 
   test('invokes async tasks with delay', function(assert) {
     assert.expect(3);
+
     this.obj = this.getComponent();
     let done = assert.async();
     let hasRun = false;
@@ -89,6 +92,7 @@ module('ember-lifeline/run-task', function(hooks) {
 
   test('runTask tasks can be canceled', function(assert) {
     assert.expect(1);
+
     this.obj = this.getComponent();
     let done = assert.async();
     let hasRun = false;
@@ -107,6 +111,29 @@ module('ember-lifeline/run-task', function(hooks) {
       assert.notOk(hasRun, 'callback should have been canceled previously');
       done();
     }, 10);
+  });
+
+  test('runTask tasks removed their cancelIds when run', function(assert) {
+    assert.expect(1);
+
+    let map = new Map();
+    _setRegisteredTimers(map);
+    this.obj = this.getComponent();
+    let done = assert.async();
+
+    runTask(
+      this.obj,
+      () => {
+        assert.equal(
+          map.get(this.obj).size,
+          0,
+          'Set deleted the cancelId after task executed'
+        );
+        _setRegisteredTimers(new WeakMap());
+        done();
+      },
+      0
+    );
   });
 
   test('scheduleTask invokes async tasks', function(assert) {
@@ -162,6 +189,27 @@ module('ember-lifeline/run-task', function(hooks) {
     });
 
     assert.notOk(hasRun, 'callback should have been canceled previously');
+  });
+
+  test('scheduleTask tasks removed their cancelIds when run', function(assert) {
+    assert.expect(1);
+
+    let map = new Map();
+    _setRegisteredTimers(map);
+    this.obj = this.getComponent();
+    let done = assert.async();
+
+    run(() => {
+      scheduleTask(this.obj, 'actions', () => {
+        assert.equal(
+          map.get(this.obj).size,
+          0,
+          'Set deleted the cancelId after task executed'
+        );
+        _setRegisteredTimers(new WeakMap());
+        done();
+      });
+    });
   });
 
   test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
