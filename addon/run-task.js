@@ -51,17 +51,14 @@ const registeredTimers = new WeakMap();
 export function runTask(obj, taskOrName, timeout = 0) {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
+  let task = getTask(obj, taskOrName, 'runTask');
   let timers = getTimers(obj);
   let cancelId = run.later(() => {
-    let cancelIndex = timers.indexOf(cancelId);
-    if (cancelIndex >= 0) {
-      timers.splice(cancelIndex, 1);
-    }
-    let task = getTask(obj, taskOrName, 'runTask');
+    timers.delete(cancelId);
     task.call(obj);
   }, timeout);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
   return cancelId;
 }
 
@@ -117,16 +114,12 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
   let timers = getTimers(obj);
   let cancelId;
   let taskWrapper = (...taskArgs) => {
-    // clean up
-    let index = timers.indexOf(cancelId);
-    if (index >= 0) {
-      timers.splice(index, 1);
-    }
+    timers.delete(cancelId);
     task.call(obj, ...taskArgs);
   };
   cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
 
   return cancelId;
 }
@@ -162,29 +155,24 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
    @param { Number } [timeout] the time in the future to run the task
    @public
    */
-export function throttleTask(obj, taskOrName, timeout = 0) {
+export function throttleTask(obj, name, timeout = 0) {
+  assert(
+    `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
+    typeof name === 'string'
+  );
+  assert(
+    `Called \`throttleTask('${name}', ${timeout})\` where '${name}' is not a function.`,
+    typeof obj[name] === 'function'
+  );
   assert(
     `Called \`throttleTask\` on destroyed object: ${obj}.`,
     !obj.isDestroyed
   );
 
   let timers = getTimers(obj);
-  let cancelId;
-  let task = getTask(obj, taskOrName, 'throttleTask');
-  assert(
-    `Called \`throttleTask('${taskOrName}', ${timeout})\` where task or name '${taskOrName}' does not map to a function.`,
-    typeof task === 'function'
-  );
-  let taskWrapper = () => {
-    let index = timers.indexOf(cancelId);
-    if (index >= 0) {
-      timers.splice(index, 1);
-    }
-    task.call(obj);
-  };
-  cancelId = run.throttle(obj, taskWrapper, timeout);
+  let cancelId = run.throttle(obj, name, timeout);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
 
   return cancelId;
 }
@@ -219,21 +207,24 @@ export function throttleTask(obj, taskOrName, timeout = 0) {
    @param { Number } cancelId the id returned from the runTask or scheduleTask call
    @public
    */
-export function cancelTask(cancelId) {
+export function cancelTask(obj, cancelId) {
+  // TODO: remove this older API on next major version
+  if (cancelId === undefined) {
+    run.cancel(obj);
+    return;
+  }
+
   run.cancel(cancelId);
-  // TODO remove the id from the array of cancelIds in registeredTimers so we don't get a leak
-  // but we need to know the object to get the timers array...
+  let timers = registeredTimers.get(obj);
+  timers.delete(cancelId);
 }
 
 function getTimersDisposable(timers) {
   return function() {
-    // clear the timers array first to avoid painters algorithm
-    // when cancelTask tries to clean up the cancelId from the
-    // timers array
-    let deletedCancelIds = timers.splice(0, timers.length);
-    for (let i = 0; i < deletedCancelIds.length; i++) {
-      cancelTask(deletedCancelIds[i]);
-    }
+    timers.forEach(cancelId => {
+      cancelTask(cancelId);
+    });
+    timers.clear();
   };
 }
 
@@ -241,7 +232,7 @@ function getTimers(obj) {
   let timers = registeredTimers.get(obj);
 
   if (!timers) {
-    timers = [];
+    timers = new Set();
     registeredTimers.set(obj, timers);
     registerDisposable(obj, getTimersDisposable(timers));
   }
