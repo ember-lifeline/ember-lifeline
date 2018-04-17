@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-const { WeakMap } = Ember;
+const { WeakMap, deprecate } = Ember;
 
 /**
  * A map of instances/timers that allows us to
@@ -215,12 +215,21 @@ export function throttleTask(obj, name, timeout = 0) {
    ```
 
    @method cancelTask
+   @param { Object } obj the entwined object that was provided with the original runTask or scheduleTask call
    @param { Number } cancelId the id returned from the runTask or scheduleTask call
    @public
    */
 export function cancelTask(obj, cancelId) {
   // TODO: remove this older API on next major version
   if (cancelId === undefined) {
+    deprecate(
+      'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
+      true,
+      {
+        id: 'ember-lifeline-cancel-task-without-object',
+        until: '4.0.0'
+      }
+    );
     run.cancel(obj);
     return;
   }
