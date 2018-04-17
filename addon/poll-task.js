@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-const { WeakMap } = Ember;
+const { WeakMap, deprecate } = Ember;
 
 /**
  * A map of instances/poller functions that allows us to
@@ -108,13 +108,13 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
   let pollers = registeredPollers.get(obj);
 
   if (!pollers) {
-    pollers = [];
+    pollers = new Set();
     registeredPollers.set(obj, pollers);
 
     registerDisposable(obj, getPollersDisposable(pollers));
   }
 
-  pollers.push(token);
+  pollers.add(token);
 
   if (shouldPoll()) {
     next = tick;
@@ -158,15 +158,30 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    @param { String } token the token for the pollTask to be cleared
    @public
    */
-export function cancelPoll(token) {
+export function cancelPoll(obj, token) {
+  // TODO: remove this older API on next major version
+  if (token === undefined) {
+    deprecate(
+      'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
+      true,
+      {
+        id: 'ember-lifeline-cancel-poll-without-object',
+        until: '4.0.0'
+      }
+    );
+    token = obj;
+    obj = null;
+  }
   delete queuedPollTasks[token];
+  let pollers = registeredPollers.get(obj);
+  pollers.delete(token);
 }
 
 function getPollersDisposable(pollers) {
   return function() {
-    for (let i = 0; i < pollers.length; i++) {
-      delete queuedPollTasks[pollers[i]];
-    }
+    pollers.forEach(token => {
+      cancelPoll(token);
+    });
   };
 }
 
