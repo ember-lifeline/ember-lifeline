@@ -205,7 +205,7 @@ export function throttleTask(obj, name, timeout = 0) {
      },
 
      disable() {
-        cancelTask(this._cancelId);
+        cancelTask(this, this._cancelId);
      },
 
      destroy() {
@@ -230,19 +230,18 @@ export function cancelTask(obj, cancelId) {
         until: '4.0.0',
       }
     );
-    run.cancel(obj);
-    return;
+    cancelId = obj;
+  } else {
+    let timers = registeredTimers.get(obj);
+    timers.delete(cancelId);
   }
-
   run.cancel(cancelId);
-  let timers = registeredTimers.get(obj);
-  timers.delete(cancelId);
 }
 
-function getTimersDisposable(timers) {
+function getTimersDisposable(obj, timers) {
   return function() {
     timers.forEach(cancelId => {
-      cancelTask(cancelId);
+      cancelTask(obj, cancelId);
     });
     timers.clear();
   };
@@ -254,7 +253,7 @@ function getTimers(obj) {
   if (!timers) {
     timers = new Set();
     registeredTimers.set(obj, timers);
-    registerDisposable(obj, getTimersDisposable(timers));
+    registerDisposable(obj, getTimersDisposable(obj, timers));
   }
 
   return timers;
