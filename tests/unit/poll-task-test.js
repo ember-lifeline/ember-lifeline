@@ -215,7 +215,7 @@ module('ember-lifeline/poll-task', function(hooks) {
       runTask(this.obj, next);
     });
 
-    cancelPoll(token);
+    cancelPoll(this.obj, token);
 
     assert.throws(() => {
       pollTaskFor(token);

@@ -173,8 +173,10 @@ export function cancelPoll(obj, token) {
     obj = null;
   }
   delete queuedPollTasks[token];
-  let pollers = registeredPollers.get(obj);
-  pollers.delete(token);
+  if (obj) {
+    let pollers = registeredPollers.get(obj);
+    pollers.delete(token);
+  }
 }
 
 function getPollersDisposable(pollers) {
