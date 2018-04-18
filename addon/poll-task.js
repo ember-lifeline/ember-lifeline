@@ -166,7 +166,7 @@ export function cancelPoll(obj, token) {
       true,
       {
         id: 'ember-lifeline-cancel-poll-without-object',
-        until: '4.0.0'
+        until: '4.0.0',
       }
     );
     token = obj;
