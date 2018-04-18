@@ -111,7 +111,7 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
     pollers = new Set();
     registeredPollers.set(obj, pollers);
 
-    registerDisposable(obj, getPollersDisposable(pollers));
+    registerDisposable(obj, getPollersDisposable(obj, pollers));
   }
 
   pollers.add(token);
@@ -149,7 +149,7 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
      },
 
      disableAutoRefresh() {
-        cancelPoll(this._pollToken);
+        cancelPoll(this, this._pollToken);
      }
    });
    ```
@@ -159,7 +159,6 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    @public
    */
 export function cancelPoll(obj, token) {
-  // TODO: remove this older API on next major version
   if (token === undefined) {
     deprecate(
       'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
@@ -170,19 +169,17 @@ export function cancelPoll(obj, token) {
       }
     );
     token = obj;
-    obj = null;
-  }
-  delete queuedPollTasks[token];
-  if (obj) {
+  } else {
     let pollers = registeredPollers.get(obj);
     pollers.delete(token);
   }
+  delete queuedPollTasks[token];
 }
 
-function getPollersDisposable(pollers) {
+function getPollersDisposable(obj, pollers) {
   return function() {
     pollers.forEach(token => {
-      cancelPoll(token);
+      cancelPoll(obj, token);
     });
   };
 }
