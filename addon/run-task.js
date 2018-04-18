@@ -220,7 +220,6 @@ export function throttleTask(obj, name, timeout = 0) {
    @public
    */
 export function cancelTask(obj, cancelId) {
-  // TODO: remove this older API on next major version
   if (cancelId === undefined) {
     deprecate(
       'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
