@@ -227,7 +227,7 @@ export function cancelTask(obj, cancelId) {
       true,
       {
         id: 'ember-lifeline-cancel-task-without-object',
-        until: '4.0.0'
+        until: '4.0.0',
       }
     );
     run.cancel(obj);
