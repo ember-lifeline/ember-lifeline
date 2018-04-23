@@ -1,10 +1,10 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-const { WeakMap, deprecate } = Ember;
+const { WeakMap } = Ember;
 
 /**
  * A map of instances/timers that allows us to
@@ -215,7 +215,7 @@ export function throttleTask(obj, name, timeout = 0) {
    ```
 
    @method cancelTask
-   @param { Object } obj the entwined object that was provided with the original runTask or scheduleTask call
+   @param { Object } obj the entangled object that was provided with the original runTask or scheduleTask call
    @param { Number } cancelId the id returned from the runTask or scheduleTask call
    @public
    */
