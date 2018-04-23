@@ -215,8 +215,8 @@ export function throttleTask(obj, name, timeout = 0) {
    ```
 
    @method cancelTask
-   @param { Object } obj the entangled object that was provided with the original runTask or scheduleTask call
-   @param { Number } cancelId the id returned from the runTask or scheduleTask call
+   @param { Object } obj the entangled object that was provided with the original *Task call
+   @param { Number } cancelId the id returned from the *Task call
    @public
    */
 export function cancelTask(obj, cancelId) {
