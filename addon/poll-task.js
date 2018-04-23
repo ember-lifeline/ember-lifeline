@@ -1,10 +1,10 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-const { WeakMap, deprecate } = Ember;
+const { WeakMap } = Ember;
 
 /**
  * A map of instances/poller functions that allows us to
