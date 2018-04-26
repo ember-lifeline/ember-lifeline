@@ -482,6 +482,11 @@ In development and production, the `updateTime` method is executed initially dur
 destroyed (e.g. no longer rendered on screen) any pending timers from `runTask` or `debounceTask`
 calls are properly canceled (as usual with those methods).
 
+If you want to stop polling at any time, you will need to call `cancelPoll`
+instead of `runTask(this, next, delay)` - `cancelPoll` cleans up internal data
+associated with the poll, avoiding a memory leak. You can also call `cancelPoll`
+from outside the poll loop.
+
 In testing, the `updateTime` method would execute initially during the components instantiation (just like
 in development and production environments), but would not automatically start polling. This allows
 tests that are not related to the polling behavior to continue uninterrupted. To test the actual polling
