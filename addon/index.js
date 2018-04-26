@@ -5,7 +5,13 @@ export {
   cancelTask,
   _setRegisteredTimers,
 } from './run-task';
-export { pollTask, pollTaskFor, setShouldPoll, cancelPoll } from './poll-task';
+export {
+  pollTask,
+  pollTaskFor,
+  setShouldPoll,
+  cancelPoll,
+  _setRegisteredPollers,
+} from './poll-task';
 export { debounceTask, cancelDebounce } from './debounce-task';
 export { addEventListener, removeEventListener } from './dom-event-listeners';
 export {

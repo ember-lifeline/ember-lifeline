@@ -13,7 +13,18 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-const registeredPollers = new WeakMap();
+let registeredPollers = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether the pollers set is empty.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredPollers(mapForTesting) {
+  registeredPollers = mapForTesting;
+}
 
 let token = 0;
 let _shouldPollOverride;

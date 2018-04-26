@@ -8,6 +8,7 @@ import {
   pollTaskFor,
   setShouldPoll,
   runDisposables,
+  _setRegisteredPollers,
 } from 'ember-lifeline';
 
 import { settled } from '@ember/test-helpers';
@@ -232,5 +233,27 @@ module('ember-lifeline/poll-task', function(hooks) {
     return settled().then(() => {
       pollTaskFor(token);
     });
+  });
+
+  test('pollTask tasks removed their tokens when cancelled', function(assert) {
+    assert.expect(1);
+
+    let map = new Map();
+    _setRegisteredPollers(map);
+    this.obj = this.getComponent();
+
+    let token = pollTask(this.obj, next => {
+      runTask(this.obj, next);
+    });
+
+    cancelPoll(this.obj, token);
+
+    assert.equal(
+      map.get(this.obj).size,
+      0,
+      'Set deleted the token after task cancelled'
+    );
+
+    _setRegisteredPollers(new WeakMap());
   });
 });
