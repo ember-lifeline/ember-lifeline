@@ -129,6 +129,7 @@ export function cancelDebounce(obj, name) {
 
   let { cancelId } = pendingDebounces[name];
 
+  delete pendingDebounces[name];
   run.cancel(cancelId);
 }
 
