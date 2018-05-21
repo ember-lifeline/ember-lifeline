@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/ember-lifeline/ember-lifeline.svg?branch=master)](https://travis-ci.org/ember-lifeline/ember-lifeline)
 [![Ember Observer Score](https://emberobserver.com/badges/ember-lifeline.svg)](https://emberobserver.com/addons/ember-lifeline)
 [![npm version](https://badge.fury.io/js/ember-lifeline.svg)](https://badge.fury.io/js/ember-lifeline)
+[![Monthly Downloads from NPM](https://img.shields.io/npm/dm/ember-lifeline.svg?style=flat-square)](https://www.npmjs.com/package/ember-lifeline)
+[![Code Style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](#badge)
 
 Ember applications have long life-cycles. A user may navigate to several pages
 and use many different features before they leave the application. This
