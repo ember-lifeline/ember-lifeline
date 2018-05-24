@@ -2,6 +2,9 @@ import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import { addEventListener, removeEventListener } from '../dom-event-listeners';
 import { runDisposables } from '../utils/disposable';
+import EmberObject from '@ember/object';
+
+type MaybeComponent = EmberObject & { isComponent?: boolean, tagName?: string, _currentState?: any, _states?: any, element?: any }; // an ember object that MIGHT have isComponent boolean
 
 /**
  ContextBoundEventListenersMixin provides a mechanism to attach event listeners
@@ -54,7 +57,7 @@ export default Mixin.create({
    @param { Function } _callback the callback to run for that event
    @public
    */
-  addEventListener(selector, eventName, callback, options) {
+  addEventListener(this: MaybeComponent, selector, eventName, callback, options) {
     assert(
       'Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
       !this.isComponent || this.tagName !== '' || typeof selector !== 'string'
@@ -92,7 +95,7 @@ export default Mixin.create({
    @param { Function } callback the callback to run for that event
    @public
    */
-  removeEventListener(selector, eventName, callback, options) {
+  removeEventListener(this: MaybeComponent, selector, eventName, callback, options) {
     let element;
 
     // If no element is provided, we assume we're adding the event listener to the component's element. This

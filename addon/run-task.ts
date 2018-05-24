@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert, deprecate } from '@ember/debug';
+import { assert } from '@ember/debug';
+import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
@@ -219,8 +220,10 @@ export function throttleTask(obj, name, timeout = 0) {
    @param { Number } cancelId the id returned from the *Task call
    @public
    */
-export function cancelTask(obj, cancelId) {
-  if (cancelId === undefined) {
+export function cancelTask(cancelId: Ember.EmberRunTimer);
+export function cancelTask(obj: Object, cancelId: Ember.EmberRunTimer);
+export function cancelTask(obj: Object | Ember.EmberRunTimer, cancelId?: any) {
+  if (typeof cancelId === 'undefined') {
     deprecate(
       'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
       true,

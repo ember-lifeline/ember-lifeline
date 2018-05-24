@@ -24,7 +24,7 @@ const PASSIVE_SUPPORTED = (() => {
       },
     });
 
-    window.addEventListener('test', null, options);
+    window.addEventListener('test', null as any, options);
   } catch (err) {
     // intentionally empty
   }

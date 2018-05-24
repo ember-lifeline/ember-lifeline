@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert, deprecate } from '@ember/debug';
+import { assert } from '@ember/debug';
+import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
@@ -41,7 +42,9 @@ export function setShouldPoll(callback) {
   _shouldPollOverride = callback;
 }
 
-let queuedPollTasks = Object.create(null);
+let queuedPollTasks: {
+  [k: string]: () => void
+} = Object.create(null);
 export function pollTaskFor(token) {
   assert(
     `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
@@ -169,8 +172,11 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    @param { String } token the token for the pollTask to be cleared
    @public
    */
-export function cancelPoll(obj, token) {
-  if (token === undefined) {
+export function cancelPoll(token: number);
+export function cancelPoll(obj: Object, token: number);
+export function cancelPoll(obj: Object | number, token?: number) {
+  let tok: number;
+  if (typeof obj === 'number') {
     deprecate(
       'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
       true,
@@ -179,12 +185,13 @@ export function cancelPoll(obj, token) {
         until: '4.0.0',
       }
     );
-    token = obj;
+    tok = obj;
   } else {
     let pollers = registeredPollers.get(obj);
     pollers.delete(token);
+    tok = token as number; // token is mandatory if obj is an Object
   }
-  delete queuedPollTasks[token];
+  delete queuedPollTasks[tok];
 }
 
 function getPollersDisposable(obj, pollers) {
