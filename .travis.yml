@@ -1,22 +1,14 @@
----
 language: node_js
 node_js:
-  # we recommend testing addons with the same minimum supported node version as Ember CLI
-  # so that your addon works for all apps
-  - "10"
-
+- '10'
 sudo: required
 dist: trusty
-
 addons:
-    chrome: stable
-
+  chrome: stable
 cache:
   yarn: true
-
 env:
-  # we recommend new addons test the current and previous LTS
-  # as well as latest stable release (bonus points to beta/canary)
+  matrix:
   - EMBER_TRY_SCENARIO=ember-lts-2.8
   - EMBER_TRY_SCENARIO=ember-lts-2.12
   - EMBER_TRY_SCENARIO=ember-release
@@ -24,22 +16,21 @@ env:
   - EMBER_TRY_SCENARIO=ember-canary
   - EMBER_TRY_SCENARIO=no-jquery
   - EMBER_TRY_SCENARIO=ember-default
-
+  global:
+    secure: F1LugjlZBByx1WNQsbnlcsgj4qu2ImMaHQbwknuHGfgM2FXUTryj7LoJr74yE0DGRo2r4wDGD5ysr3ozeK55smn5JZG6a78VWKXZF/2s/Xf48/oMhhvQuAQzWfsZCDNSraSKShqsGv8HtWgE5ABUh50SP6m22Oee90mUkpf4oIN70LpCY5pfcw8TEnHUESKDeFKkCSRXgViaoaOtHrI+AWuN7XBV4omtj+sxYUFnT1PsZtVSKluHFsQZzN9vlPswAP34druCKWhf3jn3uj1TPunGS913b3IlkMXLbkSsgDPqXTL2V7g4vC17w5AvpiVOcStBH/ckbYYHEHcihKtqb0v+z1D2/VAVMxjGBZthpaYFLBH0kUI2csVk9olvzuO8d2AlV94L/4k4BaCow0jsgEtg1TbpzaKkkUJf6s8lejeMrvNYLomzP+LKaOyDIzfOBHHBDwdB/JM8ezIfgmV6adTinuij45oRIZP51XdLCvGFk5J53LN10AA7aTBkyswxcl1C9HZ1nbAncEW+s2aSjWD62r3zfVyJfcyBgnIlWC+5Ao5g0UxF3MrbKTLJo7jXA8FrEqNtqRMJHIn70cYLmNO09364+soP5h7jYQQEHXh7Pts83bQqRda4MecW64QeGz8gPvnbfnvWUj44Xz0xomIEmPbTi/0iDUFDxqKvb5E=
 matrix:
   fast_finish: true
   allow_failures:
-    - env: EMBER_TRY_SCENARIO=ember-canary
-
+  - env: EMBER_TRY_SCENARIO=ember-canary
 before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH=$HOME/.yarn/bin:$PATH
-  - yarn global add phantomjs-prebuilt
-  - phantomjs --version
-
+- curl -o- -L https://yarnpkg.com/install.sh | bash
+- export PATH=$HOME/.yarn/bin:$PATH
+- yarn global add phantomjs-prebuilt
+- yarn global add greenkeeper-lockfile@1
+- phantomjs --version
+before_script: greenkeeper-lockfile-update
+after_script: greenkeeper-lockfile-upload
 install:
-  - yarn install --no-lockfile --non-interactive
-
+- yarn install --no-lockfile --non-interactive
 script:
-  # Usually, it's ok to finish the test scenario without reverting
-  #  to the addon's original dependency state, skipping "cleanup".
-  - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO --skip-cleanup
+- node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO --skip-cleanup
