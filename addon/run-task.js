@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
@@ -13,7 +13,18 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-const registeredTimers = new WeakMap();
+let registeredTimers = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether the timers set is empty.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredTimers(mapForTesting) {
+  registeredTimers = mapForTesting;
+}
 
 /**
    Registers and runs the provided task function for the provided object at the specified
@@ -51,17 +62,14 @@ const registeredTimers = new WeakMap();
 export function runTask(obj, taskOrName, timeout = 0) {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
+  let task = getTask(obj, taskOrName, 'runTask');
   let timers = getTimers(obj);
   let cancelId = run.later(() => {
-    let cancelIndex = timers.indexOf(cancelId);
-    timers.splice(cancelIndex, 1);
-
-    let task = getTask(obj, taskOrName, 'runTask');
-
+    timers.delete(cancelId);
     task.call(obj);
   }, timeout);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
   return cancelId;
 }
 
@@ -114,10 +122,15 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
   );
 
   let task = getTask(obj, taskOrName, 'scheduleTask');
-  let cancelId = run.schedule(queueName, obj, task, ...args);
   let timers = getTimers(obj);
+  let cancelId;
+  let taskWrapper = (...taskArgs) => {
+    timers.delete(cancelId);
+    task.call(obj, ...taskArgs);
+  };
+  cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
 
   return cancelId;
 }
@@ -170,7 +183,7 @@ export function throttleTask(obj, name, timeout = 0) {
   let timers = getTimers(obj);
   let cancelId = run.throttle(obj, name, timeout);
 
-  timers.push(cancelId);
+  timers.add(cancelId);
 
   return cancelId;
 }
@@ -192,7 +205,7 @@ export function throttleTask(obj, name, timeout = 0) {
      },
 
      disable() {
-        cancelTask(this._cancelId);
+        cancelTask(this, this._cancelId);
      },
 
      destroy() {
@@ -202,18 +215,34 @@ export function throttleTask(obj, name, timeout = 0) {
    ```
 
    @method cancelTask
-   @param { Number } cancelId the id returned from the runTask or scheduleTask call
+   @param { Object } obj the entangled object that was provided with the original *Task call
+   @param { Number } cancelId the id returned from the *Task call
    @public
    */
-export function cancelTask(cancelId) {
+export function cancelTask(obj, cancelId) {
+  if (cancelId === undefined) {
+    deprecate(
+      'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
+      true,
+      {
+        id: 'ember-lifeline-cancel-task-without-object',
+        until: '4.0.0',
+      }
+    );
+    cancelId = obj;
+  } else {
+    let timers = registeredTimers.get(obj);
+    timers.delete(cancelId);
+  }
   run.cancel(cancelId);
 }
 
-function getTimersDisposable(timers) {
+function getTimersDisposable(obj, timers) {
   return function() {
-    for (let i = 0; i < timers.length; i++) {
-      cancelTask(timers[i]);
-    }
+    timers.forEach(cancelId => {
+      cancelTask(obj, cancelId);
+    });
+    timers.clear();
   };
 }
 
@@ -221,9 +250,9 @@ function getTimers(obj) {
   let timers = registeredTimers.get(obj);
 
   if (!timers) {
-    timers = [];
+    timers = new Set();
     registeredTimers.set(obj, timers);
-    registerDisposable(obj, getTimersDisposable(timers));
+    registerDisposable(obj, getTimersDisposable(obj, timers));
   }
 
   return timers;

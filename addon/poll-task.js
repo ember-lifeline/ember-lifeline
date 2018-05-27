@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import { run } from '@ember/runloop';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
@@ -13,7 +13,18 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-const registeredPollers = new WeakMap();
+let registeredPollers = new WeakMap();
+
+/**
+ * Test use only. Allows for swapping out the WeakMap to a Map, giving
+ * us the ability to detect whether the pollers set is empty.
+ *
+ * @private
+ * @param {*} mapForTesting A map used to ensure correctness when testing.
+ */
+export function _setRegisteredPollers(mapForTesting) {
+  registeredPollers = mapForTesting;
+}
 
 let token = 0;
 let _shouldPollOverride;
@@ -108,13 +119,13 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
   let pollers = registeredPollers.get(obj);
 
   if (!pollers) {
-    pollers = [];
+    pollers = new Set();
     registeredPollers.set(obj, pollers);
 
-    registerDisposable(obj, getPollersDisposable(pollers));
+    registerDisposable(obj, getPollersDisposable(obj, pollers));
   }
 
-  pollers.push(token);
+  pollers.add(token);
 
   if (shouldPoll()) {
     next = tick;
@@ -149,7 +160,7 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
      },
 
      disableAutoRefresh() {
-        cancelPoll(this._pollToken);
+        cancelPoll(this, this._pollToken);
      }
    });
    ```
@@ -158,15 +169,29 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    @param { String } token the token for the pollTask to be cleared
    @public
    */
-export function cancelPoll(token) {
+export function cancelPoll(obj, token) {
+  if (token === undefined) {
+    deprecate(
+      'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
+      true,
+      {
+        id: 'ember-lifeline-cancel-poll-without-object',
+        until: '4.0.0',
+      }
+    );
+    token = obj;
+  } else {
+    let pollers = registeredPollers.get(obj);
+    pollers.delete(token);
+  }
   delete queuedPollTasks[token];
 }
 
-function getPollersDisposable(pollers) {
+function getPollersDisposable(obj, pollers) {
   return function() {
-    for (let i = 0; i < pollers.length; i++) {
-      delete queuedPollTasks[pollers[i]];
-    }
+    pollers.forEach(token => {
+      cancelPoll(obj, token);
+    });
   };
 }
 
