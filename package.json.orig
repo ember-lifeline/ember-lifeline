@@ -51,7 +51,10 @@
     "ember-native-dom-helpers": "0.6.2",
     "ember-resolver": "^4.0.0",
     "ember-source": "~3.1.2",
+<<<<<<< HEAD
+=======
     "ember-try": "^0.2.23",
+>>>>>>> 96a679855f1855cacb8b29d7c22a1fced0ffa35e
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-ember-suave": "^1.0.0",
     "eslint-plugin-prettier": "^2.5.0",
