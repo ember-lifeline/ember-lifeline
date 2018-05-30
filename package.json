@@ -50,7 +50,7 @@
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-native-dom-helpers": "0.6.2",
     "ember-resolver": "^4.0.0",
-    "ember-source": "~2.18.0",
+    "ember-source": "~3.1.2",
     "ember-try": "^0.2.23",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-ember-suave": "^1.0.0",
