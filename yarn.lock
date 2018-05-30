@@ -2374,10 +2374,10 @@ ember-export-application-global@^2.0.0:
     ember-cli-babel "^6.0.0-beta.7"
 
 ember-load-initializers@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ember-load-initializers/-/ember-load-initializers-1.0.0.tgz#4919eaf06f6dfeca7e134633d8c05a6c9921e6e7"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ember-load-initializers/-/ember-load-initializers-1.1.0.tgz#4edacc0f3a14d9f53d241ac3e5561804c8377978"
   dependencies:
-    ember-cli-babel "^6.0.0-beta.7"
+    ember-cli-babel "^6.6.0"
 
 ember-maybe-import-regenerator@^0.1.6:
   version "0.1.6"
