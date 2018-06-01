@@ -1,4 +1,10 @@
 
+v3.0.4 / 2018-06-01
+==================
+
+  * Updated dependencies to latest versions, including Ember 3.1.2 and Ember CLI 3.1.4
+  * PR - Clean up canceled pending debounce by 2hu12 
+
 v3.0.0 / 2018-03-12
 ==================
 
