@@ -42,6 +42,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask provides ability to poll with callback provided', function(assert) {
     assert.expect(2);
+
     setShouldPoll(() => true);
     this.obj = this.getComponent();
     let calledTimes = 0;
@@ -64,6 +65,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask provides ability to poll with method provided', function(assert) {
     assert.expect(3);
+
     setShouldPoll(() => true);
     let calledTimes = 0;
     let obj = (this.obj = this.getComponent({
@@ -87,8 +89,38 @@ module('ember-lifeline/poll-task', function(hooks) {
     return settled();
   });
 
+  test('pollTask provides ability to poll with custom string token', function(assert) {
+    assert.expect(3);
+
+    setShouldPoll(() => true);
+    this.obj = this.getComponent();
+    let calledTimes = 0;
+    let token = 'custom:token';
+
+    let returnedToken = pollTask(
+      this.obj,
+      next => {
+        calledTimes++;
+
+        if (calledTimes === 5) {
+          assert.ok(true, 'polled successfully');
+        } else {
+          runTask(this.obj, next, 5);
+        }
+      },
+      token
+    );
+
+    assert.equal(token, returnedToken, 'poll task string tokens match');
+    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+
+    // ensure that pending pollTask's are not running
+    return settled();
+  });
+
   test('pollTask calls callback once in testing mode', function(assert) {
     assert.expect(2);
+
     let obj = (this.obj = this.getComponent());
     let calledTimes = 0;
 
@@ -120,6 +152,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask next tick can be incremented via test helper with callback', function(assert) {
     assert.expect(2);
+
     this.obj = this.getComponent();
     let calledTimes = 0;
 
@@ -151,6 +184,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask next tick can be incremented via test helper with method name', function(assert) {
     assert.expect(2);
+
     let calledTimes = 0;
     let obj = (this.obj = this.getComponent({
       run(next) {
@@ -210,6 +244,7 @@ module('ember-lifeline/poll-task', function(hooks) {
 
   test('pollTask can be manually cleared', function(assert) {
     assert.expect(3);
+
     this.obj = this.getComponent();
 
     let token = pollTask(this.obj, next => {

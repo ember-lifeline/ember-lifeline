@@ -6,6 +6,11 @@ import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
 /**
+ *
+ */
+type Token = string | number;
+
+/**
  * A map of instances/poller functions that allows us to
  * store poller tokens per instance.
  *
@@ -106,10 +111,12 @@ export function pollTaskFor(token) {
    ```
 
    @method pollTask
+   @param { Object } obj the entangled object that was provided with the original *Task call
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
                                            which is run at the provided time specified
                                            by timeout
+   @param { Token } token the Token for the pollTask
    @public
    */
 export function pollTask(obj, taskOrName, token = getNextToken()) {
@@ -167,13 +174,13 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    ```
 
    @method cancelPoll
-   @param { String } token the token for the pollTask to be cleared
+   @param { Token } token the Token for the pollTask to be cleared
    @public
    */
-export function cancelPoll(token: number);
-export function cancelPoll(obj: Object, token: number);
-export function cancelPoll(obj: Object | number, token?: number) {
-  let tok: number;
+export function cancelPoll(token: Token);
+export function cancelPoll(obj: Object, token: Token);
+export function cancelPoll(obj: Object | number, token?: Token) {
+  let tok: Token;
   if (typeof obj === 'number') {
     deprecate(
       'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
@@ -187,7 +194,7 @@ export function cancelPoll(obj: Object | number, token?: number) {
   } else {
     let pollers = registeredPollers.get(obj);
     pollers.delete(token);
-    tok = token as number; // token is mandatory if obj is an Object
+    tok = token as Token;
   }
   delete queuedPollTasks[tok];
 }
