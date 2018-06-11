@@ -5,8 +5,6 @@ import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-const { WeakMap } = Ember;
-
 /**
  * A map of instances/poller functions that allows us to
  * store poller tokens per instance.
@@ -43,7 +41,7 @@ export function setShouldPoll(callback) {
 }
 
 let queuedPollTasks: {
-  [k: string]: () => void
+  [k: string]: () => void;
 } = Object.create(null);
 export function pollTaskFor(token) {
   assert(

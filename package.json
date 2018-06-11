@@ -29,8 +29,7 @@
     ]
   },
   "dependencies": {
-    "ember-cli-babel": "^6.8.2",
-    "ember-weakmap": "^3.1.1"
+    "ember-cli-babel": "^6.8.2"
   },
   "devDependencies": {
     "@types/ember": "^2.8.23",

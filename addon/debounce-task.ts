@@ -1,9 +1,6 @@
-import Ember from 'ember';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
-
-const { WeakMap } = Ember;
 
 /**
  * A map of instances/debounce functions that allows us to

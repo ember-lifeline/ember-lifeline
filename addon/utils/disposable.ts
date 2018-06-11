@@ -1,7 +1,4 @@
-import Ember from 'ember';
 import { assert } from '@ember/debug';
-
-const { WeakMap } = Ember;
 
 /**
  * A map of instances/array of disposables. Only exported for

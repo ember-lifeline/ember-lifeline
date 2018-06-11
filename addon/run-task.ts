@@ -5,8 +5,6 @@ import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-const { WeakMap } = Ember;
-
 /**
  * A map of instances/timers that allows us to
  * store cancelIds for scheduled timers per instance.
