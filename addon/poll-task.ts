@@ -171,14 +171,14 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    ```
 
    @method cancelPoll
-   @param { Token } token the Token for the pollTask to be cleared
+   @param { Token } _token the Token for the pollTask to be cleared
    @public
    */
-export function cancelPoll(token: Token);
-export function cancelPoll(obj: Object, token: Token);
-export function cancelPoll(obj: Object | number, token?: Token) {
-  let tok: Token;
-  if (typeof obj === 'number') {
+export function cancelPoll(_token: Token);
+export function cancelPoll(obj: Object, _token: Token);
+export function cancelPoll(obj: Object | Token, _token?: Token) {
+  let token: Token;
+  if (typeof obj === 'number' || typeof obj === 'string') {
     deprecate(
       'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
       true,
@@ -187,13 +187,13 @@ export function cancelPoll(obj: Object | number, token?: Token) {
         until: '4.0.0',
       }
     );
-    tok = obj;
+    token = obj;
   } else {
     let pollers = registeredPollers.get(obj);
-    pollers.delete(token);
-    tok = token as Token;
+    pollers.delete(_token);
+    token = _token as Token;
   }
-  delete queuedPollTasks[tok];
+  delete queuedPollTasks[token];
 }
 
 function getPollersDisposable(obj, pollers) {

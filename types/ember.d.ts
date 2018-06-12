@@ -5,3 +5,11 @@ declare module 'ember' {
     }
   }
 }
+
+type EmberRunQueues =
+  | 'sync'
+  | 'actions'
+  | 'routerTransitions'
+  | 'render'
+  | 'afterRender'
+  | 'destroy';

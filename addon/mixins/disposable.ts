@@ -50,7 +50,7 @@ export default Mixin.create({
   @returns A disposable object
   @public
   */
-  registerDisposable(dispose) {
+  registerDisposable(dispose: Function) {
     return registerDisposable(this, dispose);
   },
 
