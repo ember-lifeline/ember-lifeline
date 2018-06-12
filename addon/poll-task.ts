@@ -1,9 +1,12 @@
 import Ember from 'ember';
+import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
+import { IMap } from './interfaces';
+import { TaskOrName } from './types';
 
 type Token = string | number;
 
@@ -14,7 +17,7 @@ type Token = string | number;
  * @private
  *
  */
-let registeredPollers = new WeakMap();
+let registeredPollers: IMap<Object, any> = new WeakMap();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -23,12 +26,14 @@ let registeredPollers = new WeakMap();
  * @private
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
-export function _setRegisteredPollers(mapForTesting) {
+export function _setRegisteredPollers(
+  mapForTesting: IMap<Object, any>
+): void | undefined {
   registeredPollers = mapForTesting;
 }
 
-let token = 0;
-let _shouldPollOverride;
+let token: number = 0;
+let _shouldPollOverride: Function | undefined;
 function shouldPoll() {
   if (_shouldPollOverride) {
     return _shouldPollOverride();
@@ -38,14 +43,14 @@ function shouldPoll() {
   return !Ember.testing;
 }
 
-export function setShouldPoll(callback) {
+export function setShouldPoll(callback): void {
   _shouldPollOverride = callback;
 }
 
 let queuedPollTasks: {
   [k: string]: () => void;
 } = Object.create(null);
-export function pollTaskFor(token) {
+export function pollTaskFor(token): void | undefined {
   assert(
     `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
     !!queuedPollTasks[token]
@@ -116,7 +121,11 @@ export function pollTaskFor(token) {
    @param { Token } token the Token for the pollTask
    @public
    */
-export function pollTask(obj, taskOrName, token = getNextToken()) {
+export function pollTask(
+  obj: EmberObject,
+  taskOrName: TaskOrName,
+  token: Token = getNextToken()
+): Token {
   let next;
   let task = getTask(obj, taskOrName, 'pollTask');
   let tick = () => task.call(obj, next);
@@ -176,7 +185,10 @@ export function pollTask(obj, taskOrName, token = getNextToken()) {
    */
 export function cancelPoll(_token: Token);
 export function cancelPoll(obj: Object, _token: Token);
-export function cancelPoll(obj: Object | Token, _token?: Token) {
+export function cancelPoll(
+  obj: Object | Token,
+  _token?: Token
+): void | undefined {
   let token: Token;
   if (typeof obj === 'number' || typeof obj === 'string') {
     deprecate(
@@ -189,14 +201,14 @@ export function cancelPoll(obj: Object | Token, _token?: Token) {
     );
     token = obj;
   } else {
-    let pollers = registeredPollers.get(obj);
-    pollers.delete(_token);
+    let pollers: Set<Token> = registeredPollers.get(obj);
     token = _token as Token;
+    pollers.delete(token);
   }
   delete queuedPollTasks[token];
 }
 
-function getPollersDisposable(obj, pollers) {
+function getPollersDisposable(obj: EmberObject, pollers: Set<Token>): Function {
   return function() {
     pollers.forEach(token => {
       cancelPoll(obj, token);
@@ -204,6 +216,6 @@ function getPollersDisposable(obj, pollers) {
   };
 }
 
-function getNextToken() {
+function getNextToken(): number {
   return token++;
 }

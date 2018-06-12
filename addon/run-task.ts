@@ -1,13 +1,11 @@
-import Ember from 'ember';
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import IMap from './imap';
-
-type TaskOrName = Function | string;
+import { IMap } from './interfaces';
+import { TaskOrName } from './types';
 
 /**
  * A map of instances/timers that allows us to
@@ -66,12 +64,12 @@ export function runTask(
   obj: EmberObject,
   taskOrName: TaskOrName,
   timeout: number = 0
-) {
+): EmberRunTimer {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
-  let task = getTask(obj, taskOrName, 'runTask');
-  let timers = getTimers(obj);
-  let cancelId = run.later(() => {
+  let task: Function = getTask(obj, taskOrName, 'runTask');
+  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let cancelId: EmberRunTimer = run.later(() => {
     timers.delete(cancelId);
     task.call(obj);
   }, timeout);
@@ -119,7 +117,7 @@ export function scheduleTask(
   queueName: EmberRunQueues,
   taskOrName: TaskOrName,
   ...args: any[]
-) {
+): EmberRunTimer {
   assert(
     `Called \`scheduleTask\` without a string as the first argument on ${obj}.`,
     typeof queueName === 'string'
@@ -133,14 +131,14 @@ export function scheduleTask(
     !obj.isDestroyed
   );
 
-  let task = getTask(obj, taskOrName, 'scheduleTask');
-  let timers = getTimers(obj);
-  let cancelId;
-  let taskWrapper = (...taskArgs) => {
+  let task: Function = getTask(obj, taskOrName, 'scheduleTask');
+  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let cancelId: EmberRunTimer;
+  let taskWrapper: Function = (...taskArgs) => {
     timers.delete(cancelId);
     task.call(obj, ...taskArgs);
   };
-  cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
+  cancelId = run.schedule(queueName, obj as any, taskWrapper, ...args);
 
   timers.add(cancelId);
 
@@ -182,7 +180,7 @@ export function throttleTask(
   obj: EmberObject,
   taskName: any,
   timeout: number = 0
-) {
+): EmberRunTimer {
   assert(
     `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
     typeof taskName === 'string'
@@ -196,8 +194,8 @@ export function throttleTask(
     !obj.isDestroyed
   );
 
-  let timers = getTimers(obj);
-  let cancelId = run.throttle(obj, taskName, timeout);
+  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let cancelId: EmberRunTimer = run.throttle(obj, taskName, timeout);
 
   timers.add(cancelId);
 
@@ -235,9 +233,12 @@ export function throttleTask(
    @param { Number } cancelId the id returned from the *Task call
    @public
    */
-export function cancelTask(cancelId: Ember.EmberRunTimer);
-export function cancelTask(obj: Object, cancelId: Ember.EmberRunTimer);
-export function cancelTask(obj: Object | Ember.EmberRunTimer, cancelId?: any) {
+export function cancelTask(cancelId: EmberRunTimer);
+export function cancelTask(obj: EmberObject, cancelId: EmberRunTimer);
+export function cancelTask(
+  obj: EmberObject | EmberRunTimer,
+  cancelId?: any
+): void | undefined {
   if (typeof cancelId === 'undefined') {
     deprecate(
       'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
@@ -249,13 +250,16 @@ export function cancelTask(obj: Object | Ember.EmberRunTimer, cancelId?: any) {
     );
     cancelId = obj;
   } else {
-    let timers = registeredTimers.get(obj);
+    let timers: Set<EmberRunTimer> = getTimers(obj);
     timers.delete(cancelId);
   }
   run.cancel(cancelId);
 }
 
-function getTimersDisposable(obj, timers) {
+function getTimersDisposable(
+  obj: EmberObject,
+  timers: Set<EmberRunTimer>
+): Function {
   return function() {
     timers.forEach(cancelId => {
       cancelTask(obj, cancelId);
@@ -264,11 +268,11 @@ function getTimersDisposable(obj, timers) {
   };
 }
 
-function getTimers(obj) {
+function getTimers(obj): Set<EmberRunTimer> {
   let timers = registeredTimers.get(obj);
 
   if (!timers) {
-    timers = new Set();
+    timers = new Set<EmberRunTimer>();
     registeredTimers.set(obj, timers);
     registerDisposable(obj, getTimersDisposable(obj, timers));
   }
