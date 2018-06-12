@@ -5,9 +5,6 @@ import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 
-/**
- *
- */
 type Token = string | number;
 
 /**
