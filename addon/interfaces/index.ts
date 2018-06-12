@@ -4,3 +4,5 @@ export interface IMap<K extends object, V> {
   has(key: K): boolean;
   set(key: K, value: V): this;
 }
+
+export type TaskOrName = Function | string;

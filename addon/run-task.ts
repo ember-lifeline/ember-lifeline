@@ -4,8 +4,7 @@ import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import { IMap } from './interfaces';
-import { TaskOrName } from './types';
+import { IMap, TaskOrName } from './interfaces';
 
 /**
  * A map of instances/timers that allows us to
