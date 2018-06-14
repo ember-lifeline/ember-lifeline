@@ -1,6 +1,7 @@
 import { assert } from '@ember/debug';
-import { run } from '@ember/runloop';
+import { bind } from '@ember/runloop';
 import { registerDisposable } from './utils/disposable';
+import { IMap } from './interfaces';
 
 /**
  * A map of instances/listeners that allows us to
@@ -9,7 +10,7 @@ import { registerDisposable } from './utils/disposable';
  * @private
  *
  */
-const eventListeners = new WeakMap();
+const eventListeners: IMap<Object, Array<Function>> = new WeakMap();
 
 const PASSIVE_SUPPORTED = (() => {
   let ret = false;
@@ -84,7 +85,7 @@ const INDEX = {
 export function addEventListener(obj, element, eventName, callback, options) {
   assertArguments(element, eventName, callback);
 
-  let _callback = run.bind(obj, callback);
+  let _callback = bind(obj, callback);
   let listeners = eventListeners.get(obj);
 
   if (listeners === undefined) {

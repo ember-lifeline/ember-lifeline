@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import { run } from '@ember/runloop';
+import { later, schedule, throttle, cancel } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
@@ -13,7 +13,7 @@ import { IMap, TaskOrName } from './interfaces';
  * @private
  *
  */
-let registeredTimers: IMap<Object, any> = new WeakMap();
+let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -22,7 +22,9 @@ let registeredTimers: IMap<Object, any> = new WeakMap();
  * @private
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
-export function _setRegisteredTimers(mapForTesting: IMap<Object, any>) {
+export function _setRegisteredTimers(
+  mapForTesting: IMap<Object, Set<EmberRunTimer>>
+) {
   registeredTimers = mapForTesting;
 }
 
@@ -68,7 +70,7 @@ export function runTask(
 
   let task: Function = getTask(obj, taskOrName, 'runTask');
   let timers: Set<EmberRunTimer> = getTimers(obj);
-  let cancelId: EmberRunTimer = run.later(() => {
+  let cancelId: EmberRunTimer = later(() => {
     timers.delete(cancelId);
     task.call(obj);
   }, timeout);
@@ -137,7 +139,7 @@ export function scheduleTask(
     timers.delete(cancelId);
     task.call(obj, ...taskArgs);
   };
-  cancelId = run.schedule(queueName, obj as any, taskWrapper, ...args);
+  cancelId = schedule(queueName, obj as any, taskWrapper, ...args);
 
   timers.add(cancelId);
 
@@ -194,7 +196,7 @@ export function throttleTask(
   );
 
   let timers: Set<EmberRunTimer> = getTimers(obj);
-  let cancelId: EmberRunTimer = run.throttle(obj, taskName, timeout);
+  let cancelId: EmberRunTimer = throttle(obj, taskName, timeout);
 
   timers.add(cancelId);
 
@@ -252,7 +254,7 @@ export function cancelTask(
     let timers: Set<EmberRunTimer> = getTimers(obj);
     timers.delete(cancelId);
   }
-  run.cancel(cancelId);
+  cancel(cancelId);
 }
 
 function getTimersDisposable(

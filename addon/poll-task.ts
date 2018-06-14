@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import EmberObject from '@ember/object';
-import { run } from '@ember/runloop';
+import { join } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
@@ -16,7 +16,7 @@ type Token = string | number;
  * @private
  *
  */
-let registeredPollers: IMap<Object, any> = new WeakMap();
+let registeredPollers: IMap<Object, Set<Token>> = new WeakMap();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -26,7 +26,7 @@ let registeredPollers: IMap<Object, any> = new WeakMap();
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
 export function _setRegisteredPollers(
-  mapForTesting: IMap<Object, any>
+  mapForTesting: IMap<Object, Set<Token>>
 ): void | undefined {
   registeredPollers = mapForTesting;
 }
@@ -55,7 +55,7 @@ export function pollTaskFor(token): void | undefined {
     !!queuedPollTasks[token]
   );
 
-  return run.join(null, queuedPollTasks[token]);
+  return join(null, queuedPollTasks[token]);
 }
 
 /**
