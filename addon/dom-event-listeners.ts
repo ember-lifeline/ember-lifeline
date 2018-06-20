@@ -30,13 +30,13 @@ const PASSIVE_SUPPORTED = (() => {
 })();
 
 const LISTENER_ITEM_LENGTH = 5;
-const INDEX = {
-  ELEMENT: 0,
-  EVENT_NAME: 1,
-  CALLBACK: 2,
-  ORIGINAL_CALLBACK: 3,
-  OPTIONS: 4,
-};
+enum ListenerItemPosition {
+  Element = 0,
+  eventName = 1,
+  callback = 2,
+  originalCallback = 3,
+  options = 4,
+}
 
 /**
    Attaches an event listener that will automatically be removed when the host
@@ -141,16 +141,16 @@ export function removeEventListener<Target>(
   // We cannot use Array.findIndex as we cannot rely on babel/polyfill being present
   for (let i = 0; i < listeners.length; i += LISTENER_ITEM_LENGTH) {
     if (
-      listeners[i + INDEX.ELEMENT] === element &&
-      listeners[i + INDEX.EVENT_NAME] === eventName &&
-      listeners[i + INDEX.ORIGINAL_CALLBACK] === callback
+      listeners[i + ListenerItemPosition.Element] === element &&
+      listeners[i + ListenerItemPosition.eventName] === eventName &&
+      listeners[i + ListenerItemPosition.originalCallback] === callback
     ) {
       /*
          * Drop the event listener and remove the listener object
          */
       let ownCallback: EventListenerOrEventListenerObject = <
         EventListenerOrEventListenerObject
-      >listeners[i + INDEX.CALLBACK];
+      >listeners[i + ListenerItemPosition.callback];
       element.removeEventListener(eventName, ownCallback, options);
       listeners.splice(i, LISTENER_ITEM_LENGTH);
       break;
@@ -183,12 +183,16 @@ function getEventListenersDisposable(listeners: Array<Object>): Function {
     if (listeners !== undefined) {
       /* Drop non-passive event listeners */
       for (let i = 0; i < listeners.length; i += LISTENER_ITEM_LENGTH) {
-        let element: HTMLElement = <HTMLElement>listeners[i + INDEX.ELEMENT];
-        let eventName: string = <string>listeners[i + INDEX.EVENT_NAME];
+        let element: HTMLElement = <HTMLElement>(
+          listeners[i + ListenerItemPosition.Element]
+        );
+        let eventName: string = <string>(
+          listeners[i + ListenerItemPosition.eventName]
+        );
         let callback: EventListenerOrEventListenerObject = <
           EventListenerOrEventListenerObject
-        >listeners[i + INDEX.CALLBACK];
-        let options: Object = listeners[i + INDEX.OPTIONS];
+        >listeners[i + ListenerItemPosition.callback];
+        let options: Object = listeners[i + ListenerItemPosition.options];
 
         element.removeEventListener(eventName, callback, options);
       }
