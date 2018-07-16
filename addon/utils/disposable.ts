@@ -31,7 +31,6 @@ export function _setRegisteredDisposables(mapForTesting: IMap<Object, any>) {
  * @public
  * @param {*} obj the instance to store the disposable for
  * @param {*} dispose a function that disposes of instance resources
- * @returns a disposable object, which wraps the passed in `dispose` function
  */
 export function registerDisposable(
   obj: EmberObject,

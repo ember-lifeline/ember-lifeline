@@ -47,14 +47,13 @@ export default Mixin.create({
 
   @method registerDisposable
   @param { Function } dispose
-  @returns A disposable object
   @public
   */
-  registerDisposable(dispose: Function) {
-    return registerDisposable(this, dispose);
+  registerDisposable(dispose: Function): void {
+    registerDisposable(this, dispose);
   },
 
-  destroy() {
+  destroy(): void {
     runDisposables(this);
 
     this._super(...arguments);

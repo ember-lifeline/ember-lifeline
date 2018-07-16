@@ -12,15 +12,19 @@ import { IMap } from './interfaces';
  */
 const eventListeners: IMap<Object, Array<Object>> = new WeakMap();
 
-const PASSIVE_SUPPORTED = (() => {
-  let ret = false;
+const PASSIVE_SUPPORTED: boolean = (() => {
+  let ret: boolean = false;
 
   try {
-    let options = Object.defineProperty({}, 'passive', {
-      get() {
-        ret = true;
-      },
-    });
+    let options: AddEventListenerOptions = Object.defineProperty(
+      {},
+      'passive',
+      {
+        get() {
+          ret = true;
+        },
+      }
+    );
 
     window.addEventListener('test', null as any, options);
   } catch (err) {

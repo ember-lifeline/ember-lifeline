@@ -4,10 +4,12 @@ import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
 import { IMap } from './interfaces';
 
-type PendingDebounce = {
-  debouncedTask: Function;
-  cancelId: EmberRunTimer;
-};
+type PendingDebounce =
+  | {
+      debouncedTask: Function;
+      cancelId: EmberRunTimer;
+    }
+  | undefined;
 
 /**
  * A map of instances/debounce functions that allows us to
@@ -16,7 +18,7 @@ type PendingDebounce = {
  * @private
  *
  */
-const registeredDebounces: IMap<Object, any> = new WeakMap();
+const registeredDebounces: IMap<Object, Object> = new WeakMap();
 
 /**
    Runs the function with the provided name after the timeout has expired on the last
@@ -72,7 +74,7 @@ export function debounceTask(
   let pendingDebounces: Object = registeredDebounces.get(obj);
 
   if (!pendingDebounces) {
-    pendingDebounces = {};
+    pendingDebounces = new Map();
     registeredDebounces.set(obj, pendingDebounces);
     registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
   }
