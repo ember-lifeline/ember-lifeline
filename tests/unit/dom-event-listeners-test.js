@@ -502,4 +502,27 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     await triggerEvent(window, 'click');
     assert.equal(calls, 1, 'callback was called');
   });
+
+  test('runDisposables more than once', async function(assert) {
+    assert.expect(1);
+
+    this.owner.register('template:components/under-test', hbs`<span></span>`);
+    await render(hbs`{{under-test}}`);
+    let component = this.componentInstance;
+
+    let calls = 0;
+    let listener = () => {
+      calls++;
+    };
+
+    addEventListener(component, window, 'click', listener);
+    runDisposables(component);
+    addEventListener(component, window, 'click', listener);
+    runDisposables(component);
+    addEventListener(component, window, 'click', listener);
+    runDisposables(component);
+
+    await triggerEvent(window, 'click');
+    assert.equal(calls, 0, 'callback was not called');
+  });
 });
