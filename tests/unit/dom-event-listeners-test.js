@@ -504,7 +504,8 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
   });
 
   test('runDisposables more than once', async function(assert) {
-    assert.expect(1);
+    let iterations = 3;
+    assert.expect(iterations * 2);
 
     this.owner.register('template:components/under-test', hbs`<span></span>`);
     await render(hbs`{{under-test}}`);
@@ -515,14 +516,15 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       calls++;
     };
 
-    addEventListener(component, window, 'click', listener);
-    runDisposables(component);
-    addEventListener(component, window, 'click', listener);
-    runDisposables(component);
-    addEventListener(component, window, 'click', listener);
-    runDisposables(component);
+    // The value for calls should grow linearly with the loop counter.
+    for (let i = 1; i <= iterations; i++) {
+      addEventListener(component, window, 'click', listener);
+      await triggerEvent(window, 'click');
+      assert.equal(calls, i, `callback was called after adding, iteration ${i}`);
 
-    await triggerEvent(window, 'click');
-    assert.equal(calls, 0, 'callback was not called');
+      runDisposables(component);
+      await triggerEvent(window, 'click');
+      assert.equal(calls, i, `callback was not called after calling runDisposables, iteration ${i}`);
+    }
   });
 });
