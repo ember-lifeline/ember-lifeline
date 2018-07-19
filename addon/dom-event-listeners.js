@@ -88,7 +88,17 @@ export function addEventListener(obj, element, eventName, callback, options) {
   assertArguments(element, eventName, callback);
 
   let _callback = run.bind(obj, callback);
-  let listeners = getEventListeners(obj);
+  let listeners = eventListeners.get(obj);
+
+  if (listeners === undefined) {
+    listeners = [];
+    eventListeners.set(obj, listeners);
+  }
+
+  // Register a disposable every time we go from zero to one.
+  if (listeners.length === 0) {
+    registerDisposable(obj, getEventListenersDisposable(listeners));
+  }
 
   if (!PASSIVE_SUPPORTED) {
     options = undefined;
@@ -114,9 +124,9 @@ export function removeEventListener(
 ) {
   assertArguments(element, eventName, callback);
 
-  let listeners = getEventListeners(obj);
+  let listeners = eventListeners.get(obj);
 
-  if (listeners.length === 0) {
+  if (listeners === undefined || listeners.length === 0) {
     return;
   }
 
@@ -173,16 +183,4 @@ function getEventListenersDisposable(listeners) {
       listeners.length = 0;
     }
   };
-}
-
-function getEventListeners(obj) {
-  let listeners = eventListeners.get(obj);
-
-  if (listeners === undefined) {
-    listeners = [];
-    eventListeners.set(obj, listeners);
-    registerDisposable(obj, getEventListenersDisposable(listeners));
-  }
-
-  return listeners;
 }
