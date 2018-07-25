@@ -754,6 +754,18 @@ module('module', function(hooks) {
 
 If a failure occurs, lifeline will output an array containing the module names that were the cause of the async leakage.
 
+You may also, optionally, pass in an options hash:
+```js
+module('module', function(hooks) {
+  let disposableMap = new Map();
+  setupLifelineValidation(hooks, { map: disposableMap });
+
+  test('test', function(assert) {
+    assert.equal(disposableMap.size, 0);
+  });
+});
+```
+
 ## Credit
 
 This addon was developed internally at Twitch, written originally by [@mixonic](https://github.com/mixonic) and [@rwjblue](https://github.com/rwjblue).
