@@ -2307,8 +2307,8 @@ ember-qunit@^3.3.2:
     qunit "^2.5.0"
 
 ember-resolver@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/ember-resolver/-/ember-resolver-5.0.0.tgz#733a7d99bca0ca724ffa377636b42a32b014e5c7"
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/ember-resolver/-/ember-resolver-5.0.1.tgz#21740b92e1e4a65f94018de22aa1c73434dc3b2f"
   dependencies:
     "@glimmer/resolver" "^0.4.1"
     babel-plugin-debug-macros "^0.1.10"
