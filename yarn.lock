@@ -2382,8 +2382,8 @@ ember-try@^0.2.23:
     semver "^5.1.0"
 
 ember-weakmap@^3.1.1:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/ember-weakmap/-/ember-weakmap-3.2.0.tgz#663871d7a8bb085c5b1cedcb3fb183857990343f"
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/ember-weakmap/-/ember-weakmap-3.3.0.tgz#2842aaf8468cad40f90d4381ca7a7fb1ee7c267b"
   dependencies:
     browserslist "^3.1.1"
     debug "^3.1.0"
