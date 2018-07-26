@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import { run } from '@ember/runloop';
+import { debounce } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
 import { IMap } from './interfaces';
@@ -72,31 +72,26 @@ export function debounceTask(
   );
 
   let pendingDebounces: Object = registeredDebounces.get(obj);
-
   if (!pendingDebounces) {
     pendingDebounces = new Map();
     registeredDebounces.set(obj, pendingDebounces);
     registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
   }
 
-  let debounce: PendingDebounce = pendingDebounces[name];
+  let pendingDebounce: PendingDebounce = pendingDebounces[name];
   let debouncedTask: Function;
 
-  if (!debounce) {
+  if (!pendingDebounce) {
     debouncedTask = (...args) => {
       delete pendingDebounces[name];
       obj[name](...args);
     };
   } else {
-    debouncedTask = debounce.debouncedTask;
+    debouncedTask = pendingDebounce.debouncedTask;
   }
 
   // cancelId is new, even if the debounced function was already present
-  let cancelId = run.debounce(
-    obj as any,
-    debouncedTask as any,
-    ...debounceArgs
-  );
+  let cancelId = debounce(obj as any, debouncedTask as any, ...debounceArgs);
 
   pendingDebounces[name] = { debouncedTask, cancelId };
 }
