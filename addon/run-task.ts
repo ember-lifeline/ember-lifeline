@@ -1,10 +1,10 @@
-import Ember from 'ember';
-import { run } from '@ember/runloop';
-import { assert, deprecate } from '@ember/debug';
+import EmberObject from '@ember/object';
+import { later, schedule, throttle, cancel } from '@ember/runloop';
+import { assert } from '@ember/debug';
+import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-
-const { WeakMap } = Ember;
+import { IMap, TaskOrName } from './interfaces';
 
 /**
  * A map of instances/timers that allows us to
@@ -13,7 +13,7 @@ const { WeakMap } = Ember;
  * @private
  *
  */
-let registeredTimers = new WeakMap();
+let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -22,7 +22,9 @@ let registeredTimers = new WeakMap();
  * @private
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
-export function _setRegisteredTimers(mapForTesting) {
+export function _setRegisteredTimers(
+  mapForTesting: IMap<Object, Set<EmberRunTimer>>
+) {
   registeredTimers = mapForTesting;
 }
 
@@ -59,12 +61,16 @@ export function _setRegisteredTimers(mapForTesting) {
    @param { Number } [timeout=0] the time in the future to run the task
    @public
    */
-export function runTask(obj, taskOrName, timeout = 0) {
+export function runTask(
+  obj: EmberObject,
+  taskOrName: TaskOrName,
+  timeout: number = 0
+): EmberRunTimer {
   assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
 
-  let task = getTask(obj, taskOrName, 'runTask');
-  let timers = getTimers(obj);
-  let cancelId = run.later(() => {
+  let task: Function = getTask(obj, taskOrName, 'runTask');
+  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let cancelId: EmberRunTimer = later(() => {
     timers.delete(cancelId);
     task.call(obj);
   }, timeout);
@@ -107,7 +113,12 @@ export function runTask(obj, taskOrName, timeout = 0) {
    @param { ...* } args arguments to pass to the task
    @public
    */
-export function scheduleTask(obj, queueName, taskOrName, ...args) {
+export function scheduleTask(
+  obj: EmberObject,
+  queueName: EmberRunQueues,
+  taskOrName: TaskOrName,
+  ...args: any[]
+): EmberRunTimer {
   assert(
     `Called \`scheduleTask\` without a string as the first argument on ${obj}.`,
     typeof queueName === 'string'
@@ -121,14 +132,14 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
     !obj.isDestroyed
   );
 
-  let task = getTask(obj, taskOrName, 'scheduleTask');
-  let timers = getTimers(obj);
-  let cancelId;
-  let taskWrapper = (...taskArgs) => {
+  let task: Function = getTask(obj, taskOrName, 'scheduleTask');
+  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let cancelId: EmberRunTimer;
+  let taskWrapper: Function = (...taskArgs) => {
     timers.delete(cancelId);
     task.call(obj, ...taskArgs);
   };
-  cancelId = run.schedule(queueName, obj, taskWrapper, ...args);
+  cancelId = schedule(queueName, obj as any, taskWrapper, ...args);
 
   timers.add(cancelId);
 
@@ -162,26 +173,30 @@ export function scheduleTask(obj, queueName, taskOrName, ...args) {
 
    @method throttleTask
    @param { Object } obj the instance to register the task for
-   @param { String } name the name of the task to throttle
+   @param { String } taskName the name of the task to throttle
    @param { Number } [timeout] the time in the future to run the task
    @public
    */
-export function throttleTask(obj, name, timeout = 0) {
+export function throttleTask(
+  obj: EmberObject,
+  taskName: any,
+  timeout: number = 0
+): EmberRunTimer {
   assert(
     `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
-    typeof name === 'string'
+    typeof taskName === 'string'
   );
   assert(
-    `Called \`throttleTask('${name}', ${timeout})\` where '${name}' is not a function.`,
-    typeof obj[name] === 'function'
+    `Called \`throttleTask('${taskName}', ${timeout})\` where '${taskName}' is not a function.`,
+    typeof obj[taskName] === 'function'
   );
   assert(
     `Called \`throttleTask\` on destroyed object: ${obj}.`,
     !obj.isDestroyed
   );
 
-  let timers = getTimers(obj);
-  let cancelId = run.throttle(obj, name, timeout);
+  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let cancelId: EmberRunTimer = throttle(obj, taskName, timeout);
 
   timers.add(cancelId);
 
@@ -219,8 +234,13 @@ export function throttleTask(obj, name, timeout = 0) {
    @param { Number } cancelId the id returned from the *Task call
    @public
    */
-export function cancelTask(obj, cancelId) {
-  if (cancelId === undefined) {
+export function cancelTask(cancelId: EmberRunTimer);
+export function cancelTask(obj: EmberObject, cancelId: EmberRunTimer);
+export function cancelTask(
+  obj: EmberObject | EmberRunTimer,
+  cancelId?: any
+): void | undefined {
+  if (typeof cancelId === 'undefined') {
     deprecate(
       'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
       true,
@@ -231,13 +251,16 @@ export function cancelTask(obj, cancelId) {
     );
     cancelId = obj;
   } else {
-    let timers = registeredTimers.get(obj);
+    let timers: Set<EmberRunTimer> = getTimers(obj);
     timers.delete(cancelId);
   }
-  run.cancel(cancelId);
+  cancel(cancelId);
 }
 
-function getTimersDisposable(obj, timers) {
+function getTimersDisposable(
+  obj: EmberObject,
+  timers: Set<EmberRunTimer>
+): Function {
   return function() {
     timers.forEach(cancelId => {
       cancelTask(obj, cancelId);
@@ -246,11 +269,11 @@ function getTimersDisposable(obj, timers) {
   };
 }
 
-function getTimers(obj) {
+function getTimers(obj): Set<EmberRunTimer> {
   let timers = registeredTimers.get(obj);
 
   if (!timers) {
-    timers = new Set();
+    timers = new Set<EmberRunTimer>();
     registeredTimers.set(obj, timers);
     registerDisposable(obj, getTimersDisposable(obj, timers));
   }

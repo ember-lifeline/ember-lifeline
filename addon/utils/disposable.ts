@@ -1,7 +1,6 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
 import { assert } from '@ember/debug';
-
-const { WeakMap } = Ember;
+import { IMap } from '../interfaces';
 
 /**
  * A map of instances/array of disposables. Only exported for
@@ -9,7 +8,7 @@ const { WeakMap } = Ember;
  *
  * @public
  */
-let registeredDisposables = new WeakMap();
+let registeredDisposables: IMap<Object, any> = new WeakMap();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -18,7 +17,7 @@ let registeredDisposables = new WeakMap();
  * @private
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
-export function _setRegisteredDisposables(mapForTesting) {
+export function _setRegisteredDisposables(mapForTesting: IMap<Object, any>) {
   registeredDisposables = mapForTesting;
 }
 
@@ -32,9 +31,11 @@ export function _setRegisteredDisposables(mapForTesting) {
  * @public
  * @param {*} obj the instance to store the disposable for
  * @param {*} dispose a function that disposes of instance resources
- * @returns a disposable object, which wraps the passed in `dispose` function
  */
-export function registerDisposable(obj, dispose) {
+export function registerDisposable(
+  obj: EmberObject,
+  dispose: Function
+): void | undefined {
   assert(
     'Called `registerDisposable` where `obj` is not an object',
     typeof obj === 'object'
@@ -48,7 +49,7 @@ export function registerDisposable(obj, dispose) {
     !obj.isDestroying
   );
 
-  let disposables = getRegisteredDisposables(obj);
+  let disposables: Function[] = getRegisteredDisposables(obj);
 
   disposables.push(dispose);
 }
@@ -59,8 +60,8 @@ export function registerDisposable(obj, dispose) {
  * @public
  * @param {*} obj the instance to run the disposables for
  */
-export function runDisposables(obj) {
-  let disposables = registeredDisposables.get(obj);
+export function runDisposables(obj: EmberObject): void | undefined {
+  let disposables: Function[] = registeredDisposables.get(obj);
 
   if (disposables === undefined) {
     return;
@@ -68,17 +69,17 @@ export function runDisposables(obj) {
 
   registeredDisposables.delete(obj);
 
-  for (let i = 0; i < disposables.length; i++) {
+  for (let i: number = 0; i < disposables.length; i++) {
     disposables[i]();
   }
 }
 
-function getRegisteredDisposables(obj) {
-  let arr = registeredDisposables.get(obj);
+function getRegisteredDisposables(obj: EmberObject): Function[] {
+  let disposables: Function[] = registeredDisposables.get(obj);
 
-  if (arr === undefined) {
-    registeredDisposables.set(obj, (arr = []));
+  if (disposables === undefined) {
+    registeredDisposables.set(obj, (disposables = []));
   }
 
-  return arr;
+  return disposables;
 }
