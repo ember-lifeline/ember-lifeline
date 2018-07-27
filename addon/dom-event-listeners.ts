@@ -105,7 +105,7 @@ export function addEventListener<Target>(
 
   // Register a disposable every time we go from zero to one.
   if (listeners.length === 0) {
-    registerDisposable(obj, getEventListenersDisposable(listeners));
+    registerDisposable(obj as any, getEventListenersDisposable(listeners));
   }
 
   if (!PASSIVE_SUPPORTED) {
