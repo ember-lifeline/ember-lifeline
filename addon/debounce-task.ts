@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import { debounce } from '@ember/runloop';
+import { debounce, cancel } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
 import { IMap } from './interfaces';
@@ -142,7 +142,7 @@ export function cancelDebounce(
   let { cancelId } = pendingDebounces[name];
 
   delete pendingDebounces[name];
-  run.cancel(cancelId);
+  cancel(cancelId);
 }
 
 function getDebouncesDisposable(debounces: Object): Function {
@@ -156,7 +156,7 @@ function getDebouncesDisposable(debounces: Object): Function {
     for (let i = 0; i < debounceNames.length; i++) {
       let { cancelId } = debounces[debounceNames[i]];
 
-      run.cancel(cancelId);
+      cancel(cancelId);
     }
   };
 }
