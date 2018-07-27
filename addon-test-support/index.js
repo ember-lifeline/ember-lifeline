@@ -5,8 +5,23 @@ const FAILED_ASSERTION_MESSAGE =
   'One or more objects registered disposables that were not correctly disposed of. Please ensure that objects correctly run their registered disposables by calling `runDisposables` in the `destroy` method of the object.';
 let setupTestDone = false;
 
-export default function setupLifelineValidation(hooks) {
-  let registeredDisposables = new Map();
+/**
+ * Test helper to assert that all async work is disposed of.
+ *
+ * @method setupLifelineValidation
+ * @param { QUnit.hooks } hooks Qunit's hooks object.
+ * @param { Map } options.map Optional map object to use for external reference.
+ * @public
+ */
+export default function setupLifelineValidation(hooks, options) {
+  let registeredDisposables;
+
+  if (options && options.map instanceof Map) {
+    registeredDisposables = options.map;
+  } else {
+    registeredDisposables = new Map();
+  }
+
   hooks.beforeEach(function() {
     _setRegisteredDisposables(registeredDisposables);
   });
@@ -31,8 +46,7 @@ export default function setupLifelineValidation(hooks) {
 
       assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);
     } finally {
-      registeredDisposables = new WeakMap();
-      _setRegisteredDisposables(registeredDisposables);
+      _setRegisteredDisposables(new WeakMap());
     }
   });
 }
