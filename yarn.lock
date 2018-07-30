@@ -78,8 +78,8 @@
   resolved "https://registry.yarnpkg.com/@types/qunit/-/qunit-2.5.1.tgz#ee39feefb9ee33f6761a046c563cd3c2caacfcf3"
 
 "@types/rsvp@*", "@types/rsvp@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@types/rsvp/-/rsvp-4.0.1.tgz#82956bc8d0a8151ec3b7e9cae64fd06808a1c714"
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/rsvp/-/rsvp-4.0.2.tgz#bf9f72eaa6771292638a85bb8ce1db97e754b371"
 
 abbrev@1:
   version "1.1.0"
