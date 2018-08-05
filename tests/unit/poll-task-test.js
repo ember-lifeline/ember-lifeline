@@ -297,14 +297,10 @@ module('ember-lifeline/poll-task', function(hooks) {
   test('cancelPoll can be safely called without a previous call to pollTask', function(assert) {
     assert.expect(1);
 
-    let map = new Map();
-    _setRegisteredPollers(map);
     this.obj = this.getComponent();
 
     cancelPoll(this.obj, 'foo');
 
     assert.ok(true, 'cancelPoll was called without first calling pollTask');
-
-    _setRegisteredPollers(new WeakMap());
   });
 });
