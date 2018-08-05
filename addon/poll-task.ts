@@ -202,7 +202,10 @@ export function cancelPoll(
   } else {
     let pollers: Set<Token> = registeredPollers.get(obj);
     token = _token as Token;
-    pollers.delete(token);
+
+    if (pollers !== undefined) {
+      pollers.delete(token);
+    }
   }
   delete queuedPollTasks[token];
 }
