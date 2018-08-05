@@ -17,6 +17,8 @@ module('ember-lifeline/poll-task', function(hooks) {
   hooks.beforeEach(function() {
     this.BaseObject = EmberObject.extend({
       destroy() {
+        this._super(...arguments);
+
         runDisposables(this);
       },
     });
@@ -290,5 +292,15 @@ module('ember-lifeline/poll-task', function(hooks) {
     );
 
     _setRegisteredPollers(new WeakMap());
+  });
+
+  test('cancelPoll can be safely called without a previous call to pollTask', function(assert) {
+    assert.expect(1);
+
+    this.obj = this.getComponent();
+
+    cancelPoll(this.obj, 'foo');
+
+    assert.ok(true, 'cancelPoll was called without first calling pollTask');
   });
 });
