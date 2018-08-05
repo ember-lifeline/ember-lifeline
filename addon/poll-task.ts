@@ -16,7 +16,7 @@ type Token = string | number;
  * @private
  *
  */
-let registeredPollers: IMap<Object, Set<Token>> = new WeakMap();
+let registeredPollers: IMap<Object, Set<Token>> = new WeakMap<Object, any>();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
