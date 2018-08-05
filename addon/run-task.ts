@@ -13,7 +13,7 @@ import { IMap, TaskOrName } from './interfaces';
  * @private
  *
  */
-let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap();
+let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap<Object, any>();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving

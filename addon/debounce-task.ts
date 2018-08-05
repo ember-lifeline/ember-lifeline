@@ -18,7 +18,7 @@ type PendingDebounce =
  * @private
  *
  */
-const registeredDebounces: IMap<Object, Object> = new WeakMap();
+const registeredDebounces: IMap<Object, Object> = new WeakMap<Object, any>();
 
 /**
    Runs the function with the provided name after the timeout has expired on the last
