@@ -144,7 +144,7 @@ function findElement(
 ): HTMLElement {
   let selectorType: string = typeof selector;
   let element;
-debugger;
+
   if (selectorType === 'string') {
     element = contextElement.querySelector(<string>selector);
   } else if (
