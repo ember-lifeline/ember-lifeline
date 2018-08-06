@@ -144,12 +144,11 @@ function findElement(
 ): HTMLElement {
   let selectorType: string = typeof selector;
   let element;
-
+debugger;
   if (selectorType === 'string') {
     element = contextElement.querySelector(<string>selector);
   } else if (
-    selector instanceof HTMLElement &&
-    (selector.nodeType || selector instanceof Window)
+    ((selector as HTMLElement).nodeType || selector instanceof Window)
   ) {
     element = selector;
   }
