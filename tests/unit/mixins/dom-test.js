@@ -373,6 +373,66 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       target.click();
     });
 
+    test(`${testName} adds event listener to Window`, async function(assert) {
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<span class="foo"></span>`
+      );
+      await render(hbs`{{under-test}}`);
+      let component = this.componentInstance;
+
+      let calls = 0;
+      let hadRunloop = null;
+      let handledEvent = null;
+
+      component.addEventListener(
+        window,
+        'click',
+        event => {
+          calls++;
+          hadRunloop = !!run.currentRunLoop;
+          handledEvent = event;
+        },
+        testedOptions
+      );
+
+      window.dispatchEvent(new Event('click'));
+
+      assert.equal(calls, 1, 'callback was called');
+      assert.ok(hadRunloop, 'callback was called in runloop');
+      assert.ok(handledEvent.target, 'callback passed a target');
+    });
+
+    test(`${testName} adds event listener to SVG element`, async function(assert) {
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<svg class="svg"></svg>`
+      );
+      await render(hbs`{{under-test}}`);
+      let component = this.componentInstance;
+
+      let calls = 0;
+      let hadRunloop = null;
+      let handledEvent = null;
+
+      component.addEventListener(
+        find('.svg'),
+        'click',
+        event => {
+          calls++;
+          hadRunloop = !!run.currentRunLoop;
+          handledEvent = event;
+        },
+        testedOptions
+      );
+
+      component.element.firstChild.dispatchEvent(new Event('click'));
+
+      assert.equal(calls, 1, 'callback was called');
+      assert.ok(hadRunloop, 'callback was called in runloop');
+      assert.ok(handledEvent.target, 'callback passed a target');
+    });
+
     test(`${testName.replace(
       'add',
       'remove'
@@ -465,10 +525,10 @@ module('ember-lifeline/mixins/dom', function(hooks) {
       let factory = this.owner.factoryFor
         ? this.owner.factoryFor(serviceName)
         : this.owner._lookupFactory(serviceName);
-      let component = factory.create();
+      let service = factory.create();
 
       assert.throws(() => {
-        component.addEventListener('.foo', 'click', () => {}, testedOptions);
+        service.addEventListener('.foo', 'click', () => {}, testedOptions);
       }, /Must provide an element/);
     });
   });
