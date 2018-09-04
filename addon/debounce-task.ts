@@ -40,7 +40,9 @@ const registeredDebounces: IMap<Object, Object> = new WeakMap<Object, any>();
        debounceTask(this, 'logMe', 300);
      },
 
-     destroy() {
+     willDestroy() {
+       this._super(...arguments);
+
        runDisposables(this);
      }
    });
@@ -118,7 +120,8 @@ export function debounceTask(
         cancelDebounce(this, 'logMe');
      },
 
-     destroy() {
+     willDestroy() {
+       this._super(..arguments);
        runDisposables(this);
      }
    });
