@@ -74,8 +74,8 @@
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.2.tgz#8700226bdde24b6f98e3a60126dbaab3b2a3ab41"
 
 "@types/qunit@^2.5.1":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@types/qunit/-/qunit-2.5.2.tgz#8b1c3fa33017148032c58a6530f66be3239edef9"
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/@types/qunit/-/qunit-2.5.3.tgz#e7df363b5e1d1ba034b5fdd34b560d5ec0914225"
 
 "@types/rsvp@*", "@types/rsvp@^4.0.1":
   version "4.0.2"
