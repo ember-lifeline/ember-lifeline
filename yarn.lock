@@ -2302,8 +2302,8 @@ ember-cli-typescript-blueprints@^1.0.0:
     silent-error "^1.1.0"
 
 ember-cli-typescript@^1.3.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/ember-cli-typescript/-/ember-cli-typescript-1.4.1.tgz#55c523fc3d5d149612fef59af90b10b1bf5b8dc6"
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/ember-cli-typescript/-/ember-cli-typescript-1.4.2.tgz#4fad637cf0b74a4452611030419c9a97a5bddb41"
   dependencies:
     broccoli-funnel "^2.0.1"
     broccoli-merge-trees "^2.0.0"
