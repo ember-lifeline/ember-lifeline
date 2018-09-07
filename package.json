@@ -32,7 +32,7 @@
     "ember-cli-babel": "^6.8.2"
   },
   "devDependencies": {
-    "@types/ember": "^2.8.31",
+    "@types/ember": "^3.0.1",
     "@types/ember-qunit": "^3.0.2",
     "@types/ember-test-helpers": "^0.7.1",
     "@types/ember-testing-helpers": "^0.0.3",
