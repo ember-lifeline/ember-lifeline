@@ -37,9 +37,9 @@
     "@types/ember" "*"
     "@types/ember-test-helpers" "*"
 
-"@types/ember-test-helpers@*", "@types/ember-test-helpers@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-0.7.1.tgz#14b9f132e9c60c2dfaf7a10ace937bfb7157fb26"
+"@types/ember-test-helpers@*", "@types/ember-test-helpers@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-1.0.0.tgz#bc0ac361ab3361726ab6479f9e15f325916d6718"
   dependencies:
     "@types/ember" "*"
     "@types/htmlbars-inline-precompile" "*"

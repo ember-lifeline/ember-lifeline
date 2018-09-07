@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/ember": "^3.0.1",
     "@types/ember-qunit": "^3.0.2",
-    "@types/ember-test-helpers": "^0.7.1",
+    "@types/ember-test-helpers": "^1.0.0",
     "@types/ember-testing-helpers": "^0.0.3",
     "@types/qunit": "^2.5.1",
     "@types/rsvp": "^4.0.1",
