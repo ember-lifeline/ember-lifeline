@@ -54,8 +54,8 @@
     "@types/rsvp" "*"
 
 "@types/ember@*", "@types/ember@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.1.tgz#ebede3a5a8fccbfcb66096e9b4ef312f856df060"
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.2.tgz#9c1a63a888c4f2572f43e72a8d3e8463c0e89f26"
   dependencies:
     "@types/handlebars" "*"
     "@types/jquery" "*"
