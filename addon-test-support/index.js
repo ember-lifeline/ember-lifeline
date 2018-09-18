@@ -31,8 +31,7 @@ export default function setupLifelineValidation(hooks) {
 
       assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);
     } finally {
-      registeredDisposables = new WeakMap();
-      _setRegisteredDisposables(registeredDisposables);
+      _setRegisteredDisposables(new WeakMap());
     }
   });
 }
