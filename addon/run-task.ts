@@ -46,7 +46,8 @@ export function _setRegisteredTimers(
        }, 5000)
      },
 
-     destroy() {
+     willDestroy() {
+       this._super(...arguments);
        runDisposables(this);
      }
    });
@@ -97,7 +98,8 @@ export function runTask(
        })
      },
 
-     destroy() {
+     willDestroy() {
+       this._super(...arguments);
        runDisposables(this);
      }
    });
@@ -223,7 +225,8 @@ export function throttleTask(
         cancelTask(this, this._cancelId);
      },
 
-     destroy() {
+     willDestroy() {
+       this._super(...arguments);
        runDisposables(this);
      }
    });

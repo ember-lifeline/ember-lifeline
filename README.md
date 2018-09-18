@@ -53,10 +53,9 @@ import { runTask, runDisposables } from 'ember-lifeline';
 export default Component.extend({
   // use `runTask` method somewhere in this component
 
-  destroy() {
-    runDisposables(this); // ensure that lifeline will clean up any remaining async work
-
+  willDestroy() {
     this._super(...arguments);
+    runDisposables(this); // ensure that lifeline will clean up any remaining async work
   }
 })
 ```
@@ -162,10 +161,10 @@ export default Component.extend({
     }, 500);
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -237,10 +236,10 @@ export default Component.extend({
     });
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -287,10 +286,10 @@ export default Component.extend({
     this.set('time', new Date());
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -322,10 +321,10 @@ export default Component.extend({
     this.set('time', new Date());
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -355,10 +354,10 @@ export default Component.extend({
     this._evt = null;
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -397,10 +396,10 @@ export default Component.extend({
     runTask(this, () => this.updateTime(), 20);
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -433,10 +432,10 @@ export default Component.extend({
     }
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -471,10 +470,10 @@ export default Component.extend({
     runTask(this, next, 20);
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 });
 ```
@@ -604,10 +603,10 @@ export default Component.extend({
     this.bindEvents();
   },
 
-  destroy() {
-    runDisposables(this);
-
+  willDestroy() {
     this._super(...arguments);
+
+    runDisposables(this);
   }
 
   bindEvents() {
