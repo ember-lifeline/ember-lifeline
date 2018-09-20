@@ -54,12 +54,13 @@
     "@types/rsvp" "*"
 
 "@types/ember@*", "@types/ember@^3.0.1":
-  version "3.0.15"
-  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.15.tgz#b251e49bc5fec916f9bd84cffebe1ef1a737146e"
+  version "3.0.16"
+  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.16.tgz#14cb1deb79f5b89d506e5e53ec98945f4f2ffbfc"
   dependencies:
     "@types/ember__object" "*"
     "@types/ember__polyfills" "*"
     "@types/ember__string" "*"
+    "@types/ember__utils" "*"
     "@types/handlebars" "*"
     "@types/jquery" "*"
     "@types/rsvp" "*"
@@ -79,6 +80,10 @@
   resolved "https://registry.yarnpkg.com/@types/ember__string/-/ember__string-3.0.1.tgz#d17c4e1716bd2a6b5fbc2d787da4bf732d5611fb"
   dependencies:
     "@types/handlebars" "*"
+
+"@types/ember__utils@*":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/ember__utils/-/ember__utils-3.0.1.tgz#f08aa24920515400fec869cbf29df69c4773f6d0"
 
 "@types/handlebars@*":
   version "4.0.38"
