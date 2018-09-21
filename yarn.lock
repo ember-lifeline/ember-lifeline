@@ -38,8 +38,8 @@
     "@types/ember-test-helpers" "*"
 
 "@types/ember-test-helpers@*", "@types/ember-test-helpers@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-1.0.1.tgz#dff6044be11b4540ce2cbb2baee5a90d075d678c"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-1.0.2.tgz#6bae71bdf7036301f5bb0cb16f981ca663e27f94"
   dependencies:
     "@types/ember" "*"
     "@types/htmlbars-inline-precompile" "*"
