@@ -54,10 +54,11 @@
     "@types/rsvp" "*"
 
 "@types/ember@*", "@types/ember@^3.0.1":
-  version "3.0.19"
-  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.19.tgz#25488d30de13c59a95c978874a8687f5a05068c5"
+  version "3.0.20"
+  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.20.tgz#ba6cca9676eda8635124721049d8c316954e902c"
   dependencies:
     "@types/ember__array" "*"
+    "@types/ember__controller" "*"
     "@types/ember__debug" "*"
     "@types/ember__engine" "*"
     "@types/ember__object" "*"
@@ -71,6 +72,10 @@
 "@types/ember__array@*":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/ember__array/-/ember__array-3.0.2.tgz#4f61ba9e6bb12dd4c8b0abaefd5220b4f6579f1d"
+
+"@types/ember__controller@*":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/ember__controller/-/ember__controller-3.0.2.tgz#b0b125b0f077a9f3a4d3c48d1131d6976607c05c"
 
 "@types/ember__debug@*":
   version "3.0.1"
