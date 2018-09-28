@@ -1907,15 +1907,15 @@ chownr@^1.0.1:
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.0.1.tgz#e2a75042a9551908bebd25b8523d5f9769d79181"
   integrity sha1-4qdQQqlVGQi+vSW4Uj1fl2nXkYE=
 
-ci-info@^1.0.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-1.1.2.tgz#03561259db48d0474c8bdc90f5b47b068b6bbfb4"
-  integrity sha512-uTGIPNx/nSpBdsF6xnseRXLLtfr9VLqkz8ZqHXr3Y7b6SftyRxBGjwMtJj1OhNbmlc1wZzLNAlAcvyIiE8a6ZA==
-
 ci-info@^1.1.3:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-1.4.0.tgz#4841d53cad49f11b827b648ebde27a6e189b412f"
   integrity sha512-Oqmw2pVfCl8sCL+1QgMywPfdxPJPkC51y4usw0iiE2S9qnEOAqXy8bwl1CpMpnoU39g4iKJTz6QZj+28FvOnjQ==
+
+ci-info@^1.5.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-1.6.0.tgz#2ca20dbb9ceb32d4524a683303313f0304b1e497"
+  integrity sha512-vsGdkwSCDpWmP80ncATX7iea5DWQemg1UgCW5J8tqjU3lYw4FBYuj89J0CTVomA7BEfvSZd84GmHko+MxFQU2A==
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -2275,6 +2275,15 @@ cosmiconfig@^5.0.2:
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-5.0.5.tgz#a809e3c2306891ce17ab70359dc8bdf661fe2cd0"
   integrity sha512-94j37OtvxS5w7qr7Ta6dt67tWdnOxigBVN4VnSxNXFez9o18PGQ0D33SchKP17r9LAcWVTYV72G6vDayAUBFIg==
+  dependencies:
+    is-directory "^0.3.1"
+    js-yaml "^3.9.0"
+    parse-json "^4.0.0"
+
+cosmiconfig@^5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-5.0.6.tgz#dca6cf680a0bd03589aff684700858c81abeeb39"
+  integrity sha512-6DWfizHriCrFWURP1/qyhsiFvYdlJzbCzmtFWh744+KyWsJo5+kPzUZZaMRSSItoYc0pxFX7gEO7ZC1/gN/7AQ==
   dependencies:
     is-directory "^0.3.1"
     js-yaml "^3.9.0"
@@ -4329,14 +4338,21 @@ http-signature@~1.1.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
-husky@^0.14.3:
-  version "0.14.3"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-0.14.3.tgz#c69ed74e2d2779769a17ba8399b54ce0b63c12c3"
-  integrity sha512-e21wivqHpstpoiWA/Yi8eFti8E+sQDSS53cpJsPptPs295QTOQR0ZwnHo2TXy1XOpZFD9rPOd3NpmqTK6uMLJA==
+husky@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-1.0.1.tgz#749bc6b3a14bdc9cab73d8cc827b92fcd691fac6"
+  integrity sha512-MxwLwwwgY7mqV4auSpGWKPTCkZ9RmsdGojQQBvRtr6vxnjSOyI5l/M58QdUz0vRKb0igTpbzBeoUsScx4XJwQg==
   dependencies:
-    is-ci "^1.0.10"
-    normalize-path "^1.0.0"
-    strip-indent "^2.0.0"
+    cosmiconfig "^5.0.6"
+    execa "^0.9.0"
+    find-up "^3.0.0"
+    get-stdin "^6.0.0"
+    is-ci "^1.2.1"
+    pkg-dir "^3.0.0"
+    please-upgrade-node "^3.1.1"
+    read-pkg "^4.0.1"
+    run-node "^1.0.0"
+    slash "^2.0.0"
 
 iconv-lite@0.4.19:
   version "0.4.19"
@@ -4496,12 +4512,12 @@ is-builtin-module@^1.0.0:
   dependencies:
     builtin-modules "^1.0.0"
 
-is-ci@^1.0.10:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-1.1.0.tgz#247e4162e7860cebbdaf30b774d6b0ac7dcfe7a5"
-  integrity sha512-c7TnwxLePuqIlxHgr7xtxzycJPegNHFuIrBkwbf8hc58//+Op1CqFkyS+xnIMkwn9UsJIwc174BIjkyBmSpjKg==
+is-ci@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-1.2.1.tgz#e3779c8ee17fccf428488f6e281187f2e632841c"
+  integrity sha512-s6tfsaQaQi3JNciBH6shVqEDvhGut0SUXr31ag8Pd8BBbVVlcGfWhpPmEOoM6RJ5TFhbypvf5yyRw/VXW1IiWg==
   dependencies:
-    ci-info "^1.0.0"
+    ci-info "^1.5.0"
 
 is-data-descriptor@^0.1.4:
   version "0.1.4"
@@ -6069,11 +6085,6 @@ normalize-package-data@^2.3.2, normalize-package-data@^2.3.4:
     semver "2 || 3 || 4 || 5"
     validate-npm-package-license "^3.0.1"
 
-normalize-path@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-1.0.0.tgz#32d0e472f91ff345701c15a8311018d3b0a90379"
-  integrity sha1-MtDkcvkf80VwHBWoMRAY07CpA3k=
-
 normalize-path@^2.0.1, normalize-path@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-2.1.1.tgz#1ab28b556e198363a8c1a6f7e6fa20137fe6aed9"
@@ -6494,10 +6505,24 @@ pinkie@^2.0.0:
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
+pkg-dir@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-3.0.0.tgz#2749020f239ed990881b1f71210d51eb6523bea3"
+  integrity sha512-/E57AYkoeQ25qkxMj5PBOVgF8Kiu/h7cYS30Z5+R7WaiCCBfLq58ZI/dSeaEKb9WVJV5n/03QwrN3IeWIFllvw==
+  dependencies:
+    find-up "^3.0.0"
+
 please-upgrade-node@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/please-upgrade-node/-/please-upgrade-node-3.0.2.tgz#7b9eaeca35aa4a43d6ebdfd10616c042f9a83acc"
   integrity sha512-bslfSeW+ksUbB/sYZeEdKFyTG4YWU9YKRvqfSRvZKE675khAuBUPqV5RUwJZaGuWmVQLweK45Q+lPHFVnSlSug==
+  dependencies:
+    semver-compare "^1.0.0"
+
+please-upgrade-node@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/please-upgrade-node/-/please-upgrade-node-3.1.1.tgz#ed320051dfcc5024fae696712c8288993595e8ac"
+  integrity sha512-KY1uHnQ2NlQHqIJQpnh/i54rKkuxCEBx+voJIS/Mvb+L2iYd2NMotwduhKTMjfC1uKoX3VXOxLjIYG66dfJTVQ==
   dependencies:
     semver-compare "^1.0.0"
 
@@ -6720,6 +6745,15 @@ read-pkg@^1.0.0:
     load-json-file "^1.0.0"
     normalize-package-data "^2.3.2"
     path-type "^1.0.0"
+
+read-pkg@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/read-pkg/-/read-pkg-4.0.1.tgz#963625378f3e1c4d48c85872b5a6ec7d5d093237"
+  integrity sha1-ljYlN48+HE1IyFhytabsfV0JMjc=
+  dependencies:
+    normalize-package-data "^2.3.2"
+    parse-json "^4.0.0"
+    pify "^3.0.0"
 
 readable-stream@^2.0.0:
   version "2.3.6"
@@ -7056,6 +7090,11 @@ run-async@^2.2.0:
   dependencies:
     is-promise "^2.1.0"
 
+run-node@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/run-node/-/run-node-1.0.0.tgz#46b50b946a2aa2d4947ae1d886e9856fd9cabe5e"
+  integrity sha512-kc120TBlQ3mih1LSzdAJXo4xn/GWS2ec0l3S+syHDXP9uRr0JAT8Qd3mdMuyjqCzeZktgP3try92cEgf9Nks8A==
+
 rx@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/rx/-/rx-4.1.0.tgz#a5f13ff79ef3b740fe30aa803fb09f98805d4782"
@@ -7290,6 +7329,11 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
   integrity sha1-xB8vbDn8FtHNF61LXYlhFK5HDVU=
+
+slash@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/slash/-/slash-2.0.0.tgz#de552851a1759df3a8f206535442f5ec4ddeab44"
+  integrity sha512-ZYKh3Wh2z1PpEXWr0MpSBZ0V6mZHAQfYevttO11c51CaWjGTaadiKZ+wVt1PbMlDV5qhMFslpZCemhwOK7C89A==
 
 slice-ansi@0.0.4:
   version "0.0.4"
@@ -7682,11 +7726,6 @@ strip-indent@^1.0.1:
   integrity sha1-DHlipq3vp7vUrDZkYKY4VSrhoKI=
   dependencies:
     get-stdin "^4.0.1"
-
-strip-indent@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/strip-indent/-/strip-indent-2.0.0.tgz#5ef8db295d01e6ed6cbf7aab96998d7822527b68"
-  integrity sha1-XvjbKV0B5u1sv3qrlpmNeCJSe2g=
 
 strip-json-comments@~2.0.1:
   version "2.0.1"
