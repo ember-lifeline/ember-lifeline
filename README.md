@@ -335,7 +335,7 @@ a timeout window of its own.
 
 Often it is desired to pass additional arguments to the throttle task. We
 also need to reference the same function in order for throttling to work. In
-order to acheive this it is recommended to make use of instance variables. This
+order to achieve this it is recommended to make use of instance variables. This
 enables the throttle function to use the arguments in the state they are in
 at the time the task is executed:
 
