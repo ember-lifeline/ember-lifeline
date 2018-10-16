@@ -45,9 +45,9 @@
     "@types/ember-test-helpers" "*"
 
 "@types/ember-test-helpers@*", "@types/ember-test-helpers@^1.0.0":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-1.0.3.tgz#1cdad7b204b028fb3518c6764d588c8e1fdeb2e1"
-  integrity sha512-/KuZ/Y0LSbiufRK97WMtAejAZFEUIryPvDGK4iVsAyGIymogreOrf9bCW73ofqAK1NTauZL9OKGZr4rDxUyOQA==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-1.0.4.tgz#db08190659339cd6018ff8f842c6df6f24d7679a"
+  integrity sha512-9UnLaDSRiNHZtj3Bn46kRkQKbbnb50ClpzQQ0p/raZYzHjDjUZfLpI4KOuVRfibgEj4LI+lsUKx5LQeLD09wcw==
   dependencies:
     "@types/ember" "*"
     "@types/htmlbars-inline-precompile" "*"
