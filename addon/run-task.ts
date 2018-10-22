@@ -175,22 +175,22 @@ export function scheduleTask(
 
    @method throttleTask
    @param { Object } obj the instance to register the task for
-   @param { String } taskName the name of the task to throttle
+   @param { String | Function } taskNameOrFunction the name of the task or a function to throttle
    @param { Number } [timeout] the time in the future to run the task
    @public
    */
-export function throttleTask(
-  obj: EmberObject,
-  taskName: any,
+export function throttleTask<O extends EmberObject>(
+  obj: O,
+  taskNameOrFunction: keyof O | ((...args: any[]) => any),
   timeout: number = 0
 ): EmberRunTimer {
   assert(
-    `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
-    typeof taskName === 'string'
+    `Called \`throttleTask\` without a string or function as the first argument on ${obj}.`,
+    typeof taskNameOrFunction === 'string' || typeof taskNameOrFunction === 'function'
   );
   assert(
-    `Called \`throttleTask('${taskName}', ${timeout})\` where '${taskName}' is not a function.`,
-    typeof obj[taskName] === 'function'
+    `Called \`throttleTask('${taskNameOrFunction}', ${timeout})\` where '${taskNameOrFunction}' is not a function.`,
+    typeof taskNameOrFunction === 'function' || typeof obj[taskNameOrFunction] === 'function'
   );
   assert(
     `Called \`throttleTask\` on destroyed object: ${obj}.`,
@@ -198,7 +198,7 @@ export function throttleTask(
   );
 
   let timers: Set<EmberRunTimer> = getTimers(obj);
-  let cancelId: EmberRunTimer = throttle(obj, taskName, timeout);
+  let cancelId: EmberRunTimer = throttle(obj, taskNameOrFunction, timeout);
 
   timers.add(cancelId);
 

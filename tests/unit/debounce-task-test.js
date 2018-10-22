@@ -46,6 +46,33 @@ module('ember-lifeline/debounce-task', function(hooks) {
     }, 10);
   });
 
+  test('debounceTask accepts functions', function(assert) {
+    assert.expect(4);
+
+    let done = assert.async();
+    let runCount = 0;
+    let runArg;
+    let obj = (this.obj = this.getComponent());
+
+    function doStuff(arg) {
+      runCount++;
+      assert.equal(this, obj, 'context is correct');
+      runArg = arg;
+    }
+    debounceTask(this.obj, doStuff, 'arg1', 5);
+    debounceTask(this.obj, doStuff, 'arg2', 5);
+    debounceTask(this.obj, doStuff, 'arg3', 5);
+
+    assert.equal(runCount, 0, 'should not have run');
+
+    window.setTimeout(() => {
+      assert.equal(runCount, 1, 'should have run only once');
+      assert.equal(runArg, 'arg3', 'should run the task with the last arg');
+      done();
+    }, 10);
+  });
+
+
   test('debounceTask can be canceled', function(assert) {
     let done = assert.async();
     assert.expect(2);

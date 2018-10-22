@@ -133,13 +133,13 @@ export default Mixin.create({
    ```
 
    @method debounceTask
-   @param { String } name the name of the task to debounce
+   @param { String | Function } methodNameOrFunction the name of the task or function to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
    @param { Number } wait the amount of time to wait before calling the method (in milliseconds)
    @public
    */
-  debounceTask(name, ...debounceArgs) {
-    debounceTask(this, name, ...debounceArgs);
+  debounceTask(methodNameOrFunction, ...debounceArgs) {
+    debounceTask(this, methodNameOrFunction, ...debounceArgs);
   },
 
   /**
@@ -167,11 +167,11 @@ export default Mixin.create({
    ```
 
    @method cancelDebounce
-   @param { String } methodName the name of the debounced method to cancel
+   @param { String | Function } methodNameOrFunction the name of the debounced method or function reference to cancel
    @public
    */
-  cancelDebounce(name) {
-    cancelDebounce(this, name);
+  cancelDebounce(methodNameOrFunction) {
+    cancelDebounce(this, methodNameOrFunction);
   },
 
   /**
@@ -196,12 +196,12 @@ export default Mixin.create({
    ```
 
    @method throttleTask
-   @param { String } name the name of the task to throttle
+   @param { String | Function } methodNameOrFunction the name of the task or function referenceto throttle
    @param { Number } [timeout] the time in the future to run the task
    @public
    */
-  throttleTask(name, timeout) {
-    return throttleTask(this, name, timeout);
+  throttleTask(methodNameOrFunction, timeout) {
+    return throttleTask(this, methodNameOrFunction, timeout);
   },
 
   /**

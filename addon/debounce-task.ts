@@ -11,6 +11,8 @@ type PendingDebounce =
     }
   | undefined;
 
+type PendingDebounces = Map<string | Function, PendingDebounce>;
+
 /**
  * A map of instances/debounce functions that allows us to
  * store pending debounces per instance.
@@ -18,7 +20,7 @@ type PendingDebounce =
  * @private
  *
  */
-const registeredDebounces: IMap<Object, Object> = new WeakMap<Object, any>();
+const registeredDebounces: IMap<Object, PendingDebounces> = new WeakMap<Object, any>();
 
 /**
    Runs the function with the provided name after the timeout has expired on the last
@@ -50,43 +52,47 @@ const registeredDebounces: IMap<Object, Object> = new WeakMap<Object, any>();
 
    @method debounceTask
    @param { Object } obj the instance to register the task for
-   @param { String } name the name of the task to debounce
+   @param { String | Function } nameOrFunction the name of the task or a function to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
    @param { Number } wait the amount of time to wait before calling the method (in milliseconds)
    @public
    */
-export function debounceTask(
-  obj: EmberObject,
-  name: string,
+export function debounceTask<O extends EmberObject>(
+  obj: O,
+  nameOrFunction: keyof O | ((...args: any[]) => any),
   ...debounceArgs: any[]
 ): void | undefined {
   assert(
-    `Called \`debounceTask\` without a string as the first argument on ${obj}.`,
-    typeof name === 'string'
+    `Called \`debounceTask\` without a string or function as the first argument on ${obj}.`,
+    typeof nameOrFunction === 'string' || typeof nameOrFunction === 'function'
   );
   assert(
-    `Called \`obj.debounceTask('${name}', ...)\` where 'obj.${name}' is not a function.`,
-    typeof obj[name] === 'function'
+    `Called \`obj.debounceTask('${nameOrFunction}', ...)\` where 'obj.${nameOrFunction}' is not a function.`,
+    typeof nameOrFunction === 'function' || typeof obj[nameOrFunction] === 'function'
   );
   assert(
     `Called \`debounceTask\` on destroyed object: ${obj}.`,
     !obj.isDestroyed
   );
 
-  let pendingDebounces: Object = registeredDebounces.get(obj);
+  let pendingDebounces: PendingDebounces = registeredDebounces.get(obj);
   if (!pendingDebounces) {
     pendingDebounces = new Map();
     registeredDebounces.set(obj, pendingDebounces);
     registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
   }
 
-  let pendingDebounce: PendingDebounce = pendingDebounces[name];
+  let pendingDebounce: PendingDebounce = pendingDebounces.get(nameOrFunction);
   let debouncedTask: Function;
 
   if (!pendingDebounce) {
     debouncedTask = (...args) => {
       delete pendingDebounces[name];
-      obj[name](...args);
+      if (typeof nameOrFunction === 'function') {
+        nameOrFunction.apply(obj, args);
+      } else {
+        obj[nameOrFunction](...args);
+      }
     };
   } else {
     debouncedTask = pendingDebounce.debouncedTask;
@@ -95,7 +101,7 @@ export function debounceTask(
   // cancelId is new, even if the debounced function was already present
   let cancelId = debounce(obj as any, debouncedTask as any, ...debounceArgs);
 
-  pendingDebounces[name] = { debouncedTask, cancelId };
+  pendingDebounces.set(nameOrFunction, { debouncedTask, cancelId });
 }
 
 /**
@@ -134,31 +140,27 @@ export function debounceTask(
    */
 export function cancelDebounce(
   obj: EmberObject,
-  name: string
+  nameOrFunction: string | (() => any)
 ): void | undefined {
-  let pendingDebounces: Object = registeredDebounces.get(obj);
+  let pendingDebounces: PendingDebounces = registeredDebounces.get(obj);
 
-  if (pendingDebounces === undefined || pendingDebounces[name] === undefined) {
+  if (pendingDebounces === undefined || !pendingDebounces.has(nameOrFunction)) {
     return;
   }
 
-  let { cancelId } = pendingDebounces[name];
+  let { cancelId } = pendingDebounces.get(nameOrFunction);
 
-  delete pendingDebounces[name];
+  pendingDebounces.delete(nameOrFunction);
   cancel(cancelId);
 }
 
-function getDebouncesDisposable(debounces: Object): Function {
+function getDebouncesDisposable(debounces: PendingDebounces): Function {
   return function() {
-    let debounceNames = debounces && Object.keys(debounces);
-
-    if (!debounceNames || !debounceNames.length) {
+    if (!debounces) {
       return;
     }
 
-    for (let i = 0; i < debounceNames.length; i++) {
-      let { cancelId } = debounces[debounceNames[i]];
-
+    for (const { cancelId } of debounces.values()) {
       cancel(cancelId);
     }
   };

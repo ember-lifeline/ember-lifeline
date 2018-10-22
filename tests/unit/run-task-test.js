@@ -212,12 +212,15 @@ module('ember-lifeline/run-task', function(hooks) {
     });
   });
 
-  test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
-    this.obj = this.getComponent({ doStuff() {} });
+  test('throttleTask triggers an assertion when a string or a function is not the first argument', function(assert) {
+    this.obj = this.getComponent({ doStuff() { } });
+
+    throttleTask(this.obj, 'doStuff', 5);
+    throttleTask(this.obj, this.obj.doStuff, 5);
 
     assert.throws(() => {
-      throttleTask(this.obj, this.obj.doStuff, 5);
-    }, /without a string as the first argument/);
+      throttleTask(this.obj, {}, 5);
+    }, /without a string or function as the first argument/);
   });
 
   test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {

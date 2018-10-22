@@ -252,7 +252,7 @@ Therefore, *`scheduleTask` is prohibited from scheduling work on the `afterRende
 
 ### `debounceTask`
 
-**tl;dr Call `debounceTask(obj, methodName, args*, wait, immediate)` on any object to debounce work.**
+**tl;dr Call `debounceTask(obj, methodNameOrFunction, args*, wait, immediate)` on any object to debounce work.**
 
 Debouncing is a common async pattern often used to manage user input. When a
 task is debounced with a timeout of 100ms, it first schedules the work for
@@ -300,7 +300,7 @@ cancelled.
 
 ### `throttleTask`
 
-**tl;dr Call `throttleTask(obj, methodName, args*, spacing, immediate)` on any object to throttle work.**
+**tl;dr Call `throttleTask(obj, methodNameOrFunction, args*, spacing, immediate)` on any object to throttle work.**
 
 When a task is throttled, it is executed immediately. For the length of the
 timeout, additional throttle calls are ignored. Again, like debounce, throttle

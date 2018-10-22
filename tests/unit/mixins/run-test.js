@@ -302,14 +302,17 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('debounceTask triggers an assertion when a string is not the first argument', function(assert) {
+  test('debounceTask triggers an assertion when a string or function is not the first argument', function(assert) {
     let component = this.getComponent({
       doStuff() {},
     });
 
+    component.debounceTask(component.doStuff, 5);
+    component.debounceTask('doStuff', 5);
+
     assert.throws(() => {
-      component.debounceTask(component.doStuff, 5);
-    }, /without a string as the first argument/);
+      component.debounceTask({}, 5);
+    }, /without a string or function as the first argument/);
   });
 
   test('debounceTask triggers an assertion the function name provided does not exist on the object', function(assert) {
