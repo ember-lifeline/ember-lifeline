@@ -2456,10 +2456,10 @@ elegant-spinner@^1.0.1:
   resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
 
-ember-ajax@^3.0.0:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/ember-ajax/-/ember-ajax-3.1.2.tgz#32e4c906835ea74aa5a8a24d9abf5b1576fd70aa"
-  integrity sha512-Dc6szcgXStqvWjZ3ndBhO+EtZDebUgi+kl9Z9+/vXHg7Ch8cRMoVi3cUZ7pa7orUcD/vM2/jFFEX0WCmSscuYQ==
+ember-ajax@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/ember-ajax/-/ember-ajax-4.0.0.tgz#c21e97db81393f3f48c6e402139fb517bef1b421"
+  integrity sha512-IAdzj2u/fVMu57jlzMq/OSb4xp1Viyn52TyseWbjuPDr4Kn/Wz0HR40GckQdu+3vH3yJkh5aMzTIMTM7DCUlcw==
   dependencies:
     ember-cli-babel "^6.16.0"
     najax "^1.0.3"
