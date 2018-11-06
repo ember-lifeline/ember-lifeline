@@ -25,8 +25,9 @@ export default function setupLifelineValidation(hooks) {
 
   hooks.afterEach(function(assert) {
     try {
-      let retainedObjects = [...registeredDisposables.keys()].map(o =>
-        o.toString()
+      let retainedObjects = [];
+      registeredDisposables.forEach((_, k) =>
+        retainedObjects.push(k.toString())
       );
 
       assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);

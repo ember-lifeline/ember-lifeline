@@ -73,7 +73,7 @@ export function debounceTask(
     !obj.isDestroyed
   );
 
-  let pendingDebounces: PendingDebounces = registeredDebounces.get(obj);
+  let pendingDebounces = registeredDebounces.get(obj);
   if (!pendingDebounces) {
     pendingDebounces = new Map();
     registeredDebounces.set(obj, pendingDebounces);
@@ -138,7 +138,7 @@ export function cancelDebounce(
   if (!registeredDebounces.has(obj)) {
     return;
   }
-  const pendingDebounces: PendingDebounces = registeredDebounces.get(obj);
+  const pendingDebounces = registeredDebounces.get(obj);
 
   if (!pendingDebounces.has(name)) {
     return;
