@@ -3,7 +3,7 @@ import { run } from '@ember/runloop';
 import Component from '@ember/component';
 import Service from '@ember/service';
 import hbs from 'htmlbars-inline-precompile';
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, triggerEvent } from '@ember/test-helpers';
 import {
@@ -11,6 +11,7 @@ import {
   addEventListener,
   removeEventListener,
 } from 'ember-lifeline';
+import { PASSIVE_SUPPORTED } from 'ember-lifeline/dom-event-listeners';
 
 module('ember-lifeline/dom-event-listeners', function(hooks) {
   setupRenderingTest(hooks);
@@ -77,7 +78,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         testedOptions
       );
 
-      component.element.firstChild.dispatchEvent(new Event('click'));
+      await triggerEvent(component.element.firstChild, 'click');
 
       assert.equal(calls, 1, 'callback was called');
       assert.ok(hadRunloop, 'callback was called in runloop');
@@ -460,7 +461,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     assert.equal(innerCalls, 1, 'inner callback fires');
   });
 
-  test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
+  (PASSIVE_SUPPORTED ? test : skip)('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
     assert.expect(2);
 
     this.owner.register(

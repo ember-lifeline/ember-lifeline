@@ -12,7 +12,7 @@ import { IMap } from './interfaces';
  */
 const eventListeners: IMap<Object, Array<Object>> = new WeakMap<Object, any>();
 
-const PASSIVE_SUPPORTED: boolean = (() => {
+export const PASSIVE_SUPPORTED: boolean = (() => {
   let ret: boolean = false;
 
   try {
