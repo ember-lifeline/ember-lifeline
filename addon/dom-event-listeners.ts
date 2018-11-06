@@ -35,7 +35,7 @@ const PASSIVE_SUPPORTED: boolean = (() => {
 
 const LISTENER_ITEM_LENGTH = 5;
 enum ListenerItemPosition {
-  Element = 0,
+  Target = 0,
   eventName = 1,
   callback = 2,
   originalCallback = 3,
@@ -81,19 +81,19 @@ enum ListenerItemPosition {
 
    @method addEventListener
    @param { Object } obj the instance to attach the listener for
-   @param { HTMLElement } element the DOM element
+   @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
    @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
    @public
    */
 export function addEventListener<Target>(
   obj: Target,
-  element: HTMLElement,
+  target: EventTarget,
   eventName: string,
   callback: RunMethod<Target>,
   options: any
 ): void {
-  assertArguments(element, eventName, callback);
+  assertArguments(target, eventName, callback);
 
   let _callback: EventListenerOrEventListenerObject = bind(obj, callback);
   let listeners: Array<Object> = eventListeners.get(obj);
@@ -112,25 +112,25 @@ export function addEventListener<Target>(
     options = undefined;
   }
 
-  element.addEventListener(eventName, _callback, options);
-  listeners.push(element, eventName, _callback, callback, options);
+  target.addEventListener(eventName, _callback, options);
+  listeners.push(target, eventName, _callback, callback, options);
 }
 
 /**
    @param { Object } obj the instance to remove the listener for
-   @param { HTMLElement } element the DOM element
+   @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
    @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
    @public
    */
 export function removeEventListener<Target>(
   obj: Target,
-  element: HTMLElement,
+  target: EventTarget,
   eventName: string,
   callback: RunMethod<Target>,
   options: any
 ): void {
-  assertArguments(element, eventName, callback);
+  assertArguments(target, eventName, callback);
 
   let listeners: Array<Object> = eventListeners.get(obj);
 
@@ -145,7 +145,7 @@ export function removeEventListener<Target>(
   // We cannot use Array.findIndex as we cannot rely on babel/polyfill being present
   for (let i = 0; i < listeners.length; i += LISTENER_ITEM_LENGTH) {
     if (
-      listeners[i + ListenerItemPosition.Element] === element &&
+      listeners[i + ListenerItemPosition.Target] === target &&
       listeners[i + ListenerItemPosition.eventName] === eventName &&
       listeners[i + ListenerItemPosition.originalCallback] === callback
     ) {
@@ -155,7 +155,7 @@ export function removeEventListener<Target>(
       let ownCallback: EventListenerOrEventListenerObject = <
         EventListenerOrEventListenerObject
       >listeners[i + ListenerItemPosition.callback];
-      element.removeEventListener(eventName, ownCallback, options);
+      target.removeEventListener(eventName, ownCallback, options);
       listeners.splice(i, LISTENER_ITEM_LENGTH);
       break;
     }
@@ -163,7 +163,7 @@ export function removeEventListener<Target>(
 }
 
 function assertArguments(
-  element: HTMLElement,
+  element: EventTarget,
   eventName: string,
   callback: any
 ): void {
@@ -188,7 +188,7 @@ function getEventListenersDisposable(listeners: Array<Object>): Function {
       /* Drop non-passive event listeners */
       for (let i = 0; i < listeners.length; i += LISTENER_ITEM_LENGTH) {
         let element: HTMLElement = <HTMLElement>(
-          listeners[i + ListenerItemPosition.Element]
+          listeners[i + ListenerItemPosition.Target]
         );
         let eventName: string = <string>(
           listeners[i + ListenerItemPosition.eventName]

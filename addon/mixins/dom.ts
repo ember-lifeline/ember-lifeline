@@ -12,7 +12,7 @@ type MaybeIsComponent = EmberObject & {
   element?: HTMLElement;
 };
 
-type ElementOrString = HTMLElement | string;
+type TargetOrString = EventTarget | string;
 
 /**
  ContextBoundEventListenersMixin provides a mechanism to attach event listeners
@@ -60,31 +60,31 @@ export default Mixin.create({
    ```
 
    @method addEventListener
-   @param { String } selector the DOM selector or element
+   @param { String | EventTarget } target the DOM selector or element
    @param { String } _eventName the event name to listen for
    @param { Function } _callback the callback to run for that event
    @public
    */
   addEventListener(
     this: MaybeIsComponent,
-    selector: ElementOrString,
+    target: TargetOrString,
     eventName: string,
     callback: RunMethod<MaybeIsComponent>,
     options?: Object
   ): void {
     assert(
       'Must provide an element (not a DOM selector) when using addEventListener in a tagless component.',
-      !this.isComponent || this.tagName !== '' || typeof selector !== 'string'
+      !this.isComponent || this.tagName !== '' || typeof target !== 'string'
     );
     assert(
       'Called addEventListener with a css selector before the component was rendered',
       !this.isComponent ||
-        typeof selector !== 'string' ||
+        typeof target !== 'string' ||
         this._currentState === this._states.inDOM
     );
     assert(
       'Must provide an element (not a DOM selector) when calling addEventListener outside of component instance.',
-      this.isComponent || typeof selector !== 'string'
+      this.isComponent || typeof target !== 'string'
     );
 
     let element: HTMLElement;
@@ -94,24 +94,24 @@ export default Mixin.create({
     if (this.isComponent && typeof eventName === 'function') {
       options = callback;
       callback = eventName;
-      eventName = <string>selector;
+      eventName = <string>target;
       element = <HTMLElement>this.element;
     } else {
-      element = findElement(<HTMLElement>this.element, selector);
+      element = findElement(<HTMLElement>this.element, target);
     }
 
     addEventListener(this, element, eventName, callback, options);
   },
 
   /**
-   @param { String } selector the DOM selector or element
+   @param { String | EventTarget } target the DOM selector or element
    @param { String } _eventName the event name to listen for
    @param { Function } callback the callback to run for that event
    @public
    */
   removeEventListener(
     this: MaybeIsComponent,
-    selector: ElementOrString,
+    target: TargetOrString,
     eventName: string,
     callback: RunMethod<MaybeIsComponent>,
     options?: Object
@@ -122,10 +122,10 @@ export default Mixin.create({
     // addresses use cases where we want to bind events like `scroll` to the component's root element.
     if (this.isComponent && typeof eventName === 'function') {
       callback = eventName;
-      eventName = <string>selector;
+      eventName = <string>target;
       element = <HTMLElement>this.element;
     } else {
-      element = findElement(<HTMLElement>this.element, selector);
+      element = findElement(<HTMLElement>this.element, target);
     }
 
     removeEventListener(this, element, eventName, callback, options);
@@ -140,7 +140,7 @@ export default Mixin.create({
 
 function findElement(
   contextElement: HTMLElement,
-  selector: ElementOrString
+  selector: TargetOrString
 ): HTMLElement {
   let selectorType: string = typeof selector;
   let element;
