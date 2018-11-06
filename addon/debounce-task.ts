@@ -80,16 +80,15 @@ export function debounceTask(
     registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
   }
 
-  let pendingDebounce: PendingDebounce | undefined = pendingDebounces.get(name);
   let debouncedTask: Function;
 
-  if (!pendingDebounce) {
+  if (!pendingDebounces.has(name)) {
     debouncedTask = (...args) => {
       pendingDebounces.delete(name);
       obj[name](...args);
     };
   } else {
-    debouncedTask = pendingDebounce.debouncedTask;
+    debouncedTask = pendingDebounces.get(name)!.debouncedTask;
   }
 
   // cancelId is new, even if the debounced function was already present
@@ -144,8 +143,7 @@ export function cancelDebounce(
   if (!pendingDebounces.has(name)) {
     return;
   }
-  // @ts-ignore
-  const { cancelId } = pendingDebounces.get(name);
+  const { cancelId } = pendingDebounces.get(name)!;
 
   pendingDebounces.delete(name);
   cancel(cancelId);
@@ -153,12 +151,10 @@ export function cancelDebounce(
 
 function getDebouncesDisposable(debounces: PendingDebounces): Function {
   return function () {
-    if (!debounces.size) {
+    if (debounces.size === 0) {
       return;
     }
 
-    for (const { cancelId } of debounces.values()) {
-      cancel(cancelId);
-    }
+    debounces.forEach(p => cancel(p.cancelId));
   };
 }
