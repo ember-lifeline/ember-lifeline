@@ -4,7 +4,11 @@
 const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
-  let options = {};
+  let options = {
+    'ember-cli-babel': {
+      includePolyfill: true
+    }
+  };
 
   if (defaults.project.findAddonByName('ember-native-dom-event-dispatcher')) {
     options.vendorFiles = { 'jquery.js': null };
