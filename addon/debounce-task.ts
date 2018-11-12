@@ -9,8 +9,6 @@ interface PendingDebounce {
   cancelId: EmberRunTimer;
 }
 
-type PendingDebounces = Map<string, PendingDebounce>;
-
 /**
  * A map of instances/debounce functions that allows us to
  * store pending debounces per instance.
@@ -18,7 +16,10 @@ type PendingDebounces = Map<string, PendingDebounce>;
  * @private
  *
  */
-const registeredDebounces: IMap<Object, PendingDebounces> = new WeakMap<Object, any>();
+const registeredDebounces: IMap<
+  Object,
+  Map<string, PendingDebounce>
+> = new WeakMap<Object, any>();
 
 /**
    Runs the function with the provided name after the timeout has expired on the last
@@ -149,8 +150,10 @@ export function cancelDebounce(
   cancel(cancelId);
 }
 
-function getDebouncesDisposable(debounces: PendingDebounces): Function {
-  return function () {
+function getDebouncesDisposable(
+  debounces: Map<string, PendingDebounce>
+): Function {
+  return function() {
     if (debounces.size === 0) {
       return;
     }

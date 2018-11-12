@@ -3,7 +3,7 @@ import { run } from '@ember/runloop';
 import Component from '@ember/component';
 import Service from '@ember/service';
 import hbs from 'htmlbars-inline-precompile';
-import { module, test, skip } from 'qunit';
+import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, triggerEvent } from '@ember/test-helpers';
 import { ContextBoundEventListenersMixin } from 'ember-lifeline';
@@ -22,7 +22,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         init() {
           this._super(...arguments);
           testContext.componentInstance = this;
-        },
+        }
       })
     );
 
@@ -34,12 +34,12 @@ module('ember-lifeline/mixins/dom', function(hooks) {
   [
     {
       testName: 'addEventListener(_,_,_,undefined)',
-      testedOptions: undefined,
+      testedOptions: undefined
     },
     {
       testName: 'addEventListener(_,_,_,{passive:false})',
-      testedOptions: { passive: false },
-    },
+      testedOptions: { passive: false }
+    }
   ].forEach(({ testName, testedOptions }) => {
     test(`${testName} adds event listener to child element`, async function(assert) {
       assert.expect(4);
@@ -141,7 +141,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
 
       let delta = {};
       await triggerEvent(component.element.firstChild, 'drag', {
-        details: { delta },
+        details: { delta }
       });
 
       assert.equal(calls, 1, 'callback was called');
@@ -284,7 +284,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectA = this;
-          },
+          }
         })
       );
       this.owner.register(
@@ -293,7 +293,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
-          },
+          }
         })
       );
 
@@ -333,7 +333,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectA = this;
-          },
+          }
         })
       );
       this.owner.register(
@@ -342,7 +342,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
-          },
+          }
         })
       );
 
@@ -559,35 +559,37 @@ module('ember-lifeline/mixins/dom', function(hooks) {
     );
 
     await triggerEvent(component.element.firstChild.firstChild, 'click', {
-      bubbles: true,
+      bubbles: true
     });
 
     assert.equal(outerCalls, 0, 'outer callback never fires');
     assert.equal(innerCalls, 1, 'inner callback fires');
   });
 
-  (PASSIVE_SUPPORTED ? test : skip)('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
-    assert.expect(2);
+  if (PASSIVE_SUPPORTED) {
+    test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
+      assert.expect(2);
 
-    this.owner.register(
-      'template:components/under-test',
-      hbs`<span class="foo"></span>`
-    );
-    await render(hbs`{{under-test}}`);
-    let component = this.componentInstance;
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<span class="foo"></span>`
+      );
+      await render(hbs`{{under-test}}`);
+      let component = this.componentInstance;
 
-    let calls = 0;
-    let listener = () => {
-      calls++;
-    };
-    let element = find('.foo');
+      let calls = 0;
+      let listener = () => {
+        calls++;
+      };
+      let element = find('.foo');
 
-    component.addEventListener('.foo', 'click', listener, { once: true });
+      component.addEventListener('.foo', 'click', listener, { once: true });
 
-    await triggerEvent(element, 'click');
-    assert.equal(calls, 1, 'callback was called once');
+      await triggerEvent(element, 'click');
+      assert.equal(calls, 1, 'callback was called once');
 
-    await triggerEvent(element, 'click');
-    assert.equal(calls, 1, 'callback was called once');
-  });
+      await triggerEvent(element, 'click');
+      assert.equal(calls, 1, 'callback was called once');
+    });
+  }
 });
