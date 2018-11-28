@@ -4,12 +4,10 @@ import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
 import { IMap } from './interfaces';
 
-type PendingDebounce =
-  | {
-      debouncedTask: Function;
-      cancelId: EmberRunTimer;
-    }
-  | undefined;
+interface PendingDebounce {
+  debouncedTask: Function;
+  cancelId: EmberRunTimer;
+}
 
 /**
  * A map of instances/debounce functions that allows us to
@@ -18,7 +16,10 @@ type PendingDebounce =
  * @private
  *
  */
-const registeredDebounces: IMap<Object, Object> = new WeakMap<Object, any>();
+const registeredDebounces: IMap<
+  Object,
+  Map<string, PendingDebounce>
+> = new WeakMap<Object, any>();
 
 /**
    Runs the function with the provided name after the timeout has expired on the last
@@ -73,29 +74,28 @@ export function debounceTask(
     !obj.isDestroyed
   );
 
-  let pendingDebounces: Object = registeredDebounces.get(obj);
+  let pendingDebounces = registeredDebounces.get(obj);
   if (!pendingDebounces) {
     pendingDebounces = new Map();
     registeredDebounces.set(obj, pendingDebounces);
     registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
   }
 
-  let pendingDebounce: PendingDebounce = pendingDebounces[name];
   let debouncedTask: Function;
 
-  if (!pendingDebounce) {
+  if (!pendingDebounces.has(name)) {
     debouncedTask = (...args) => {
-      delete pendingDebounces[name];
+      pendingDebounces.delete(name);
       obj[name](...args);
     };
   } else {
-    debouncedTask = pendingDebounce.debouncedTask;
+    debouncedTask = pendingDebounces.get(name)!.debouncedTask;
   }
 
   // cancelId is new, even if the debounced function was already present
   let cancelId = debounce(obj as any, debouncedTask as any, ...debounceArgs);
 
-  pendingDebounces[name] = { debouncedTask, cancelId };
+  pendingDebounces.set(name, { debouncedTask, cancelId });
 }
 
 /**
@@ -136,30 +136,28 @@ export function cancelDebounce(
   obj: EmberObject,
   name: string
 ): void | undefined {
-  let pendingDebounces: Object = registeredDebounces.get(obj);
-
-  if (pendingDebounces === undefined || pendingDebounces[name] === undefined) {
+  if (!registeredDebounces.has(obj)) {
     return;
   }
+  const pendingDebounces = registeredDebounces.get(obj);
 
-  let { cancelId } = pendingDebounces[name];
+  if (!pendingDebounces.has(name)) {
+    return;
+  }
+  const { cancelId } = pendingDebounces.get(name)!;
 
-  delete pendingDebounces[name];
+  pendingDebounces.delete(name);
   cancel(cancelId);
 }
 
-function getDebouncesDisposable(debounces: Object): Function {
+function getDebouncesDisposable(
+  debounces: Map<string, PendingDebounce>
+): Function {
   return function() {
-    let debounceNames = debounces && Object.keys(debounces);
-
-    if (!debounceNames || !debounceNames.length) {
+    if (debounces.size === 0) {
       return;
     }
 
-    for (let i = 0; i < debounceNames.length; i++) {
-      let { cancelId } = debounces[debounceNames[i]];
-
-      cancel(cancelId);
-    }
+    debounces.forEach(p => cancel(p.cancelId));
   };
 }

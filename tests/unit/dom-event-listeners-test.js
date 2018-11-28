@@ -9,8 +9,9 @@ import { render, find, triggerEvent } from '@ember/test-helpers';
 import {
   runDisposables,
   addEventListener,
-  removeEventListener,
+  removeEventListener
 } from 'ember-lifeline';
+import { PASSIVE_SUPPORTED } from 'ember-lifeline/dom-event-listeners';
 
 module('ember-lifeline/dom-event-listeners', function(hooks) {
   setupRenderingTest(hooks);
@@ -31,7 +32,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
           this._super(...arguments);
 
           runDisposables(this);
-        },
+        }
       })
     );
 
@@ -43,12 +44,12 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
   [
     {
       testName: 'addEventListener(_,_,_,undefined)',
-      testedOptions: undefined,
+      testedOptions: undefined
     },
     {
       testName: 'addEventListener(_,_,_,{passive:false})',
-      testedOptions: { passive: false },
-    },
+      testedOptions: { passive: false }
+    }
   ].forEach(({ testName, testedOptions }) => {
     test(`${testName} adds event listener to child element`, async function(assert) {
       assert.expect(4);
@@ -77,7 +78,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         testedOptions
       );
 
-      component.element.firstChild.dispatchEvent(new Event('click'));
+      await triggerEvent(component.element.firstChild, 'click');
 
       assert.equal(calls, 1, 'callback was called');
       assert.ok(hadRunloop, 'callback was called in runloop');
@@ -118,7 +119,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
 
       let delta = {};
       await triggerEvent(component.element.firstChild, 'drag', {
-        details: { delta },
+        details: { delta }
       });
 
       assert.equal(calls, 1, 'callback was called');
@@ -230,7 +231,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          },
+          }
         })
       );
       this.owner.register(
@@ -244,7 +245,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          },
+          }
         })
       );
 
@@ -289,7 +290,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          },
+          }
         })
       );
       this.owner.register(
@@ -303,7 +304,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          },
+          }
         })
       );
 
@@ -376,7 +377,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             runDisposables(this);
 
             this._super(...arguments);
-          },
+          }
         })
       );
 
@@ -453,37 +454,39 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     );
 
     await triggerEvent(component.element.firstChild.firstChild, 'click', {
-      bubbles: true,
+      bubbles: true
     });
 
     assert.equal(outerCalls, 0, 'outer callback never fires');
     assert.equal(innerCalls, 1, 'inner callback fires');
   });
 
-  test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
-    assert.expect(2);
+  if (PASSIVE_SUPPORTED) {
+    test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
+      assert.expect(2);
 
-    this.owner.register(
-      'template:components/under-test',
-      hbs`<span class="foo"></span>`
-    );
-    await render(hbs`{{under-test}}`);
-    let component = this.componentInstance;
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<span class="foo"></span>`
+      );
+      await render(hbs`{{under-test}}`);
+      let component = this.componentInstance;
 
-    let calls = 0;
-    let listener = () => {
-      calls++;
-    };
-    let element = find('.foo');
+      let calls = 0;
+      let listener = () => {
+        calls++;
+      };
+      let element = find('.foo');
 
-    addEventListener(component, element, 'click', listener, { once: true });
+      addEventListener(component, element, 'click', listener, { once: true });
 
-    await triggerEvent(element, 'click');
-    assert.equal(calls, 1, 'callback was called once');
+      await triggerEvent(element, 'click');
+      assert.equal(calls, 1, 'callback was called once');
 
-    await triggerEvent(element, 'click');
-    assert.equal(calls, 1, 'callback was called once');
-  });
+      await triggerEvent(element, 'click');
+      assert.equal(calls, 1, 'callback was called once');
+    });
+  }
 
   test('addEventListener to window', async function(assert) {
     assert.expect(1);
@@ -520,11 +523,19 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     for (let i = 1; i <= iterations; i++) {
       addEventListener(component, window, 'click', listener);
       await triggerEvent(window, 'click');
-      assert.equal(calls, i, `callback was called after adding, iteration ${i}`);
+      assert.equal(
+        calls,
+        i,
+        `callback was called after adding, iteration ${i}`
+      );
 
       runDisposables(component);
       await triggerEvent(window, 'click');
-      assert.equal(calls, i, `callback was not called after calling runDisposables, iteration ${i}`);
+      assert.equal(
+        calls,
+        i,
+        `callback was not called after calling runDisposables, iteration ${i}`
+      );
     }
   });
 });

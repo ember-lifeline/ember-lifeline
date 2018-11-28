@@ -25,8 +25,9 @@ module('ember-lifeline/utils/disposable', function(hooks) {
   hooks.afterEach(function(assert) {
     run(this.obj, 'destroy');
 
-    let retainedObjects = [...this.registeredDisposables.keys()].map(o =>
-      o.toString()
+    let retainedObjects = [];
+    this.registeredDisposables.forEach((v, k) =>
+      retainedObjects.push(k.toString())
     );
 
     assert.deepEqual(
