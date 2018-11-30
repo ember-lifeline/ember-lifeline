@@ -70,6 +70,13 @@
     "prettier": "^1.10.2",
     "typescript": "^3.0.1"
   },
+  "resolutions": {
+    "@types/ember__object": "~3.0.5",
+    "@types/ember__component": "~3.0.4",
+    "@types/ember__routing": "~3.0.6",
+    "@types/ember__error": "~3.0.2",
+    "@types/jquery": "~3.3.22"
+  },
   "engines": {
     "node": "^4.5 || 6.* || >= 7.*"
   },
