@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import { IMap, TaskOrName, IDisposable } from './interfaces';
+import { IMap, TaskOrName, IDestroyable } from './interfaces';
 
 type Token = string | number;
 
@@ -120,7 +120,7 @@ export function pollTaskFor(token): void | undefined {
    @public
    */
 export function pollTask(
-  obj: IDisposable,
+  obj: IDestroyable,
   taskOrName: TaskOrName,
   token: Token = getNextToken()
 ): Token {
@@ -209,7 +209,7 @@ export function cancelPoll(
   delete queuedPollTasks[token];
 }
 
-function getPollersDisposable(obj: IDisposable, pollers: Set<Token>): Function {
+function getPollersDisposable(obj: IDestroyable, pollers: Set<Token>): Function {
   return function() {
     pollers.forEach(token => {
       cancelPoll(obj, token);

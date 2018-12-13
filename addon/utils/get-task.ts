@@ -1,7 +1,7 @@
-import { TaskOrName, IDisposable } from '../interfaces';
+import { TaskOrName, IDestroyable } from '../interfaces';
 
 export default function getTask(
-  obj: IDisposable,
+  obj: IDestroyable,
   taskOrName: TaskOrName,
   taskName: string
 ): Function {

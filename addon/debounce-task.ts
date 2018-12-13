@@ -1,7 +1,7 @@
 import { debounce, cancel } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { registerDisposable } from './utils/disposable';
-import { IMap, IDisposable } from './interfaces';
+import { IMap, IDestroyable } from './interfaces';
 
 interface PendingDebounce {
   debouncedTask: Function;
@@ -56,7 +56,7 @@ const registeredDebounces: IMap<
    @public
    */
 export function debounceTask(
-  obj: IDisposable,
+  obj: IDestroyable,
   name: string,
   ...debounceArgs: any[]
 ): void | undefined {
@@ -132,7 +132,7 @@ export function debounceTask(
    @public
    */
 export function cancelDebounce(
-  obj: IDisposable,
+  obj: IDestroyable,
   name: string
 ): void | undefined {
   if (!registeredDebounces.has(obj)) {
