@@ -1,9 +1,9 @@
-import { later, schedule, throttle, cancel } from '@ember/runloop';
-import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
-import getTask from './utils/get-task';
+import { assert } from '@ember/debug';
+import { cancel, later, schedule, throttle } from '@ember/runloop';
+import { IDestroyable, IMap, TaskOrName } from './interfaces';
 import { registerDisposable } from './utils/disposable';
-import { IMap, IDestroyable, TaskOrName } from './interfaces';
+import getTask from './utils/get-task';
 
 /**
  * A map of instances/timers that allows us to
@@ -12,7 +12,10 @@ import { IMap, IDestroyable, TaskOrName } from './interfaces';
  * @private
  *
  */
-let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap<Object, any>();
+let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap<
+  Object,
+  any
+>();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -149,7 +152,7 @@ export function scheduleTask(
 
 /**
    Runs the function with the provided name immediately, and only once in the time window
-   specified by the timeout argument.
+   specified by the spacing argument.
 
    Example:
 
@@ -175,20 +178,22 @@ export function scheduleTask(
    @method throttleTask
    @param { Object } obj the instance to register the task for
    @param { String } taskName the name of the task to throttle
-   @param { Number } [timeout] the time in the future to run the task
+   @param { ...* } [throttleArgs] arguments to pass to the throttled method
+   @param { Number } spacing the time in the future to run the task
+   @param { Boolean } [immediate] Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
    @public
    */
 export function throttleTask(
   obj: IDestroyable,
-  taskName: any,
-  timeout: number = 0
+  taskName: string,
+  ...throttleArgs: any[]
 ): EmberRunTimer {
   assert(
     `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
     typeof taskName === 'string'
   );
   assert(
-    `Called \`throttleTask('${taskName}', ${timeout})\` where '${taskName}' is not a function.`,
+    `Called \`throttleTask('${taskName}')\` where '${taskName}' is not a function.`,
     typeof obj[taskName] === 'function'
   );
   assert(
@@ -196,8 +201,19 @@ export function throttleTask(
     !obj.isDestroyed
   );
 
+  const lastArgument = throttleArgs[throttleArgs.length - 1];
+  const spacing =
+    typeof lastArgument === 'boolean'
+      ? throttleArgs[throttleArgs.length - 2]
+      : lastArgument;
+
+  assert(
+    `Called \`throttleTask\` with incorrect \`spacing\` argument. Expected Number and received \`${spacing}\``,
+    typeof spacing === 'number'
+  );
+
   let timers: Set<EmberRunTimer> = getTimers(obj);
-  let cancelId: EmberRunTimer = throttle(obj, taskName, timeout);
+  let cancelId: EmberRunTimer = throttle(obj as any, taskName, ...throttleArgs);
 
   timers.add(cancelId);
 
@@ -248,7 +264,7 @@ export function cancelTask(
       true,
       {
         id: 'ember-lifeline-cancel-task-without-object',
-        until: '4.0.0',
+        until: '4.0.0'
       }
     );
     cancelId = obj;

@@ -1,14 +1,14 @@
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
-import { module, test } from 'qunit';
 import {
+  cancelTask,
+  runDisposables,
   runTask,
   scheduleTask,
   throttleTask,
-  cancelTask,
-  runDisposables,
-  _setRegisteredTimers,
+  _setRegisteredTimers
 } from 'ember-lifeline';
+import { module, test } from 'qunit';
 
 module('ember-lifeline/run-task', function(hooks) {
   hooks.beforeEach(function() {
@@ -57,7 +57,7 @@ module('ember-lifeline/run-task', function(hooks) {
         assert.equal(this, obj, 'context is correct');
         assert.ok(true, 'callback was called');
         done();
-      },
+      }
     }));
     let hasRun = false;
 
@@ -163,7 +163,7 @@ module('ember-lifeline/run-task', function(hooks) {
         assert.equal(this, obj, 'context is correct');
         assert.equal(name, 'foo', 'passed arguments are correct');
         assert.ok(true, 'callback was called');
-      },
+      }
     }));
     let hasRun = false;
 
@@ -212,6 +212,30 @@ module('ember-lifeline/run-task', function(hooks) {
     });
   });
 
+  test('throttleTask actually throttles', function(assert) {
+    let callCount = 0;
+    let callArgs;
+    this.obj = this.getComponent({
+      doStuff(...args) {
+        callCount++;
+        callArgs = args;
+      }
+    });
+
+    run(() => {
+      throttleTask(this.obj, 'doStuff', 'a', 5);
+      throttleTask(this.obj, 'doStuff', 'b', 5);
+      throttleTask(this.obj, 'doStuff', 'c', 5);
+    });
+
+    assert.equal(callCount, 1, 'Throttle only ran the method once');
+    assert.deepEqual(
+      callArgs,
+      ['a'],
+      'Throttle was called with the arguments from the first call only'
+    );
+  });
+
   test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
     this.obj = this.getComponent({ doStuff() {} });
 
@@ -226,5 +250,35 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.throws(() => {
       throttleTask(this.obj, 'doStuff', 5);
     }, /is not a function/);
+  });
+
+  test('throttleTask triggers an assertion when spacing argument is not a number or not passed', function(assert) {
+    assert.expect(2);
+
+    this.obj = this.getComponent({ doStuff() {} });
+
+    assert.throws(() => {
+      throttleTask(this.obj, 'doStuff', 'bad');
+    }, /with incorrect `spacing` argument. Expected Number and received `bad`/);
+
+    assert.throws(() => {
+      throttleTask(this.obj, 'doStuff', {});
+    }, /with incorrect `spacing` argument. Expected Number and received `\[object Object\]`/);
+  });
+
+  test('throttleTask passes arguments to method', function(assert) {
+    let calledWithArgs;
+
+    this.obj = this.getComponent({
+      doStuff(...args) {
+        calledWithArgs = args;
+      }
+    });
+
+    run(() => {
+      throttleTask(this.obj, 'doStuff', 'hello', 'world', 5);
+    });
+
+    assert.deepEqual(calledWithArgs[('hello', 'world')]);
   });
 });
