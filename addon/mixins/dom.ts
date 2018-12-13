@@ -2,9 +2,9 @@ import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import { addEventListener, removeEventListener } from '../dom-event-listeners';
 import { runDisposables } from '../utils/disposable';
-import EmberObject from '@ember/object';
+import { IDisposable } from '../interfaces';
 
-type MaybeIsComponent = EmberObject & {
+type MaybeIsComponent = IDisposable & {
   isComponent?: boolean;
   tagName?: string;
   _currentState?: any;
@@ -147,9 +147,7 @@ function findElement(
 
   if (selectorType === 'string') {
     element = contextElement.querySelector(<string>selector);
-  } else if (
-    ((selector as HTMLElement).nodeType || selector instanceof Window)
-  ) {
+  } else if ((selector as HTMLElement).nodeType || selector instanceof Window) {
     element = selector;
   }
 

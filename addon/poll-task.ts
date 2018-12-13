@@ -1,11 +1,10 @@
 import Ember from 'ember';
-import EmberObject from '@ember/object';
 import { join } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import { IMap, TaskOrName } from './interfaces';
+import { IMap, TaskOrName, IDisposable } from './interfaces';
 
 type Token = string | number;
 
@@ -121,7 +120,7 @@ export function pollTaskFor(token): void | undefined {
    @public
    */
 export function pollTask(
-  obj: EmberObject,
+  obj: IDisposable,
   taskOrName: TaskOrName,
   token: Token = getNextToken()
 ): Token {
@@ -210,7 +209,7 @@ export function cancelPoll(
   delete queuedPollTasks[token];
 }
 
-function getPollersDisposable(obj: EmberObject, pollers: Set<Token>): Function {
+function getPollersDisposable(obj: IDisposable, pollers: Set<Token>): Function {
   return function() {
     pollers.forEach(token => {
       cancelPoll(obj, token);

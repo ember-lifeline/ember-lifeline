@@ -1,8 +1,7 @@
-import EmberObject from '@ember/object';
-import { TaskOrName } from '../interfaces';
+import { TaskOrName, IDisposable } from '../interfaces';
 
 export default function getTask(
-  obj: EmberObject,
+  obj: IDisposable,
   taskOrName: TaskOrName,
   taskName: string
 ): Function {
