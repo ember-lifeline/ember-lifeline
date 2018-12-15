@@ -18,7 +18,6 @@
     "build": "ember build",
     "start": "ember server",
     "test": "ember try:each",
-    "precommit": "lint-staged",
     "prepublishOnly": "ember ts:precompile",
     "postpublish": "ember ts:clean"
   },
@@ -87,5 +86,10 @@
   "bugs": {
     "url": "https://github.com/rwjblue/ember-lifeline/issues"
   },
-  "homepage": "https://github.com/rwjblue/ember-lifeline#readme"
+  "homepage": "https://github.com/rwjblue/ember-lifeline#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
 }
