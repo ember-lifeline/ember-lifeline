@@ -1,10 +1,9 @@
-import EmberObject from '@ember/object';
 import { later, schedule, throttle, cancel } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import { IMap, TaskOrName } from './interfaces';
+import { IMap, IDestroyable, TaskOrName } from './interfaces';
 
 /**
  * A map of instances/timers that allows us to
@@ -63,7 +62,7 @@ export function _setRegisteredTimers(
    @public
    */
 export function runTask(
-  obj: EmberObject,
+  obj: IDestroyable,
   taskOrName: TaskOrName,
   timeout: number = 0
 ): EmberRunTimer {
@@ -116,7 +115,7 @@ export function runTask(
    @public
    */
 export function scheduleTask(
-  obj: EmberObject,
+  obj: IDestroyable,
   queueName: EmberRunQueues,
   taskOrName: TaskOrName,
   ...args: any[]
@@ -180,7 +179,7 @@ export function scheduleTask(
    @public
    */
 export function throttleTask(
-  obj: EmberObject,
+  obj: IDestroyable,
   taskName: any,
   timeout: number = 0
 ): EmberRunTimer {
@@ -238,9 +237,9 @@ export function throttleTask(
    @public
    */
 export function cancelTask(cancelId: EmberRunTimer);
-export function cancelTask(obj: EmberObject, cancelId: EmberRunTimer);
+export function cancelTask(obj: IDestroyable, cancelId: EmberRunTimer);
 export function cancelTask(
-  obj: EmberObject | EmberRunTimer,
+  obj: IDestroyable | EmberRunTimer,
   cancelId?: any
 ): void | undefined {
   if (typeof cancelId === 'undefined') {
@@ -261,7 +260,7 @@ export function cancelTask(
 }
 
 function getTimersDisposable(
-  obj: EmberObject,
+  obj: IDestroyable,
   timers: Set<EmberRunTimer>
 ): Function {
   return function() {

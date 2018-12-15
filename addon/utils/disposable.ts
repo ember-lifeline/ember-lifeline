@@ -1,6 +1,5 @@
-import EmberObject from '@ember/object';
 import { assert } from '@ember/debug';
-import { IMap } from '../interfaces';
+import { IMap, IDestroyable } from '../interfaces';
 
 /**
  * A map of instances/array of disposables. Only exported for
@@ -33,7 +32,7 @@ export function _setRegisteredDisposables(mapForTesting: IMap<Object, any>) {
  * @param {*} dispose a function that disposes of instance resources
  */
 export function registerDisposable(
-  obj: EmberObject,
+  obj: IDestroyable,
   dispose: Function
 ): void | undefined {
   assert(
@@ -60,7 +59,7 @@ export function registerDisposable(
  * @public
  * @param {*} obj the instance to run the disposables for
  */
-export function runDisposables(obj: EmberObject): void | undefined {
+export function runDisposables(obj: IDestroyable): void | undefined {
   let disposables: Function[] = registeredDisposables.get(obj);
 
   if (disposables === undefined) {
@@ -74,7 +73,7 @@ export function runDisposables(obj: EmberObject): void | undefined {
   }
 }
 
-function getRegisteredDisposables(obj: EmberObject): Function[] {
+function getRegisteredDisposables(obj: IDestroyable): Function[] {
   let disposables: Function[] = registeredDisposables.get(obj);
 
   if (disposables === undefined) {

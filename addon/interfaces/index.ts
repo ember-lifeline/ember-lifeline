@@ -5,4 +5,9 @@ export interface IMap<K extends object, V> {
   set(key: K, value: V): this;
 }
 
+export interface IDestroyable {
+  isDestroyed: boolean;
+  isDestroying: boolean;
+}
+
 export type TaskOrName = Function | string;
