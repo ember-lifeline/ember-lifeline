@@ -1,7 +1,7 @@
-import { debounce, cancel } from '@ember/runloop';
 import { assert } from '@ember/debug';
+import { cancel, debounce } from '@ember/runloop';
+import { IDestroyable, IMap } from './interfaces';
 import { registerDisposable } from './utils/disposable';
-import { IMap, IDestroyable } from './interfaces';
 
 interface PendingDebounce {
   debouncedTask: Function;
@@ -52,7 +52,8 @@ const registeredDebounces: IMap<
    @param { Object } obj the instance to register the task for
    @param { String } name the name of the task to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
-   @param { Number } wait the amount of time to wait before calling the method (in milliseconds)
+   @param { Number } spacing the amount of time to wait before calling the method (in milliseconds)
+   @param { Boolean } [immediate] Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
    @public
    */
 export function debounceTask(
@@ -71,6 +72,17 @@ export function debounceTask(
   assert(
     `Called \`debounceTask\` on destroyed object: ${obj}.`,
     !obj.isDestroyed
+  );
+
+  const lastArgument = debounceArgs[debounceArgs.length - 1];
+  const spacing =
+    typeof lastArgument === 'boolean'
+      ? debounceArgs[debounceArgs.length - 2]
+      : lastArgument;
+
+  assert(
+    `Called \`debounceTask\` with incorrect \`spacing\` argument. Expected Number and received \`${spacing}\``,
+    typeof spacing === 'number'
   );
 
   let pendingDebounces = registeredDebounces.get(obj);

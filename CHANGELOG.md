@@ -1,9 +1,13 @@
+v3.1.0 / 2018-12-21
+====================
+  * Modified `throttleTask` to accept arguments to be passed to throttled method
+  * Made `spacing` arguments required for `throttleTask` and `debounceTask` respectively
 
 v3.0.4 / 2018-06-01
 ==================
 
   * Updated dependencies to latest versions, including Ember 3.1.2 and Ember CLI 3.1.4
-  * PR - Clean up canceled pending debounce by 2hu12 
+  * PR - Clean up canceled pending debounce by 2hu12
 
 v3.0.0 / 2018-03-12
 ==================
@@ -21,13 +25,13 @@ v2.0.0 / 2017-11-16
   * Allow calling `addEventListener` from objects other than components (when passing specific `HTMLElement`).
   * Ensure `this.throttleTask` created timers are cleared upon destroy.
   * Upgrade to use Ember's new JS modules API. 🎉
-  * Removed ability to add multiple listeners to child elements in single call 
+  * Removed ability to add multiple listeners to child elements in single call
   * Removed dependency on jQuery for ContextBoundEventListenersMixin
 
 v1.3.0 / 2017-06-30
 ==================
 
-  * Introduce cancel\* methods 
+  * Introduce cancel\* methods
 
 v1.2.1 / 2017-06-30
 ==================
