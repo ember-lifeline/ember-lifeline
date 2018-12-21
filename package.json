@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "ember build",
+    "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
     "start": "ember server",
     "test": "ember try:each",
     "prepublishOnly": "ember ts:precompile",
@@ -38,6 +39,7 @@
     "@types/qunit": "^2.5.1",
     "@types/rsvp": "^4.0.1",
     "broccoli-asset-rev": "^3.0.0",
+    "documentation": "^9.1.1",
     "ember-ajax": "^4.0.0",
     "ember-cli": "~3.6.0",
     "ember-cli-dependency-checker": "^3.0.0",

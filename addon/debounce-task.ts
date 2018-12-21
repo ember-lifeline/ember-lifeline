@@ -132,7 +132,8 @@ export function debounceTask(
      },
 
      willDestroy() {
-       this._super(..arguments);
+       this._super(...arguments);
+
        runDisposables(this);
      }
    });

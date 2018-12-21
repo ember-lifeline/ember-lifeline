@@ -50,6 +50,7 @@ export function _setRegisteredTimers(
 
      willDestroy() {
        this._super(...arguments);
+
        runDisposables(this);
      }
    });
@@ -95,6 +96,7 @@ export function runTask(
    export default Component.extend({
      init() {
        this._super(...arguments);
+
        scheduleTask(this, 'actions', () => {
          console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
        })
@@ -102,6 +104,7 @@ export function runTask(
 
      willDestroy() {
        this._super(...arguments);
+
        runDisposables(this);
      }
    });
@@ -170,6 +173,8 @@ export function scheduleTask(
      },
 
      destroy() {
+       this._super(...arguments);
+
        runDisposables(this);
      }
    });
@@ -242,6 +247,7 @@ export function throttleTask(
 
      willDestroy() {
        this._super(...arguments);
+
        runDisposables(this);
      }
    });
@@ -264,7 +270,7 @@ export function cancelTask(
       true,
       {
         id: 'ember-lifeline-cancel-task-without-object',
-        until: '4.0.0'
+        until: '4.0.0',
       }
     );
     cancelId = obj;

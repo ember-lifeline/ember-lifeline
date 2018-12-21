@@ -1,0 +1,26 @@
+toc:
+  - name: Run loop entanglement via `*Task` functions
+    children:
+      - runTask
+      - pollTask
+      - pollTaskFor
+      - setShouldPoll
+      - scheduleTask
+      - debounceTask
+      - throttleTask
+      - cancelTask
+      - cancelPoll
+      - cancelDebounce
+  - name: DOM event handler entanglement
+    children:
+      - addEventListener
+      - removeEventListener
+  - name: Disposables
+    children:
+      - registerDisposable
+      - runDisposables
+  - name: Mixins
+    children:
+      - DisposableMixin
+      - ContextBoundEventListenersMixin
+      - ContextBoundTasksMixin

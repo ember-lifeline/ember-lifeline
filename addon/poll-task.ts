@@ -67,21 +67,28 @@ export function pollTaskFor(token): void | undefined {
    Example:
 
    ```js
-   // app/components/foo-bar.js
-   export default Component.extend({
+  import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+
+  export default Component.extend({
      api: injectService(),
 
      init() {
        this._super(...arguments);
 
-       let token = this.pollTask((next) => {
+       let token = pollTask(this, (next) => {
          this.get('api').request('get', 'some/path')
            .then(() => {
-             this.runTask(next, 1800);
+             runTask(this, next, 1800);
            })
        });
 
        this._pollToken = token;
+     },
+
+     willDestroy() {
+       this._super(...arguments);
+
+       runDisposables(this);
      }
    });
    ```
@@ -94,8 +101,8 @@ export function pollTaskFor(token): void | undefined {
 
    //...snip...
 
-   test('foo-bar watches things', function(assert) {
-     this.render(hbs`{{foo-bar}}`);
+   test('foo-bar watches things', async function(assert) {
+     await render(hbs`{{foo-bar}}`);
 
      return wait()
        .then(() => {
@@ -158,8 +165,9 @@ export function pollTask(
    Example:
 
    ```js
-   // app/components/foo-bar.js
-   export default Component.extend({
+  import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+
+  export default Component.extend({
      api: injectService(),
 
      enableAutoRefresh() {
@@ -173,6 +181,12 @@ export function pollTask(
 
      disableAutoRefresh() {
         cancelPoll(this, this._pollToken);
+     },
+
+     willDestroy() {
+       this._super(...arguments);
+
+       runDisposables(this);
      }
    });
    ```
@@ -209,7 +223,10 @@ export function cancelPoll(
   delete queuedPollTasks[token];
 }
 
-function getPollersDisposable(obj: IDestroyable, pollers: Set<Token>): Function {
+function getPollersDisposable(
+  obj: IDestroyable,
+  pollers: Set<Token>
+): Function {
   return function() {
     pollers.forEach(token => {
       cancelPoll(obj, token);
