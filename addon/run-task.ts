@@ -185,7 +185,7 @@ export function scheduleTask(
    */
 export function throttleTask(
   obj: IDestroyable,
-  taskName: string,
+  taskName: any,
   ...throttleArgs: any[]
 ): EmberRunTimer {
   assert(
