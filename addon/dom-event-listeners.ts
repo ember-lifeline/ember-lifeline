@@ -150,8 +150,8 @@ export function removeEventListener<Target>(
       listeners[i + ListenerItemPosition.originalCallback] === callback
     ) {
       /*
-         * Drop the event listener and remove the listener object
-         */
+       * Drop the event listener and remove the listener object
+       */
       let ownCallback: EventListenerOrEventListenerObject = <
         EventListenerOrEventListenerObject
       >listeners[i + ListenerItemPosition.callback];
