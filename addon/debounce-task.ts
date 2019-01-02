@@ -16,9 +16,9 @@ interface PendingDebounce {
  *
  */
 const registeredDebounces: IMap<
-  Object,
+  IDestroyable,
   Map<string, PendingDebounce>
-> = new WeakMap<Object, any>();
+> = new WeakMap<IDestroyable, any>();
 
 /**
    Runs the function with the provided name after the timeout has expired on the last
@@ -49,7 +49,7 @@ const registeredDebounces: IMap<
    ```
 
    @method debounceTask
-   @param { Object } obj the instance to register the task for
+   @param { IDestroyable } obj the instance to register the task for
    @param { String } name the name of the task to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
    @param { Number } spacing the amount of time to wait before calling the method (in milliseconds)
@@ -139,7 +139,7 @@ export function debounceTask(
    ```
 
    @method cancelDebounce
-   @param { Object } obj the instance to register the task for
+   @param { IDestroyable } obj the instance to register the task for
    @param { String } methodName the name of the debounced method to cancel
    @public
    */

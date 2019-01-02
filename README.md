@@ -56,8 +56,8 @@ export default Component.extend({
   willDestroy() {
     this._super(...arguments);
     runDisposables(this); // ensure that lifeline will clean up any remaining async work
-  }
-})
+  },
+});
 ```
 
 Lifeline provides [mixins](#mixins) that conveniently implement `destroy`, correctly calling `runDisposables`.
@@ -75,7 +75,7 @@ Use `runTask` where you might use `setTimeout`, `setInterval`, or
 
 `runTask` will handle three common issues with the above APIs.
 
-First, *`setTimeout` and `setInterval` do not use the runloop*. Ember uses
+First, _`setTimeout` and `setInterval` do not use the runloop_. Ember uses
 a [work queuing mechanism called the runloop ](https://guides.emberjs.com/v2.5.0/applications/run-loop/).
 In order for the queues to flush without autoruns (a feature that helps devs
 be lazy in development but is disabled in tests and harms performance), a
@@ -90,10 +90,10 @@ export default Component.extend({
     this._super(...arguments);
     window.setTimeout(() => {
       run(() => {
-        this.set('date', new Date);
+        this.set('date', new Date());
       });
     }, 500);
-  }
+  },
 });
 ```
 
@@ -102,8 +102,8 @@ but regardless it is less than ideal to need to remember and reason about this.
 Often `Ember.run.later` is used instead of `setTimeout`, for this reason. However
 that still has issues.
 
-Second, *none of `setTimeout`, `setInterval` or `Ember.run.later` bind the
-timeout to the lifecycle of the context object*. If the example above is
+Second, _none of `setTimeout`, `setInterval` or `Ember.run.later` bind the
+timeout to the lifecycle of the context object_. If the example above is
 re-written to use `Ember.run.later`...
 
 ```js
@@ -114,9 +114,9 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     run.later(() => {
-      this.set('date', new Date);
+      this.set('date', new Date());
     }, 500);
-  }
+  },
 });
 ```
 
@@ -135,10 +135,12 @@ export default Component.extend({
     this._super(...arguments);
     run.later(() => {
       // First, check if this object is even valid
-      if (this.isDestroyed) { return; }
-      this.set('date', new Date);
+      if (this.isDestroyed) {
+        return;
+      }
+      this.set('date', new Date());
     }, 500);
-  }
+  },
 });
 ```
 
@@ -156,21 +158,24 @@ import { runTask, runDisposables } from 'ember-lifeline';
 export default Component.extend({
   init() {
     this._super(...arguments);
-    runTask(this, () => {
-      this.set('date', new Date);
-    }, 500);
+    runTask(
+      this,
+      () => {
+        this.set('date', new Date());
+      },
+      500
+    );
   },
 
   willDestroy() {
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
 Once you've ensured your object calls `runDisposables` in its `destroy` method, there's no need to worry about cancellation or the `isDestroyed` status of the object itself.
-
 
 ### `scheduleTask`
 
@@ -180,7 +185,7 @@ Use `scheduleTask` where you might use `Ember.run.schedule`.
 
 Like `runTask`, `scheduleTask` avoids common pitfalls of deferred work.
 
-*`Ember.run.schedule` does not bind the scheduled work to the lifecycle of the context object*.
+_`Ember.run.schedule` does not bind the scheduled work to the lifecycle of the context object_.
 
 ```js
 import Component from '@ember/component';
@@ -190,9 +195,9 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     run.schedule('actions', this, () => {
-      this.set('date', new Date);
+      this.set('date', new Date());
     });
-  }
+  },
 });
 ```
 
@@ -210,10 +215,12 @@ export default Component.extend({
     this._super(...arguments);
     run.schedule('actions', this, () => {
       // First, check if this object is even valid
-      if (this.isDestroyed) { return; }
-      this.set('date', new Date);
+      if (this.isDestroyed) {
+        return;
+      }
+      this.set('date', new Date());
     });
-  }
+  },
 });
 ```
 
@@ -232,7 +239,7 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     scheduleTask(this, 'actions', () => {
-      this.set('date', new Date);
+      this.set('date', new Date());
     });
   },
 
@@ -240,15 +247,14 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
 #### A word about the `afterRender` queue
 
 Scheduling work on the `afterRender` queue has well known, negative performance implications.
-Therefore, *`scheduleTask` is prohibited from scheduling work on the `afterRender` queue.*
-
+Therefore, _`scheduleTask` is prohibited from scheduling work on the `afterRender` queue._
 
 ### `debounceTask`
 
@@ -290,13 +296,12 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
 However if the component is destroyed, any pending debounce task will be
 cancelled.
-
 
 ### `throttleTask`
 
@@ -325,7 +330,7 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
@@ -358,10 +363,9 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
-
 
 ### `pollTask`
 
@@ -373,13 +377,13 @@ When using recursive `runTask` or `run.later` invocations causes tests to pause 
 that the Ember testing helpers automatically wait for all scheduled tasks in the run loop to finish before
 resuming execution in the normal test context.
 
-And as a reminder, *`setInterval` should never be used*. Say you `setInterval(fn, 20);`.
+And as a reminder, _`setInterval` should never be used_. Say you `setInterval(fn, 20);`.
 Regardless of how long `fn` takes, a new call will be scheduled every
-20ms. For example if `fn` took 80ms to run (not uncommon), then *four*
+20ms. For example if `fn` took 80ms to run (not uncommon), then _four_
 new `fn` calls would be in the browser's event queue waiting to fire
 immediately. This causes memory issues (the queue may never flush)
 and performance problems. Instead, you should be scheduling new work
-*after* the previous work was done. For example:
+_after_ the previous work was done. For example:
 
 ```js
 import Component from '@ember/component';
@@ -400,7 +404,7 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
@@ -436,7 +440,7 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
@@ -474,7 +478,7 @@ export default Component.extend({
     this._super(...arguments);
 
     runDisposables(this);
-  }
+  },
 });
 ```
 
@@ -504,12 +508,15 @@ moduleForComponent('updating-time', {
   integration: true,
 
   beforeEach() {
-    this.register('service:time', Service.extend({
-      now() {
-        return fakeNow;
-      }
-    }));
-  }
+    this.register(
+      'service:time',
+      Service.extend({
+        now() {
+          return fakeNow;
+        },
+      })
+    );
+  },
 });
 
 test('updating-time updates', function(assert) {
@@ -521,7 +528,12 @@ test('updating-time updates', function(assert) {
     {{/updating-time}}
   `);
 
-  assert.equal(this.$().text().trim(), fakeNow);
+  assert.equal(
+    this.$()
+      .text()
+      .trim(),
+    fakeNow
+  );
 
   return wait()
     .then(() => {
@@ -532,13 +544,17 @@ test('updating-time updates', function(assert) {
       return wait();
     })
     .then(() => {
-      assert.equal(this.$().text().trim(), fakeNow);
+      assert.equal(
+        this.$()
+          .text()
+          .trim(),
+        fakeNow
+      );
     });
 });
 ```
 
 Note: If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
-
 
 ### `registerDisposable`
 
@@ -613,22 +629,13 @@ export default Component.extend({
     let onFoo = run.bind(this.respondToDomEvent);
     this.DOMish.on('foo', onFoo);
 
-    this.domFooToken = registerDisposable(this, () => this.DOMish.off('foo', onFoo));
+    registerDisposable(this, () => this.DOMish.off('foo', onFoo));
   },
 
   respondToDOMEvent() {
     // do something
   }
 });
-```
-
-The `registerDisposable` method returns a `disposable`, which is an object with the following interface:
-
-```ts
-interface IDisposable {
-  dispose: function;
-  disposed: boolean;
-}
 ```
 
 ### DOM event handler entanglement
@@ -652,7 +659,7 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   didInsertElement() {
     this._super(...arguments);
-    $(window).on(`scroll.${this.elementId}`, (e) => {
+    $(window).on(`scroll.${this.elementId}`, e => {
       run(() => {
         this.set('windowScrollOffset', e.clientY);
       });
@@ -661,7 +668,7 @@ export default Component.extend({
   willDestroyElement() {
     $(window).off(`scroll.${this.elementId}`);
     this._super(...arguments);
-  }
+  },
 });
 ```
 
@@ -675,7 +682,7 @@ import { addEventListener } from 'ember-lifeline';
 export default Component.extend({
   didInsertElement() {
     this._super(...arguments);
-    addEventListener(this, window, 'scroll', (e) => {
+    addEventListener(this, window, 'scroll', e => {
       this.set('windowScrollOffset', e.clientY);
     });
   },
@@ -684,7 +691,7 @@ export default Component.extend({
     runDisposables(this);
 
     this._super(...arguments);
-  }
+  },
 });
 ```
 
@@ -724,9 +731,9 @@ Ember lifeline also provides mixins, which extend the object's methods to includ
 
 To use any of the above mentioned functions in your component, route or service, simply import and apply one or all of these mixins to your class:
 
-* `ContextBoundTasksMixin` for using any of the *Task methods
-* `ContextBoundEventListenersMixin` for using addEventListener
-* `DisposableMixin` for using registerDisposable and runDisposable
+- `ContextBoundTasksMixin` for using any of the \*Task methods
+- `ContextBoundEventListenersMixin` for using addEventListener
+- `DisposableMixin` for using registerDisposable and runDisposable
 
 ### Testing
 
