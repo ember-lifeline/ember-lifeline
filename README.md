@@ -55,6 +55,7 @@ export default Component.extend({
 
   willDestroy() {
     this._super(...arguments);
+
     runDisposables(this); // ensure that lifeline will clean up any remaining async work
   },
 });
@@ -88,6 +89,7 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     window.setTimeout(() => {
       run(() => {
         this.set('date', new Date());
@@ -113,6 +115,7 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     run.later(() => {
       this.set('date', new Date());
     }, 500);
@@ -133,6 +136,7 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     run.later(() => {
       // First, check if this object is even valid
       if (this.isDestroyed) {
@@ -158,6 +162,7 @@ import { runTask, runDisposables } from 'ember-lifeline';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     runTask(
       this,
       () => {
@@ -194,6 +199,7 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     run.schedule('actions', this, () => {
       this.set('date', new Date());
     });
@@ -213,6 +219,7 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     run.schedule('actions', this, () => {
       // First, check if this object is even valid
       if (this.isDestroyed) {
@@ -238,6 +245,7 @@ import { scheduleTask, runDisposables } from 'ember-lifeline';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     scheduleTask(this, 'actions', () => {
       this.set('date', new Date());
     });
@@ -392,11 +400,13 @@ import { runTask, runDisposables } from 'ember-lifeline';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     this.updateTime();
   },
 
   updateTime() {
     this.set('date', new Date());
+
     runTask(this, () => this.updateTime(), 20);
   },
 
@@ -425,6 +435,7 @@ import { runTask, runDisposables } from 'ember-lifeline';
 export default Component.extend({
   init() {
     this._super(...arguments);
+
     this.updateTime();
   },
 
@@ -469,6 +480,7 @@ export default Component.extend({
 
   updateTime(next) {
     let time = this.get('time');
+
     this.set('date', time.now());
 
     runTask(this, next, 20);
@@ -627,6 +639,7 @@ export default Component.extend({
 
   bindEvents() {
     let onFoo = run.bind(this.respondToDomEvent);
+
     this.DOMish.on('foo', onFoo);
 
     registerDisposable(this, () => this.DOMish.off('foo', onFoo));
@@ -659,14 +672,18 @@ import { run } from '@ember/runloop';
 export default Component.extend({
   didInsertElement() {
     this._super(...arguments);
-    $(window).on(`scroll.${this.elementId}`, e => {
+
+    this.listener = e => {
       run(() => {
         this.set('windowScrollOffset', e.clientY);
       });
-    });
+    };
+
+    window.addEventListener(`scroll.${this.elementId}`, this.listener);
   },
   willDestroyElement() {
-    $(window).off(`scroll.${this.elementId}`);
+    window.removeEventListener(`scroll.${this.elementId}`, this.listener);
+
     this._super(...arguments);
   },
 });
@@ -682,6 +699,7 @@ import { addEventListener } from 'ember-lifeline';
 export default Component.extend({
   didInsertElement() {
     this._super(...arguments);
+
     addEventListener(this, window, 'scroll', e => {
       this.set('windowScrollOffset', e.clientY);
     });
