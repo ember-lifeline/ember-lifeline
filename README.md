@@ -642,22 +642,13 @@ export default Component.extend({
 
     this.DOMish.on('foo', onFoo);
 
-    this.domFooToken = registerDisposable(this, () => this.DOMish.off('foo', onFoo));
+    registerDisposable(this, () => this.DOMish.off('foo', onFoo));
   },
 
   respondToDOMEvent() {
     // do something
   }
 });
-```
-
-The `registerDisposable` method returns a `disposable`, which is an object with the following interface:
-
-```ts
-interface IDisposable {
-  dispose: function;
-  disposed: boolean;
-}
 ```
 
 ### DOM event handler entanglement

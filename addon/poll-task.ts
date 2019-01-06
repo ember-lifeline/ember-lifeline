@@ -15,7 +15,10 @@ type Token = string | number;
  * @private
  *
  */
-let registeredPollers: IMap<Object, Set<Token>> = new WeakMap<Object, any>();
+let registeredPollers: IMap<IDestroyable, Set<Token>> = new WeakMap<
+  IDestroyable,
+  any
+>();
 
 /**
  * Test use only. Allows for swapping out the WeakMap to a Map, giving
@@ -25,7 +28,7 @@ let registeredPollers: IMap<Object, Set<Token>> = new WeakMap<Object, any>();
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
 export function _setRegisteredPollers(
-  mapForTesting: IMap<Object, Set<Token>>
+  mapForTesting: IMap<IDestroyable, Set<Token>>
 ): void | undefined {
   registeredPollers = mapForTesting;
 }
@@ -118,12 +121,12 @@ export function pollTaskFor(token): void | undefined {
    ```
 
    @method pollTask
-   @param { Object } obj the entangled object that was provided with the original *Task call
+   @param { IDestroyable } obj the entangled object that was provided with the original *Task call
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
                                            which is run at the provided time specified
                                            by timeout
-   @param { Token } token the Token for the pollTask
+   @param { Token } token the Token for the pollTask, either a String or Number
    @public
    */
 export function pollTask(
@@ -192,13 +195,14 @@ export function pollTask(
    ```
 
    @method cancelPoll
-   @param { Token } _token the Token for the pollTask to be cleared
+   @param { IDestroyable } obj the entangled object that was provided with the original *Task call
+   @param { Token } _token the Token for the pollTask to be cleared, either a String or Number
    @public
    */
 export function cancelPoll(_token: Token);
-export function cancelPoll(obj: Object, _token: Token);
+export function cancelPoll(obj: IDestroyable, _token: Token);
 export function cancelPoll(
-  obj: Object | Token,
+  obj: IDestroyable | Token,
   _token?: Token
 ): void | undefined {
   let token: Token;

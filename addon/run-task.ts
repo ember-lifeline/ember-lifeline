@@ -12,7 +12,7 @@ import getTask from './utils/get-task';
  * @private
  *
  */
-let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap<
+let registeredTimers: IMap<IDestroyable, Set<EmberRunTimer>> = new WeakMap<
   Object,
   any
 >();
@@ -25,7 +25,7 @@ let registeredTimers: IMap<Object, Set<EmberRunTimer>> = new WeakMap<
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
 export function _setRegisteredTimers(
-  mapForTesting: IMap<Object, Set<EmberRunTimer>>
+  mapForTesting: IMap<IDestroyable, Set<EmberRunTimer>>
 ) {
   registeredTimers = mapForTesting;
 }
@@ -57,7 +57,7 @@ export function _setRegisteredTimers(
    ```
 
    @function runTask
-   @param { Object } obj the instance to register the task for
+   @param { IDestroyable } obj the instance to register the task for
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
                                            which is run at the provided time specified
@@ -111,7 +111,7 @@ export function runTask(
    ```
 
    @function scheduleTask
-   @param { Object } obj the instance to register the task for
+   @param { IDestroyable } obj the instance to register the task for
    @param { String } queueName the queue to schedule the task into
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
@@ -181,7 +181,7 @@ export function scheduleTask(
    ```
 
    @method throttleTask
-   @param { Object } obj the instance to register the task for
+   @param { IDestroyable } obj the instance to register the task for
    @param { String } taskName the name of the task to throttle
    @param { ...* } [throttleArgs] arguments to pass to the throttled method
    @param { Number } spacing the time in the future to run the task
@@ -254,7 +254,7 @@ export function throttleTask(
    ```
 
    @method cancelTask
-   @param { Object } obj the entangled object that was provided with the original *Task call
+   @param { IDestroyable } obj the entangled object that was provided with the original *Task call
    @param { Number } cancelId the id returned from the *Task call
    @public
    */
