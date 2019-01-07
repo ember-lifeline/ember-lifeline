@@ -44,14 +44,14 @@ function shouldPoll() {
   return !Ember.testing;
 }
 
-export function setShouldPoll(callback): void {
+export function setShouldPoll(callback: Function): void {
   _shouldPollOverride = callback;
 }
 
 let queuedPollTasks: {
   [k: string]: () => void;
 } = Object.create(null);
-export function pollTaskFor(token): void | undefined {
+export function pollTaskFor(token: Token): void | undefined {
   assert(
     `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
     !!queuedPollTasks[token]
@@ -121,7 +121,7 @@ export function pollTaskFor(token): void | undefined {
    ```
 
    @method pollTask
-   @param { IDestroyable } obj the entangled object that was provided with the original *Task call
+   @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
                                            which is run at the provided time specified
@@ -130,21 +130,21 @@ export function pollTaskFor(token): void | undefined {
    @public
    */
 export function pollTask(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   taskOrName: TaskOrName,
   token: Token = getNextToken()
 ): Token {
   let next;
-  let task = getTask(obj, taskOrName, 'pollTask');
-  let tick = () => task.call(obj, next);
+  let task = getTask(destroyable, taskOrName, 'pollTask');
+  let tick = () => task.call(destroyable, next);
 
-  let pollers = registeredPollers.get(obj);
+  let pollers = registeredPollers.get(destroyable);
 
   if (!pollers) {
     pollers = new Set();
-    registeredPollers.set(obj, pollers);
+    registeredPollers.set(destroyable, pollers);
 
-    registerDisposable(obj, getPollersDisposable(obj, pollers));
+    registerDisposable(destroyable, getPollersDisposable(destroyable, pollers));
   }
 
   pollers.add(token);
@@ -157,7 +157,7 @@ export function pollTask(
     };
   }
 
-  task.call(obj, next);
+  task.call(destroyable, next);
 
   return token;
 }
@@ -195,29 +195,29 @@ export function pollTask(
    ```
 
    @method cancelPoll
-   @param { IDestroyable } obj the entangled object that was provided with the original *Task call
+   @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
    @param { Token } _token the Token for the pollTask to be cleared, either a String or Number
    @public
    */
 export function cancelPoll(_token: Token);
-export function cancelPoll(obj: IDestroyable, _token: Token);
+export function cancelPoll(destroyable: IDestroyable, _token: Token);
 export function cancelPoll(
-  obj: IDestroyable | Token,
+  destroyable: IDestroyable | Token,
   _token?: Token
 ): void | undefined {
   let token: Token;
-  if (typeof obj === 'number' || typeof obj === 'string') {
+  if (typeof destroyable === 'number' || typeof destroyable === 'string') {
     deprecate(
-      'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(obj, cancelId) and avoids a memory leak.',
+      'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(destroyable, cancelId) and avoids a memory leak.',
       true,
       {
         id: 'ember-lifeline-cancel-poll-without-object',
         until: '4.0.0',
       }
     );
-    token = obj;
+    token = destroyable;
   } else {
-    let pollers: Set<Token> = registeredPollers.get(obj);
+    let pollers: Set<Token> = registeredPollers.get(destroyable);
     token = _token as Token;
 
     if (pollers !== undefined) {
@@ -228,12 +228,12 @@ export function cancelPoll(
 }
 
 function getPollersDisposable(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   pollers: Set<Token>
 ): Function {
   return function() {
     pollers.forEach(token => {
-      cancelPoll(obj, token);
+      cancelPoll(destroyable, token);
     });
   };
 }
