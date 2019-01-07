@@ -57,7 +57,7 @@ export function _setRegisteredTimers(
    ```
 
    @function runTask
-   @param { IDestroyable } obj the instance to register the task for
+   @param { IDestroyable } destroyable the instance to register the task for
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
                                            which is run at the provided time specified
@@ -66,17 +66,20 @@ export function _setRegisteredTimers(
    @public
    */
 export function runTask(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   taskOrName: TaskOrName,
   timeout: number = 0
 ): EmberRunTimer {
-  assert(`Called \`runTask\` on destroyed object: ${obj}.`, !obj.isDestroyed);
+  assert(
+    `Called \`runTask\` on destroyed object: ${destroyable}.`,
+    !destroyable.isDestroyed
+  );
 
-  let task: Function = getTask(obj, taskOrName, 'runTask');
-  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let task: Function = getTask(destroyable, taskOrName, 'runTask');
+  let timers: Set<EmberRunTimer> = getTimers(destroyable);
   let cancelId: EmberRunTimer = later(() => {
     timers.delete(cancelId);
-    task.call(obj);
+    task.call(destroyable);
   }, timeout);
 
   timers.add(cancelId);
@@ -111,7 +114,7 @@ export function runTask(
    ```
 
    @function scheduleTask
-   @param { IDestroyable } obj the instance to register the task for
+   @param { IDestroyable } destroyable the instance to register the task for
    @param { String } queueName the queue to schedule the task into
    @param { Function | String } taskOrName a function representing the task, or string
                                            specifying a property representing the task,
@@ -121,32 +124,32 @@ export function runTask(
    @public
    */
 export function scheduleTask(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   queueName: EmberRunQueues,
   taskOrName: TaskOrName,
   ...args: any[]
 ): EmberRunTimer {
   assert(
-    `Called \`scheduleTask\` without a string as the first argument on ${obj}.`,
+    `Called \`scheduleTask\` without a string as the first argument on ${destroyable}.`,
     typeof queueName === 'string'
   );
   assert(
-    `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${obj}.`,
+    `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${destroyable}.`,
     queueName !== 'afterRender'
   );
   assert(
-    `Called \`scheduleTask\` on destroyed object: ${obj}.`,
-    !obj.isDestroyed
+    `Called \`scheduleTask\` on destroyed object: ${destroyable}.`,
+    !destroyable.isDestroyed
   );
 
-  let task: Function = getTask(obj, taskOrName, 'scheduleTask');
-  let timers: Set<EmberRunTimer> = getTimers(obj);
+  let task: Function = getTask(destroyable, taskOrName, 'scheduleTask');
+  let timers: Set<EmberRunTimer> = getTimers(destroyable);
   let cancelId: EmberRunTimer;
-  let taskWrapper: Function = (...taskArgs) => {
+  let taskWrapper: Function = (...taskArgs: any[]) => {
     timers.delete(cancelId);
-    task.call(obj, ...taskArgs);
+    task.call(destroyable, ...taskArgs);
   };
-  cancelId = schedule(queueName, obj as any, taskWrapper, ...args);
+  cancelId = schedule(queueName, destroyable as any, taskWrapper, ...args);
 
   timers.add(cancelId);
 
@@ -181,7 +184,7 @@ export function scheduleTask(
    ```
 
    @method throttleTask
-   @param { IDestroyable } obj the instance to register the task for
+   @param { IDestroyable } destroyable the instance to register the task for
    @param { String } taskName the name of the task to throttle
    @param { ...* } [throttleArgs] arguments to pass to the throttled method
    @param { Number } spacing the time in the future to run the task
@@ -189,21 +192,21 @@ export function scheduleTask(
    @public
    */
 export function throttleTask(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   taskName: any,
   ...throttleArgs: any[]
 ): EmberRunTimer {
   assert(
-    `Called \`throttleTask\` without a string as the first argument on ${obj}.`,
+    `Called \`throttleTask\` without a string as the first argument on ${destroyable}.`,
     typeof taskName === 'string'
   );
   assert(
     `Called \`throttleTask('${taskName}')\` where '${taskName}' is not a function.`,
-    typeof obj[taskName] === 'function'
+    typeof destroyable[taskName] === 'function'
   );
   assert(
-    `Called \`throttleTask\` on destroyed object: ${obj}.`,
-    !obj.isDestroyed
+    `Called \`throttleTask\` on destroyed object: ${destroyable}.`,
+    !destroyable.isDestroyed
   );
 
   const lastArgument = throttleArgs[throttleArgs.length - 1];
@@ -217,8 +220,12 @@ export function throttleTask(
     typeof spacing === 'number'
   );
 
-  let timers: Set<EmberRunTimer> = getTimers(obj);
-  let cancelId: EmberRunTimer = throttle(obj as any, taskName, ...throttleArgs);
+  let timers: Set<EmberRunTimer> = getTimers(destroyable);
+  let cancelId: EmberRunTimer = throttle(
+    destroyable as any,
+    taskName,
+    ...throttleArgs
+  );
 
   timers.add(cancelId);
 
@@ -254,52 +261,52 @@ export function throttleTask(
    ```
 
    @method cancelTask
-   @param { IDestroyable } obj the entangled object that was provided with the original *Task call
+   @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
    @param { Number } cancelId the id returned from the *Task call
    @public
    */
 export function cancelTask(cancelId: EmberRunTimer);
-export function cancelTask(obj: IDestroyable, cancelId: EmberRunTimer);
+export function cancelTask(destroyable: IDestroyable, cancelId: EmberRunTimer);
 export function cancelTask(
-  obj: IDestroyable | EmberRunTimer,
+  destroyable: IDestroyable | EmberRunTimer,
   cancelId?: any
 ): void | undefined {
   if (typeof cancelId === 'undefined') {
     deprecate(
-      'ember-lifeline cancelTask called without an object. New syntax is cancelTask(obj, cancelId) and avoids a memory leak.',
+      'ember-lifeline cancelTask called without an object. New syntax is cancelTask(destroyable, cancelId) and avoids a memory leak.',
       true,
       {
         id: 'ember-lifeline-cancel-task-without-object',
         until: '4.0.0',
       }
     );
-    cancelId = obj;
+    cancelId = destroyable;
   } else {
-    let timers: Set<EmberRunTimer> = getTimers(obj);
+    let timers: Set<EmberRunTimer> = getTimers(<IDestroyable>destroyable);
     timers.delete(cancelId);
   }
   cancel(cancelId);
 }
 
 function getTimersDisposable(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   timers: Set<EmberRunTimer>
 ): Function {
   return function() {
     timers.forEach(cancelId => {
-      cancelTask(obj, cancelId);
+      cancelTask(destroyable, cancelId);
     });
     timers.clear();
   };
 }
 
-function getTimers(obj): Set<EmberRunTimer> {
-  let timers = registeredTimers.get(obj);
+function getTimers(destroyable: IDestroyable): Set<EmberRunTimer> {
+  let timers = registeredTimers.get(destroyable);
 
   if (!timers) {
     timers = new Set<EmberRunTimer>();
-    registeredTimers.set(obj, timers);
-    registerDisposable(obj, getTimersDisposable(obj, timers));
+    registeredTimers.set(destroyable, timers);
+    registerDisposable(destroyable, getTimersDisposable(destroyable, timers));
   }
 
   return timers;

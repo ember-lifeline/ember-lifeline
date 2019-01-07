@@ -84,14 +84,14 @@ enum ListenerItemPosition {
 
    @public
    @method addEventListener
-   @param { IDestroyable } obj the instance to attach the listener for
+   @param { IDestroyable } destroyable the instance to attach the listener for
    @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
    @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
    @param { any } options additional options provided to the browser's `addEventListener`
    */
 export function addEventListener<T extends IDestroyable>(
-  obj: T,
+  destroyable: T,
   target: EventTarget,
   eventName: string,
   callback: RunMethod<T>,
@@ -99,17 +99,23 @@ export function addEventListener<T extends IDestroyable>(
 ): void {
   assertArguments(target, eventName, callback);
 
-  let _callback: EventListenerOrEventListenerObject = bind(obj, callback);
-  let listeners: Array<Object> = eventListeners.get(obj);
+  let _callback: EventListenerOrEventListenerObject = bind(
+    destroyable,
+    callback
+  );
+  let listeners: Array<Object> = eventListeners.get(destroyable);
 
   if (listeners === undefined) {
     listeners = [];
-    eventListeners.set(obj, listeners);
+    eventListeners.set(destroyable, listeners);
   }
 
   // Register a disposable every time we go from zero to one.
   if (listeners.length === 0) {
-    registerDisposable(obj as any, getEventListenersDisposable(listeners));
+    registerDisposable(
+      destroyable as any,
+      getEventListenersDisposable(listeners)
+    );
   }
 
   if (!PASSIVE_SUPPORTED) {
@@ -125,14 +131,14 @@ export function addEventListener<T extends IDestroyable>(
    lifeline's DOM entanglement tracking.
 
    @public
-   @param { IDestroyable } obj the instance to remove the listener for
+   @param { IDestroyable } destroyable the instance to remove the listener for
    @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
    @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
    @param { any } options additional options provided to the browser's `removeEventListener`
    */
 export function removeEventListener<T extends IDestroyable>(
-  obj: T,
+  destroyable: T,
   target: EventTarget,
   eventName: string,
   callback: RunMethod<T>,
@@ -140,7 +146,7 @@ export function removeEventListener<T extends IDestroyable>(
 ): void {
   assertArguments(target, eventName, callback);
 
-  let listeners: Array<Object> = eventListeners.get(obj);
+  let listeners: Array<Object> = eventListeners.get(destroyable);
 
   if (listeners === undefined || listeners.length === 0) {
     return;

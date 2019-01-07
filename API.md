@@ -75,7 +75,7 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to register the task for
+- `destroyable` **IDestroyable** the instance to register the task for
 - `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
@@ -146,7 +146,7 @@ test('foo-bar watches things', async function(assert) {
 
 #### Parameters
 
-- `obj` **IDestroyable** the entangled object that was provided with the original \*Task call
+- `destroyable` **IDestroyable** the entangled object that was provided with the original \*Task call
 - `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
@@ -197,7 +197,7 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to register the task for
+- `destroyable` **IDestroyable** the instance to register the task for
 - `queueName` **[String][37]** the queue to schedule the task into
 - `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
   specifying a property representing the task,
@@ -236,7 +236,7 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to register the task for
+- `destroyable` **IDestroyable** the instance to register the task for
 - `name` **[String][37]** the name of the task to debounce
 - `debounceArgs` **...any** arguments to pass to the debounced method
 - `spacing` **[Number][38]** the amount of time to wait before calling the method (in milliseconds)
@@ -272,7 +272,7 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to register the task for
+- `destroyable` **IDestroyable** the instance to register the task for
 - `taskName` **[String][37]** the name of the task to throttle
 - `throttleArgs` **...any?** arguments to pass to the throttled method
 - `spacing` **[Number][38]** the time in the future to run the task
@@ -282,14 +282,14 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj`
+- `destroyable`
 - `cancelId`
 
 ### cancelPoll
 
 #### Parameters
 
-- `obj`
+- `destroyable`
 - `_token`
 
 ### cancelDebounce
@@ -325,7 +325,7 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to register the task for
+- `destroyable` **IDestroyable** the instance to register the task for
 - `methodName` **[String][37]** the name of the debounced method to cancel
 
 ## DOM event handler entanglement
@@ -370,7 +370,7 @@ export default Service.extend({
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to attach the listener for
+- `destroyable` **IDestroyable** the instance to attach the listener for
 - `target` **EventTarget** the EventTarget, e.g. DOM element or `window`
 - `eventName` **[String][37]** the event name to listen for
 - `callback` **[Function][36]** the callback to run for that event
@@ -383,7 +383,7 @@ lifeline's DOM entanglement tracking.
 
 #### Parameters
 
-- `obj` **IDestroyable** the instance to remove the listener for
+- `destroyable` **IDestroyable** the instance to remove the listener for
 - `target` **EventTarget** the EventTarget, e.g. DOM element or `window`
 - `eventName` **[String][37]** the event name to listen for
 - `callback` **[Function][36]** the callback to run for that event

@@ -49,7 +49,7 @@ const registeredDebounces: IMap<
    ```
 
    @method debounceTask
-   @param { IDestroyable } obj the instance to register the task for
+   @param { IDestroyable } destroyable the instance to register the task for
    @param { String } name the name of the task to debounce
    @param { ...* } debounceArgs arguments to pass to the debounced method
    @param { Number } spacing the amount of time to wait before calling the method (in milliseconds)
@@ -57,21 +57,21 @@ const registeredDebounces: IMap<
    @public
    */
 export function debounceTask(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   name: string,
   ...debounceArgs: any[]
 ): void | undefined {
   assert(
-    `Called \`debounceTask\` without a string as the first argument on ${obj}.`,
+    `Called \`debounceTask\` without a string as the first argument on ${destroyable}.`,
     typeof name === 'string'
   );
   assert(
-    `Called \`obj.debounceTask('${name}', ...)\` where 'obj.${name}' is not a function.`,
-    typeof obj[name] === 'function'
+    `Called \`destroyable.debounceTask('${name}', ...)\` where 'destroyable.${name}' is not a function.`,
+    typeof destroyable[name] === 'function'
   );
   assert(
-    `Called \`debounceTask\` on destroyed object: ${obj}.`,
-    !obj.isDestroyed
+    `Called \`debounceTask\` on destroyed object: ${destroyable}.`,
+    !destroyable.isDestroyed
   );
 
   const lastArgument = debounceArgs[debounceArgs.length - 1];
@@ -85,11 +85,11 @@ export function debounceTask(
     typeof spacing === 'number'
   );
 
-  let pendingDebounces = registeredDebounces.get(obj);
+  let pendingDebounces = registeredDebounces.get(destroyable);
   if (!pendingDebounces) {
     pendingDebounces = new Map();
-    registeredDebounces.set(obj, pendingDebounces);
-    registerDisposable(obj, getDebouncesDisposable(pendingDebounces));
+    registeredDebounces.set(destroyable, pendingDebounces);
+    registerDisposable(destroyable, getDebouncesDisposable(pendingDebounces));
   }
 
   let debouncedTask: Function;
@@ -97,14 +97,18 @@ export function debounceTask(
   if (!pendingDebounces.has(name)) {
     debouncedTask = (...args) => {
       pendingDebounces.delete(name);
-      obj[name](...args);
+      destroyable[name](...args);
     };
   } else {
     debouncedTask = pendingDebounces.get(name)!.debouncedTask;
   }
 
   // cancelId is new, even if the debounced function was already present
-  let cancelId = debounce(obj as any, debouncedTask as any, ...debounceArgs);
+  let cancelId = debounce(
+    destroyable as any,
+    debouncedTask as any,
+    ...debounceArgs
+  );
 
   pendingDebounces.set(name, { debouncedTask, cancelId });
 }
@@ -140,18 +144,18 @@ export function debounceTask(
    ```
 
    @method cancelDebounce
-   @param { IDestroyable } obj the instance to register the task for
+   @param { IDestroyable } destroyable the instance to register the task for
    @param { String } methodName the name of the debounced method to cancel
    @public
    */
 export function cancelDebounce(
-  obj: IDestroyable,
+  destroyable: IDestroyable,
   name: string
 ): void | undefined {
-  if (!registeredDebounces.has(obj)) {
+  if (!registeredDebounces.has(destroyable)) {
     return;
   }
-  const pendingDebounces = registeredDebounces.get(obj);
+  const pendingDebounces = registeredDebounces.get(destroyable);
 
   if (!pendingDebounces.has(name)) {
     return;
