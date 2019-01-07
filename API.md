@@ -75,12 +75,12 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **[Object][36]** the instance to register the task for
-- `taskOrName` **([Function][37] \| [String][38])** a function representing the task, or string
+- `obj` **IDestroyable** the instance to register the task for
+- `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
   by timeout
-- `timeout` **[Number][39]** the time in the future to run the task (optional, default `0`)
+- `timeout` **[Number][38]** the time in the future to run the task (optional, default `0`)
 
 ### pollTask
 
@@ -146,12 +146,12 @@ test('foo-bar watches things', async function(assert) {
 
 #### Parameters
 
-- `obj` **[Object][36]** the entangled object that was provided with the original \*Task call
-- `taskOrName` **([Function][37] \| [String][38])** a function representing the task, or string
+- `obj` **IDestroyable** the entangled object that was provided with the original \*Task call
+- `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
   by timeout
-- `token` **Token** the Token for the pollTask
+- `token` **Token** the Token for the pollTask, either a String or Number
 
 ### pollTaskFor
 
@@ -197,9 +197,9 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **[Object][36]** the instance to register the task for
-- `queueName` **[String][38]** the queue to schedule the task into
-- `taskOrName` **([Function][37] \| [String][38])** a function representing the task, or string
+- `obj` **IDestroyable** the instance to register the task for
+- `queueName` **[String][37]** the queue to schedule the task into
+- `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
   by timeout
@@ -236,11 +236,11 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **[Object][36]** the instance to register the task for
-- `name` **[String][38]** the name of the task to debounce
+- `obj` **IDestroyable** the instance to register the task for
+- `name` **[String][37]** the name of the task to debounce
 - `debounceArgs` **...any** arguments to pass to the debounced method
-- `spacing` **[Number][39]** the amount of time to wait before calling the method (in milliseconds)
-- `immediate` **[Boolean][40]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
+- `spacing` **[Number][38]** the amount of time to wait before calling the method (in milliseconds)
+- `immediate` **[Boolean][39]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
 
 ### throttleTask
 
@@ -272,11 +272,11 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **[Object][36]** the instance to register the task for
-- `taskName` **[String][38]** the name of the task to throttle
+- `obj` **IDestroyable** the instance to register the task for
+- `taskName` **[String][37]** the name of the task to throttle
 - `throttleArgs` **...any?** arguments to pass to the throttled method
-- `spacing` **[Number][39]** the time in the future to run the task
-- `immediate` **[Boolean][40]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
+- `spacing` **[Number][38]** the time in the future to run the task
+- `immediate` **[Boolean][39]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
 
 ### cancelTask
 
@@ -325,8 +325,8 @@ export default Component.extend({
 
 #### Parameters
 
-- `obj` **[Object][36]** the instance to register the task for
-- `methodName` **[String][38]** the name of the debounced method to cancel
+- `obj` **IDestroyable** the instance to register the task for
+- `methodName` **[String][37]** the name of the debounced method to cancel
 
 ## DOM event handler entanglement
 
@@ -370,20 +370,24 @@ export default Service.extend({
 
 #### Parameters
 
-- `obj` **[Object][36]** the instance to attach the listener for
+- `obj` **IDestroyable** the instance to attach the listener for
 - `target` **EventTarget** the EventTarget, e.g. DOM element or `window`
-- `eventName` **[String][38]** the event name to listen for
-- `callback` **[Function][37]** the callback to run for that event
+- `eventName` **[String][37]** the event name to listen for
+- `callback` **[Function][36]** the callback to run for that event
+- `options` **any** additional options provided to the browser's `addEventListener`
 
 ### removeEventListener
 
+Removes an event listener explicitly from the target, also removing it from
+lifeline's DOM entanglement tracking.
+
 #### Parameters
 
-- `obj` **[Object][36]** the instance to remove the listener for
+- `obj` **IDestroyable** the instance to remove the listener for
 - `target` **EventTarget** the EventTarget, e.g. DOM element or `window`
-- `eventName` **[String][38]** the event name to listen for
-- `callback` **[Function][37]** the callback to run for that event
-- `options`
+- `eventName` **[String][37]** the event name to listen for
+- `callback` **[Function][36]** the callback to run for that event
+- `options` **any** additional options provided to the browser's `removeEventListener`
 
 ## Disposables
 
@@ -464,8 +468,7 @@ included into all `Ember.View`, `Ember.Component`, and `Ember.Service` instances
 [33]: #disposablemixin
 [34]: #contextboundeventlistenersmixin
 [35]: #contextboundtasksmixin
-[36]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-[37]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
-[38]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-[39]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
-[40]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[36]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[37]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[38]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[39]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean

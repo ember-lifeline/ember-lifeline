@@ -1,7 +1,7 @@
 import { assert } from '@ember/debug';
 import { bind } from '@ember/runloop';
 import { registerDisposable } from './utils/disposable';
-import { IMap } from './interfaces';
+import { IMap, IDestroyable } from './interfaces';
 
 /**
  * A map of instances/listeners that allows us to
@@ -10,7 +10,10 @@ import { IMap } from './interfaces';
  * @private
  *
  */
-const eventListeners: IMap<Object, Array<Object>> = new WeakMap<Object, any>();
+const eventListeners: IMap<IDestroyable, Array<Object>> = new WeakMap<
+  IDestroyable,
+  any
+>();
 
 export const PASSIVE_SUPPORTED: boolean = (() => {
   let ret: boolean = false;
@@ -79,19 +82,20 @@ enum ListenerItemPosition {
    });
    ```
 
+   @public
    @method addEventListener
-   @param { Object } obj the instance to attach the listener for
+   @param { IDestroyable } obj the instance to attach the listener for
    @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
    @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
-   @public
+   @param { any } options additional options provided to the browser's `addEventListener`
    */
-export function addEventListener<Target>(
-  obj: Target,
+export function addEventListener<T extends IDestroyable>(
+  obj: T,
   target: EventTarget,
   eventName: string,
-  callback: RunMethod<Target>,
-  options: any
+  callback: RunMethod<T>,
+  options?: any
 ): void {
   assertArguments(target, eventName, callback);
 
@@ -117,18 +121,22 @@ export function addEventListener<Target>(
 }
 
 /**
-   @param { Object } obj the instance to remove the listener for
+   Removes an event listener explicitly from the target, also removing it from
+   lifeline's DOM entanglement tracking.
+
+   @public
+   @param { IDestroyable } obj the instance to remove the listener for
    @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
    @param { String } eventName the event name to listen for
    @param { Function } callback the callback to run for that event
-   @public
+   @param { any } options additional options provided to the browser's `removeEventListener`
    */
-export function removeEventListener<Target>(
-  obj: Target,
+export function removeEventListener<T extends IDestroyable>(
+  obj: T,
   target: EventTarget,
   eventName: string,
-  callback: RunMethod<Target>,
-  options: any
+  callback: RunMethod<T>,
+  options?: any
 ): void {
   assertArguments(target, eventName, callback);
 
