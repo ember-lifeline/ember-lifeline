@@ -1350,9 +1350,9 @@
   integrity sha512-ONhaKPIufzzrlNbqtWFFd+jlnemX6lJAgq9ZeiZtS7I1PIf/la7CW4m83rTXRnVnsMbW2k56pGYu7AUFJD9Pow==
 
 "@types/ember-qunit@^3.0.2":
-  version "3.4.4"
-  resolved "https://registry.yarnpkg.com/@types/ember-qunit/-/ember-qunit-3.4.4.tgz#c480b941e554e16d9cb0ea19f80eb37ca50ef541"
-  integrity sha512-BeR+045sYh1hYAHZOuCm8uIzoL367BkvD2YSa+yKEZll+FbB7OPRrv/qNRNNziB4YEgKihj4uKMomzLdCaUGxw==
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/@types/ember-qunit/-/ember-qunit-3.4.5.tgz#791e4919a88b8d2ac982e4d73564a2c4c08fec6a"
+  integrity sha512-Nk9hubQdaBUbRgw68dkcLsAt9n9WIHFX3vj5e75Cht5MVizz7j6hW6O5zGtM1QPp62+2/TgUqGIEYMv4nlw1uQ==
   dependencies:
     "@types/ember" "*"
     "@types/ember-test-helpers" "*"
