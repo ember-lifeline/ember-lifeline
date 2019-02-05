@@ -137,18 +137,20 @@ export function scheduleTask(
     `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${destroyable}.`,
     queueName !== 'afterRender'
   );
-  assert(
-    `Called \`scheduleTask\` on destroyed object: ${destroyable}.`,
-    !destroyable.isDestroyed
-  );
 
   let task: Function = getTask(destroyable, taskOrName, 'scheduleTask');
   let timers: Set<EmberRunTimer> = getTimers(destroyable);
   let cancelId: EmberRunTimer;
-  let taskWrapper: Function = (...taskArgs: any[]) => {
-    timers.delete(cancelId);
-    task.call(destroyable, ...taskArgs);
-  };
+  let taskWrapper: Function;
+  if (destroyable.isDestroyed) {
+    // dummy task so that we return something consistent even if target is destroyed
+    taskWrapper = () => {};
+  } else {
+    taskWrapper = (...taskArgs: any[]) => {
+      timers.delete(cancelId);
+      task.call(destroyable, ...taskArgs);
+    };
+  }
   cancelId = schedule(queueName, destroyable as any, taskWrapper, ...args);
 
   timers.add(cancelId);
