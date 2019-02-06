@@ -1,3 +1,5 @@
+/// <reference path="types/custom-ember.d.ts" />
+
 import { assert } from '@ember/debug';
 import { cancel, debounce } from '@ember/runloop';
 import { IDestroyable, IMap } from './interfaces';

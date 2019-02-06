@@ -1,3 +1,5 @@
+/// <reference path="../types/custom-ember.d.ts" />
+
 import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import { addEventListener, removeEventListener } from '../dom-event-listeners';

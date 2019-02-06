@@ -1,3 +1,5 @@
+/// <reference path="types/custom-ember.d.ts" />
+
 import { assert } from '@ember/debug';
 import { bind } from '@ember/runloop';
 import { registerDisposable } from './utils/disposable';

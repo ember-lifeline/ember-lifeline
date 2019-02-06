@@ -1,3 +1,5 @@
+/// <reference path="types/custom-ember.d.ts" />
+
 import { deprecate } from '@ember/application/deprecations';
 import { assert } from '@ember/debug';
 import { cancel, later, schedule, throttle } from '@ember/runloop';
