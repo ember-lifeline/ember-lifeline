@@ -1,12 +1,11 @@
 import Ember from 'ember';
-import { join } from '@ember/runloop';
-import { assert } from '@ember/debug';
+
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
 import { IMap, TaskOrName, IDestroyable } from './interfaces';
 
-type Token = string | number;
+export type Token = string | number;
 
 /**
  * A map of instances/poller functions that allows us to
@@ -48,17 +47,9 @@ export function setShouldPoll(callback: Function): void {
   _shouldPollOverride = callback;
 }
 
-let queuedPollTasks: {
+export let queuedPollTasks: {
   [k: string]: () => void;
 } = Object.create(null);
-export function pollTaskFor(token: Token): void | undefined {
-  assert(
-    `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
-    !!queuedPollTasks[token]
-  );
-
-  return join(null, queuedPollTasks[token]);
-}
 
 /**
    Sets up a function that can perform polling logic in a testing safe way.

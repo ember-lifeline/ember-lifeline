@@ -1,9 +1,8 @@
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';
-import { ContextBoundTasksMixin } from 'ember-lifeline';
-import { setShouldPoll, pollTaskFor } from 'ember-lifeline';
-
+import { ContextBoundTasksMixin, setShouldPoll } from 'ember-lifeline';
+import pollTaskFor from 'ember-lifeline/test-support/poll-task-for';
 import { settled } from '@ember/test-helpers';
 
 module('ember-lifeline/mixins/run', function(hooks) {
