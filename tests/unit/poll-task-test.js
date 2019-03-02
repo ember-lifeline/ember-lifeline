@@ -9,7 +9,7 @@ import {
   runDisposables,
   _setRegisteredPollers,
 } from 'ember-lifeline';
-import pollTaskFor from 'ember-lifeline/test-support/poll-task-for';
+import { pollTaskFor } from 'ember-lifeline/test-support';
 import { settled } from '@ember/test-helpers';
 
 module('ember-lifeline/poll-task', function(hooks) {
