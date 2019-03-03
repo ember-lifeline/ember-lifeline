@@ -1,9 +1,11 @@
 import { deprecate } from '@ember/application/deprecations';
 import { assert } from '@ember/debug';
 import { cancel, later, schedule, throttle } from '@ember/runloop';
-import { IDestroyable, IMap, TaskOrName } from './interfaces';
+import { IDestroyable, IMap, TaskOrName, Timer } from './types';
 import { registerDisposable } from './utils/disposable';
 import getTask from './utils/get-task';
+
+const NULL_TIMER_ID = -1;
 
 /**
  * A map of instances/timers that allows us to
@@ -69,11 +71,10 @@ export function runTask(
   destroyable: IDestroyable,
   taskOrName: TaskOrName,
   timeout: number = 0
-): EmberRunTimer {
-  assert(
-    `Called \`runTask\` on destroyed object: ${destroyable}.`,
-    !destroyable.isDestroyed
-  );
+): Timer {
+  if (destroyable.isDestroying) {
+    return NULL_TIMER_ID;
+  }
 
   let task: Function = getTask(destroyable, taskOrName, 'runTask');
   let timers: Set<EmberRunTimer> = getTimers(destroyable);
@@ -128,7 +129,7 @@ export function scheduleTask(
   queueName: EmberRunQueues,
   taskOrName: TaskOrName,
   ...args: any[]
-): EmberRunTimer {
+): Timer {
   assert(
     `Called \`scheduleTask\` without a string as the first argument on ${destroyable}.`,
     typeof queueName === 'string'
@@ -137,10 +138,10 @@ export function scheduleTask(
     `Called \`scheduleTask\` while trying to schedule to the \`afterRender\` queue on ${destroyable}.`,
     queueName !== 'afterRender'
   );
-  assert(
-    `Called \`scheduleTask\` on destroyed object: ${destroyable}.`,
-    !destroyable.isDestroyed
-  );
+
+  if (destroyable.isDestroying) {
+    return NULL_TIMER_ID;
+  }
 
   let task: Function = getTask(destroyable, taskOrName, 'scheduleTask');
   let timers: Set<EmberRunTimer> = getTimers(destroyable);
@@ -195,7 +196,7 @@ export function throttleTask(
   destroyable: IDestroyable,
   taskName: any,
   ...throttleArgs: any[]
-): EmberRunTimer {
+): Timer {
   assert(
     `Called \`throttleTask\` without a string as the first argument on ${destroyable}.`,
     typeof taskName === 'string'
@@ -204,10 +205,10 @@ export function throttleTask(
     `Called \`throttleTask('${taskName}')\` where '${taskName}' is not a function.`,
     typeof destroyable[taskName] === 'function'
   );
-  assert(
-    `Called \`throttleTask\` on destroyed object: ${destroyable}.`,
-    !destroyable.isDestroyed
-  );
+
+  if (destroyable.isDestroying) {
+    return NULL_TIMER_ID;
+  }
 
   const lastArgument = throttleArgs[throttleArgs.length - 1];
   const spacing =

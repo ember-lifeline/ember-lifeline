@@ -1,4 +1,4 @@
-import { TaskOrName, IDestroyable } from '../interfaces';
+import { TaskOrName, IDestroyable } from '../types';
 
 export default function getTask(
   obj: IDestroyable,

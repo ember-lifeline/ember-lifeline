@@ -1,7 +1,7 @@
 import { assert } from '@ember/debug';
 import { bind } from '@ember/runloop';
 import { registerDisposable } from './utils/disposable';
-import { IMap, IDestroyable } from './interfaces';
+import { IMap, IDestroyable } from './types';
 
 /**
  * A map of instances/listeners that allows us to

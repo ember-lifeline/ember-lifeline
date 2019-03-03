@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import { IMap, TaskOrName, IDestroyable } from './interfaces';
+import { IMap, TaskOrName, IDestroyable } from './types';
 
 type Token = string | number;
 

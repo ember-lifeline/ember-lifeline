@@ -6,7 +6,7 @@ import {
   runTask,
   scheduleTask,
   throttleTask,
-  _setRegisteredTimers
+  _setRegisteredTimers,
 } from 'ember-lifeline';
 import { module, test } from 'qunit';
 
@@ -57,7 +57,7 @@ module('ember-lifeline/run-task', function(hooks) {
         assert.equal(this, obj, 'context is correct');
         assert.ok(true, 'callback was called');
         done();
-      }
+      },
     }));
     let hasRun = false;
 
@@ -88,6 +88,31 @@ module('ember-lifeline/run-task', function(hooks) {
     }, 5);
 
     assert.notOk(hasRun, 'callback should not have run yet');
+  });
+
+  test('runTask returns early on destroyed object', function(assert) {
+    assert.expect(2);
+
+    this.obj = this.getComponent();
+    let done = assert.async();
+    let hasRun = false;
+
+    run(this.obj, 'destroy');
+
+    let cancelId = runTask(
+      this.obj,
+      () => {
+        hasRun = true;
+      },
+      5
+    );
+
+    assert.equal(cancelId, -1, 'Cancel ID is 1-');
+
+    window.setTimeout(() => {
+      assert.notOk(hasRun, 'callback should not have run');
+      done();
+    }, 10);
   });
 
   test('runTask tasks can be canceled', function(assert) {
@@ -163,7 +188,7 @@ module('ember-lifeline/run-task', function(hooks) {
         assert.equal(this, obj, 'context is correct');
         assert.equal(name, 'foo', 'passed arguments are correct');
         assert.ok(true, 'callback was called');
-      }
+      },
     }));
     let hasRun = false;
 
@@ -173,6 +198,25 @@ module('ember-lifeline/run-task', function(hooks) {
     });
 
     assert.ok(hasRun, 'callback was called');
+  });
+
+  test('scheduleTask returns early on destroyed object', function(assert) {
+    assert.expect(2);
+
+    let cancelId;
+    let hasRun = false;
+    this.obj = this.getComponent();
+
+    run(this.obj, 'destroy');
+
+    run(() => {
+      cancelId = scheduleTask(this.obj, 'actions', () => {
+        hasRun = true;
+      });
+    });
+
+    assert.equal(cancelId, -1, 'Cancel ID is 1-');
+    assert.notOk(hasRun, 'callback should not have run');
   });
 
   test('scheduleTask tasks can be canceled', function(assert) {
@@ -219,7 +263,7 @@ module('ember-lifeline/run-task', function(hooks) {
       doStuff(...args) {
         callCount++;
         callArgs = args;
-      }
+      },
     });
 
     run(() => {
@@ -266,13 +310,35 @@ module('ember-lifeline/run-task', function(hooks) {
     }, /with incorrect `spacing` argument. Expected Number and received `\[object Object\]`/);
   });
 
+  test('throttleTask returns early on destroyed object', function(assert) {
+    assert.expect(2);
+
+    let callCount = 0;
+    let cancelId;
+
+    this.obj = this.obj = this.getComponent({
+      doStuff(...args) {
+        callCount++;
+      },
+    });
+
+    run(this.obj, 'destroy');
+
+    run(() => {
+      cancelId = throttleTask(this.obj, 'doStuff');
+    });
+
+    assert.equal(cancelId, -1, 'Cancel ID is -1');
+    assert.equal(callCount, 0, 'throttled method was not called');
+  });
+
   test('throttleTask passes arguments to method', function(assert) {
     let calledWithArgs;
 
     this.obj = this.getComponent({
       doStuff(...args) {
         calledWithArgs = args;
-      }
+      },
     });
 
     run(() => {
