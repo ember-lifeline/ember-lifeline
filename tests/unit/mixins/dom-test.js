@@ -1,4 +1,3 @@
-/* global Event */
 import { run } from '@ember/runloop';
 import Component from '@ember/component';
 import Service from '@ember/service';
