@@ -504,6 +504,9 @@ instead of `runTask(this, next, delay)` - `cancelPoll` cleans up internal data
 associated with the poll, avoiding a memory leak. You can also call `cancelPoll`
 from outside the poll loop.
 
+**NOTE**: Calls to `cancelPoll` do not cancel any nested `runTask` calls. You're required to cancel any
+cancelable behaviors, including any calls to `runTask` using `cancelTask`.
+
 In testing, the `updateTime` method would execute initially during the components instantiation (just like
 in development and production environments), but would not automatically start polling. This allows
 tests that are not related to the polling behavior to continue uninterrupted. To test the actual polling

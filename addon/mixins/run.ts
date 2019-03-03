@@ -303,6 +303,9 @@ export default Mixin.create({
   /**
    * Clears a previously setup polling task.
    *
+   * NOTE: This does not cancel any nested `runTask` calls. You're required to cancel any
+   * cancelable behaviors, including any calls to `runTask` using `cancelTask`.
+   *
    * Example:
    *
    * ```js
