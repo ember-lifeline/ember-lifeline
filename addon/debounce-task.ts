@@ -71,7 +71,7 @@ export function debounceTask(
   );
 
   if (destroyable.isDestroying) {
-    return undefined;
+    return;
   }
 
   const lastArgument = debounceArgs[debounceArgs.length - 1];

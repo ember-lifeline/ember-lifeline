@@ -266,12 +266,16 @@ export function throttleTask(
    @param { Number } cancelId the id returned from the *Task call
    @public
    */
-export function cancelTask(cancelId: EmberRunTimer);
-export function cancelTask(destroyable: IDestroyable, cancelId: EmberRunTimer);
+export function cancelTask(cancelId: Timer);
+export function cancelTask(destroyable: IDestroyable, cancelId: Timer);
 export function cancelTask(
-  destroyable: IDestroyable | EmberRunTimer,
+  destroyable: IDestroyable | Timer,
   cancelId?: any
 ): void | undefined {
+  if (cancelId === NULL_TIMER_ID) {
+    return;
+  }
+
   if (typeof cancelId === 'undefined') {
     deprecate(
       'ember-lifeline cancelTask called without an object. New syntax is cancelTask(destroyable, cancelId) and avoids a memory leak.',
