@@ -113,11 +113,11 @@ export let queuedPollTasks: {
  *
  * @method pollTask
  * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
- * @param { Function | String } taskOrName a function representing the task, or string
- *                                         specifying a property representing the task,
- *                                         which is run at the provided time specified
- *                                         by timeout
- * @param { Token } token the Token for the pollTask, either a String or Number
+ * @param { TaskOrName } taskOrName a function representing the task, or string
+ *                                  specifying a property representing the task,
+ *                                  which is run at the provided time specified
+ *                                  by timeout
+ * @param { Token } token the Token for the pollTask, either a string or number
  * @public
  */
 export function pollTask(
@@ -190,16 +190,16 @@ export function pollTask(
  *
  * @method cancelPoll
  * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
- * @param { Token } _token the Token for the pollTask to be cleared, either a String or Number
+ * @param { Token } token the Token for the pollTask to be cleared, either a string or number
  * @public
  */
-export function cancelPoll(_token: Token);
-export function cancelPoll(destroyable: IDestroyable, _token: Token);
+export function cancelPoll(token: Token);
+export function cancelPoll(destroyable: IDestroyable, token: Token);
 export function cancelPoll(
   destroyable: IDestroyable | Token,
-  _token?: Token
+  token?: Token
 ): void | undefined {
-  let token: Token;
+  let pollToken: Token;
   if (typeof destroyable === 'number' || typeof destroyable === 'string') {
     deprecate(
       'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(destroyable, cancelId) and avoids a memory leak.',
@@ -209,16 +209,16 @@ export function cancelPoll(
         until: '4.0.0',
       }
     );
-    token = destroyable;
+    pollToken = destroyable;
   } else {
     let pollers: Set<Token> = registeredPollers.get(destroyable);
-    token = _token as Token;
+    pollToken = token as Token;
 
     if (pollers !== undefined) {
-      pollers.delete(token);
+      pollers.delete(pollToken);
     }
   }
-  delete queuedPollTasks[token];
+  delete queuedPollTasks[pollToken];
 }
 
 function getPollersDisposable(
