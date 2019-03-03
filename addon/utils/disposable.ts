@@ -14,7 +14,7 @@ let registeredDisposables: IMap<Object, any> = new WeakMap();
  * us the ability to detect whether disposables have all been called.
  *
  * @private
- * @param {*} mapForTesting A map used to ensure correctness when testing.
+ * @param {IMap} mapForTesting A map used to ensure correctness when testing.
  */
 export function _setRegisteredDisposables(mapForTesting: IMap<Object, any>) {
   registeredDisposables = mapForTesting;
@@ -27,9 +27,10 @@ export function _setRegisteredDisposables(mapForTesting: IMap<Object, any>) {
  * `destroy` hook to ensure the destroyables are run/destroyed when
  * the object is destroyed.
  *
+ * @function registerDisposable
  * @public
- * @param {*} obj the instance to store the disposable for
- * @param {*} dispose a function that disposes of instance resources
+ * @param {IDestroyable} obj the instance to store the disposable for
+ * @param {Function} dispose a function that disposes of instance resources
  */
 export function registerDisposable(
   obj: IDestroyable,
@@ -56,8 +57,9 @@ export function registerDisposable(
 /**
  * Runs all disposables for a given instance.
  *
+ * @function runDisposables
  * @public
- * @param {*} obj the instance to run the disposables for
+ * @param {IDestroyable} obj the instance to run the disposables for
  */
 export function runDisposables(obj: IDestroyable): void | undefined {
   let disposables: Function[] = registeredDisposables.get(obj);

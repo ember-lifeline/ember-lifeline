@@ -12,7 +12,6 @@ const NULL_TIMER_ID = -1;
  * store cancelIds for scheduled timers per instance.
  *
  * @private
- *
  */
 let registeredTimers: IMap<IDestroyable, Set<EmberRunTimer>> = new WeakMap<
   Object,
@@ -33,40 +32,40 @@ export function _setRegisteredTimers(
 }
 
 /**
-   Registers and runs the provided task function for the provided object at the specified
-   timeout (defaulting to 0). The timer is properly canceled if the object is destroyed
-   before it is invoked.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { runTask, runDisposables } from 'ember-lifeline';
-
-   export default Component.extend({
-     didInsertElement() {
-       runTask(this, () => {
-         console.log('This runs after 5 seconds if this component is still displayed');
-       }, 5000)
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @function runTask
-   @param { IDestroyable } destroyable the instance to register the task for
-   @param { Function | String } taskOrName a function representing the task, or string
-                                           specifying a property representing the task,
-                                           which is run at the provided time specified
-                                           by timeout
-   @param { Number } [timeout=0] the time in the future to run the task
-   @public
-   */
+ * Registers and runs the provided task function for the provided object at the specified
+ * timeout (defaulting to 0). The timer is properly canceled if the object is destroyed
+ * before it is invoked.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { runTask, runDisposables } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   didInsertElement() {
+ *     runTask(this, () => {
+ *       console.log('This runs after 5 seconds if this component is still displayed');
+ *     }, 5000)
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @function runTask
+ * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { Function | String } taskOrName a function representing the task, or string
+ *                                         specifying a property representing the task,
+ *                                         which is run at the provided time specified
+ *                                         by timeout
+ * @param { Number } [timeout=0] the time in the future to run the task
+ * @public
+ */
 export function runTask(
   destroyable: IDestroyable,
   taskOrName: TaskOrName,
@@ -88,42 +87,42 @@ export function runTask(
 }
 
 /**
-   Adds the provided function to the named queue for the provided object. The timer is
-   properly canceled if the object is destroyed before it is invoked.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { scheduleTask, runDisposables } from 'ember-lifeline';
-
-   export default Component.extend({
-     init() {
-       this._super(...arguments);
-
-       scheduleTask(this, 'actions', () => {
-         console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
-       })
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @function scheduleTask
-   @param { IDestroyable } destroyable the instance to register the task for
-   @param { String } queueName the queue to schedule the task into
-   @param { Function | String } taskOrName a function representing the task, or string
-                                           specifying a property representing the task,
-                                           which is run at the provided time specified
-                                           by timeout
-   @param { ...* } args arguments to pass to the task
-   @public
-   */
+ * Adds the provided function to the named queue for the provided object. The timer is
+ * properly canceled if the object is destroyed before it is invoked.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { scheduleTask, runDisposables } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   init() {
+ *     this._super(...arguments);
+ *
+ *     scheduleTask(this, 'actions', () => {
+ *       console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
+ *     })
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @function scheduleTask
+ * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { String } queueName the queue to schedule the task into
+ * @param { Function | String } taskOrName a function representing the task, or string
+ *                                         specifying a property representing the task,
+ *                                         which is run at the provided time specified
+ *                                         by timeout
+ * @param { ...* } args arguments to pass to the task
+ * @public
+ */
 export function scheduleTask(
   destroyable: IDestroyable,
   queueName: EmberRunQueues,
@@ -158,40 +157,40 @@ export function scheduleTask(
 }
 
 /**
-   Runs the function with the provided name immediately, and only once in the time window
-   specified by the spacing argument.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { throttleTask, runDisposables } from 'ember-lifeline';
-
-   export default Component.extend({
-     logMe() {
-       console.log('This will run once immediately, then only once every 300ms.');
-     },
-
-     click() {
-       throttleTask(this, 'logMe', 300);
-     },
-
-     destroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @method throttleTask
-   @param { IDestroyable } destroyable the instance to register the task for
-   @param { String } taskName the name of the task to throttle
-   @param { ...* } [throttleArgs] arguments to pass to the throttled method
-   @param { Number } spacing the time in the future to run the task
-   @param { Boolean } [immediate] Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
-   @public
-   */
+ * Runs the function with the provided name immediately, and only once in the time window
+ * specified by the spacing argument.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { throttleTask, runDisposables } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   logMe() {
+ *     console.log('This will run once immediately, then only once every 300ms.');
+ *   },
+ *
+ *   click() {
+ *     throttleTask(this, 'logMe', 300);
+ *   },
+ *
+ *   destroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @function throttleTask
+ * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { String } taskName the name of the task to throttle
+ * @param { ...* } [throttleArgs] arguments to pass to the throttled method
+ * @param { Number } spacing the time in the future to run the task
+ * @param { Boolean } [immediate] Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
+ * @public
+ */
 export function throttleTask(
   destroyable: IDestroyable,
   taskName: any,
@@ -234,38 +233,38 @@ export function throttleTask(
 }
 
 /**
-   Cancel a previously scheduled task.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { runTask, cancelTask } from 'ember-lifeline';
-
-   export default Component.extend({
-     didInsertElement() {
-       this._cancelId = runTask(this, () => {
-         console.log('This runs after 5 seconds if this component is still displayed');
-       }, 5000)
-     },
-
-     disable() {
-        cancelTask(this, this._cancelId);
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @method cancelTask
-   @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
-   @param { Number } cancelId the id returned from the *Task call
-   @public
-   */
+ * Cancel a previously scheduled task.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { runTask, cancelTask } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   didInsertElement() {
+ *     this._cancelId = runTask(this, () => {
+ *       console.log('This runs after 5 seconds if this component is still displayed');
+ *     }, 5000)
+ *   },
+ *
+ *   disable() {
+ *      cancelTask(this, this._cancelId);
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @function cancelTask
+ * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
+ * @param { Number } cancelId the id returned from the *Task call
+ * @public
+ */
 export function cancelTask(cancelId: Timer);
 export function cancelTask(destroyable: IDestroyable, cancelId: Timer);
 export function cancelTask(
