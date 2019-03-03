@@ -6,19 +6,25 @@
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "Robert Jackson <me@rwjblue.com>",
+  "contributors": [
+    "Robert Jackson <me@rwjblue.com>",
+    "Steve Calvert <steve.calvert@gmail.com>"
+  ],
   "directories": {
     "test": "tests"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rwjblue/ember-lifeline.git"
+    "url": "git+https://github.com/ember-lifeline/ember-lifeline.git"
   },
   "scripts": {
     "build": "ember build",
+    "lint:hbs": "ember-template-lint .",
+    "lint:js": "eslint .",
     "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
-    "start": "ember server",
-    "test": "ember try:each",
+    "start": "ember serve",
+    "test": "ember test",
+    "test:all": "ember try:each",
     "prepublishOnly": "ember ts:precompile",
     "postpublish": "ember ts:clean"
   },
@@ -32,6 +38,7 @@
     "ember-cli-babel": "^7.1.3"
   },
   "devDependencies": {
+    "@ember/optional-features": "^0.6.3",
     "@types/ember": "^3.0.1",
     "@types/ember-qunit": "^3.0.2",
     "@types/ember-test-helpers": "^1.0.0",
@@ -40,34 +47,34 @@
     "@types/rsvp": "^4.0.1",
     "broccoli-asset-rev": "^3.0.0",
     "documentation": "^9.1.1",
-    "ember-ajax": "^4.0.0",
     "ember-cli": "~3.8.0",
-    "ember-cli-dependency-checker": "^3.0.0",
+    "ember-cli-dependency-checker": "^3.1.0",
     "ember-cli-htmlbars": "^3.0.0",
     "ember-cli-htmlbars-inline-precompile": "^2.0.0",
     "ember-cli-inject-live-reload": "^2.0.1",
-    "ember-cli-release": "^0.2.9",
-    "ember-cli-shims": "^1.1.0",
     "ember-cli-sri": "^2.1.0",
+    "ember-cli-template-lint": "^1.0.0-beta.1",
     "ember-cli-typescript": "^1.3.1",
-    "ember-cli-uglify": "^2.0.2",
-    "ember-disable-prototype-extensions": "^1.1.0",
+    "ember-cli-uglify": "^2.1.0",
+    "ember-disable-prototype-extensions": "^1.1.3",
     "ember-export-application-global": "^2.0.0",
     "ember-load-initializers": "^2.0.0",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-native-dom-helpers": "0.6.2",
-    "ember-qunit": "^4.2.0",
-    "ember-resolver": "^5.0.0",
+    "ember-qunit": "^4.3.0",
+    "ember-resolver": "^5.0.1",
     "ember-source": "~3.8.0",
     "ember-source-channel-url": "^1.1.0",
     "ember-try": "^1.0.0",
     "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-ember": "^5.2.0",
     "eslint-plugin-ember-suave": "^1.0.0",
+    "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-prettier": "^3.0.0",
     "fs.extra": "^1.3.2",
     "husky": "^1.0.1",
     "lint-staged": "^8.0.4",
-    "loader.js": "^4.2.3",
+    "loader.js": "^4.7.0",
     "prettier": "^1.10.2",
     "typescript": "^3.0.1"
   },
@@ -79,16 +86,16 @@
     "@types/jquery": "~3.3.22"
   },
   "engines": {
-    "node": "^4.5 || 6.* || >= 7.*"
+    "node": "6.* || 8.* || >= 10.*"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
   },
   "main": "index.js",
   "bugs": {
-    "url": "https://github.com/rwjblue/ember-lifeline/issues"
+    "url": "https://github.com/ember-lifeline/ember-lifeline/issues"
   },
-  "homepage": "https://github.com/rwjblue/ember-lifeline#readme",
+  "homepage": "https://github.com/ember-lifeline/ember-lifeline#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

@@ -9,7 +9,7 @@ import { render, find, triggerEvent } from '@ember/test-helpers';
 import {
   runDisposables,
   addEventListener,
-  removeEventListener
+  removeEventListener,
 } from 'ember-lifeline';
 import { PASSIVE_SUPPORTED } from 'ember-lifeline/dom-event-listeners';
 
@@ -32,7 +32,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
           this._super(...arguments);
 
           runDisposables(this);
-        }
+        },
       })
     );
 
@@ -44,12 +44,12 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
   [
     {
       testName: 'addEventListener(_,_,_,undefined)',
-      testedOptions: undefined
+      testedOptions: undefined,
     },
     {
       testName: 'addEventListener(_,_,_,{passive:false})',
-      testedOptions: { passive: false }
-    }
+      testedOptions: { passive: false },
+    },
   ].forEach(({ testName, testedOptions }) => {
     test(`${testName} adds event listener to child element`, async function(assert) {
       assert.expect(4);
@@ -119,7 +119,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
 
       let delta = {};
       await triggerEvent(component.element.firstChild, 'drag', {
-        details: { delta }
+        details: { delta },
       });
 
       assert.equal(calls, 1, 'callback was called');
@@ -231,7 +231,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          }
+          },
         })
       );
       this.owner.register(
@@ -245,7 +245,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          }
+          },
         })
       );
 
@@ -290,7 +290,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          }
+          },
         })
       );
       this.owner.register(
@@ -304,7 +304,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             this._super(...arguments);
 
             runDisposables(this);
-          }
+          },
         })
       );
 
@@ -377,7 +377,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
             runDisposables(this);
 
             this._super(...arguments);
-          }
+          },
         })
       );
 
@@ -454,7 +454,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     );
 
     await triggerEvent(component.element.firstChild.firstChild, 'click', {
-      bubbles: true
+      bubbles: true,
     });
 
     assert.equal(outerCalls, 0, 'outer callback never fires');

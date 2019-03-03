@@ -22,7 +22,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
         init() {
           this._super(...arguments);
           testContext.componentInstance = this;
-        }
+        },
       })
     );
 
@@ -34,12 +34,12 @@ module('ember-lifeline/mixins/dom', function(hooks) {
   [
     {
       testName: 'addEventListener(_,_,_,undefined)',
-      testedOptions: undefined
+      testedOptions: undefined,
     },
     {
       testName: 'addEventListener(_,_,_,{passive:false})',
-      testedOptions: { passive: false }
-    }
+      testedOptions: { passive: false },
+    },
   ].forEach(({ testName, testedOptions }) => {
     test(`${testName} adds event listener to child element`, async function(assert) {
       assert.expect(4);
@@ -141,7 +141,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
 
       let delta = {};
       await triggerEvent(component.element.firstChild, 'drag', {
-        details: { delta }
+        details: { delta },
       });
 
       assert.equal(calls, 1, 'callback was called');
@@ -284,7 +284,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectA = this;
-          }
+          },
         })
       );
       this.owner.register(
@@ -293,7 +293,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
-          }
+          },
         })
       );
 
@@ -333,7 +333,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectA = this;
-          }
+          },
         })
       );
       this.owner.register(
@@ -342,7 +342,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
-          }
+          },
         })
       );
 
@@ -559,7 +559,7 @@ module('ember-lifeline/mixins/dom', function(hooks) {
     );
 
     await triggerEvent(component.element.firstChild.firstChild, 'click', {
-      bubbles: true
+      bubbles: true,
     });
 
     assert.equal(outerCalls, 0, 'outer callback never fires');

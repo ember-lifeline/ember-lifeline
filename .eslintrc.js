@@ -4,18 +4,12 @@ module.exports = {
     ecmaVersion: 2017,
     sourceType: 'module',
   },
+  plugins: ['ember', 'prettier'],
+  extends: ['eslint:recommended', 'plugin:ember/recommended', 'prettier'],
   env: {
-    es6: true,
     browser: true,
+    node: false,
   },
-  plugins: [
-    'prettier'
-  ],
-  extends: [
-    'eslint:recommended',
-    'plugin:ember-suave/recommended',
-    'prettier'
-  ],
   rules: {
     'prettier/prettier': [
       'error',
@@ -25,4 +19,41 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    // node files
+    {
+      files: [
+        '.eslintrc.js',
+        '.template-lintrc.js',
+        'ember-cli-build.js',
+        'index.js',
+        'testem.js',
+        'blueprints/*/index.js',
+        'config/**/*.js',
+        'tests/dummy/config/**/*.js',
+      ],
+      excludedFiles: [
+        'addon/**',
+        'addon-test-support/**',
+        'app/**',
+        'tests/dummy/app/**',
+      ],
+      parserOptions: {
+        sourceType: 'script',
+        ecmaVersion: 2015,
+      },
+      env: {
+        browser: false,
+        node: true,
+      },
+      plugins: ['node'],
+      rules: Object.assign(
+        {},
+        require('eslint-plugin-node').configs.recommended.rules,
+        {
+          // add your custom rules and overrides for node files here
+        }
+      ),
+    },
+  ],
 };

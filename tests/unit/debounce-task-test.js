@@ -30,7 +30,7 @@ module('ember-lifeline/debounce-task', function(hooks) {
         runCount++;
         assert.equal(this, obj, 'context is correct');
         runArg = arg;
-      }
+      },
     }));
 
     debounceTask(this.obj, 'doStuff', 'arg1', 5);
@@ -67,12 +67,13 @@ module('ember-lifeline/debounce-task', function(hooks) {
       doStuff(...args) {
         callCount++;
         calledWithArgs = args;
-      }
+      },
     });
 
     debounceTask(this.obj, 'doStuff', 'hello', 'world', 5);
 
     setTimeout(() => {
+      assert.equal(callCount, 1, 'should have run only once');
       assert.deepEqual(calledWithArgs, ['hello', 'world']);
       done();
     }, 10);
@@ -86,7 +87,7 @@ module('ember-lifeline/debounce-task', function(hooks) {
     this.obj = this.getComponent({
       doStuff() {
         runCount++;
-      }
+      },
     });
 
     debounceTask(this.obj, 'doStuff', 5);
@@ -105,7 +106,7 @@ module('ember-lifeline/debounce-task', function(hooks) {
     assert.expect(1);
 
     this.obj = this.getComponent({
-      doStuff() {}
+      doStuff() {},
     });
 
     cancelDebounce(this.obj, 'doStuff');
@@ -118,7 +119,7 @@ module('ember-lifeline/debounce-task', function(hooks) {
     assert.expect(1);
 
     this.obj = this.getComponent({
-      doStuff() {}
+      doStuff() {},
     });
 
     debounceTask(this.obj, 'doStuff', 5);
