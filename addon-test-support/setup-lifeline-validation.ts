@@ -1,3 +1,4 @@
+// @ts-ignore
 import require from 'require';
 import { _setRegisteredDisposables } from 'ember-lifeline';
 
@@ -27,7 +28,7 @@ export default function setupLifelineValidation(hooks) {
     try {
       let retainedObjects = [];
       registeredDisposables.forEach((_, k) =>
-        retainedObjects.push(k.toString())
+        retainedObjects.push(k.toString() as never)
       );
 
       assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);

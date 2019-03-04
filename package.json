@@ -84,7 +84,8 @@
     "@types/ember__component": "~3.0.4",
     "@types/ember__routing": "~3.0.6",
     "@types/ember__error": "~3.0.2",
-    "@types/jquery": "~3.3.22"
+    "@types/jquery": "~3.3.22",
+    "@types/handlebars": "npm:handlebars@^4.1.0"
   },
   "engines": {
     "node": "8.* || >= 10.*"
