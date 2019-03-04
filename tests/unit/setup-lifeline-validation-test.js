@@ -1,8 +1,8 @@
 import Service from '@ember/service';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import setupLifelineValidation from 'ember-lifeline/test-support';
 import { registerDisposable } from 'ember-lifeline';
+import { setupLifelineValidation } from 'ember-lifeline/test-support';
 
 module('setupLifelineValidation', function(hooks) {
   setupLifelineValidation(hooks);

@@ -20,28 +20,21 @@
     "baseUrl": ".",
     "module": "es6",
     "paths": {
-      "dummy/tests/*": [
-        "tests/*"
-      ],
-      "dummy/*": [
-        "tests/dummy/app/*",
-        "app/*"
-      ],
-      "ember-lifeline": [
-        "addon"
-      ],
-      "ember-lifeline/*": [
-        "addon/*"
-      ],
-      "*": [
-        "types/*"
-      ]
+      "dummy/tests/*": ["tests/*"],
+      "dummy/*": ["tests/dummy/app/*", "app/*"],
+      "ember-lifeline": ["addon"],
+      "ember-lifeline/*": ["addon/*"],
+      "ember-lifeline/test-support": ["addon-test-support"],
+      "ember-lifeline/test-support/*": ["addon-test-support/*"],
+      "*": ["types/*"]
     }
   },
   "include": [
-    "app",
-    "addon",
-    "tests",
-    "types"
+    "app/**/*",
+    "addon/**/*",
+    "tests/**/*",
+    "types/**/*",
+    "test-support/**/*",
+    "addon-test-support/**/*"
   ]
 }
