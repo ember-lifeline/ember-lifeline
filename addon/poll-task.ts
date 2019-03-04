@@ -3,7 +3,7 @@ import Ember from 'ember';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { registerDisposable } from './utils/disposable';
-import { IMap, TaskOrName, IDestroyable } from './interfaces';
+import { IMap, TaskOrName, IDestroyable } from './types';
 
 export type Token = string | number;
 

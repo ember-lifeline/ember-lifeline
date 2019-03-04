@@ -1,5 +1,5 @@
 import { assert } from '@ember/debug';
-import { IMap, IDestroyable } from '../interfaces';
+import { IMap, IDestroyable } from '../types';
 
 /**
  * A map of instances/array of disposables. Only exported for

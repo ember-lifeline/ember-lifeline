@@ -1,6 +1,6 @@
 import { assert } from '@ember/debug';
 import { cancel, debounce } from '@ember/runloop';
-import { IDestroyable, IMap } from './interfaces';
+import { IDestroyable, IMap, Timer } from './types';
 import { registerDisposable } from './utils/disposable';
 
 interface PendingDebounce {
@@ -69,10 +69,10 @@ export function debounceTask(
     `Called \`destroyable.debounceTask('${name}', ...)\` where 'destroyable.${name}' is not a function.`,
     typeof destroyable[name] === 'function'
   );
-  assert(
-    `Called \`debounceTask\` on destroyed object: ${destroyable}.`,
-    !destroyable.isDestroyed
-  );
+
+  if (destroyable.isDestroying) {
+    return;
+  }
 
   const lastArgument = debounceArgs[debounceArgs.length - 1];
   const spacing =
