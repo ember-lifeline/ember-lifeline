@@ -5,38 +5,42 @@
 - [Run loop entanglement via \`\*Task\` functions][1]
   - [runTask][2]
     - [Parameters][3]
-  - [pollTask][4]
+  - [scheduleTask][4]
     - [Parameters][5]
-  - [pollTaskFor][6]
+  - [throttleTask][6]
     - [Parameters][7]
-  - [setShouldPoll][8]
+  - [cancelTask][8]
     - [Parameters][9]
-  - [scheduleTask][10]
+  - [debounceTask][10]
     - [Parameters][11]
-  - [debounceTask][12]
+  - [cancelDebounce][12]
     - [Parameters][13]
-  - [throttleTask][14]
+  - [pollTask][14]
     - [Parameters][15]
-  - [cancelTask][16]
+  - [cancelPoll][16]
     - [Parameters][17]
-  - [cancelPoll][18]
+  - [setShouldPoll][18]
     - [Parameters][19]
-  - [cancelDebounce][20]
-    - [Parameters][21]
-- [DOM event handler entanglement][22]
-  - [addEventListener][23]
+- [DOM event handler entanglement][20]
+  - [addEventListener][21]
+    - [Parameters][22]
+  - [removeEventListener][23]
     - [Parameters][24]
-  - [removeEventListener][25]
-    - [Parameters][26]
-- [Disposables][27]
-  - [registerDisposable][28]
+- [Disposables][25]
+  - [registerDisposable][26]
+    - [Parameters][27]
+  - [runDisposables][28]
     - [Parameters][29]
-  - [runDisposables][30]
-    - [Parameters][31]
-- [Mixins][32]
-  - [DisposableMixin][33]
-  - [ContextBoundEventListenersMixin][34]
-  - [ContextBoundTasksMixin][35]
+- [Mixins][30]
+  - [DisposableMixin][31]
+  - [ContextBoundEventListenersMixin][32]
+  - [ContextBoundTasksMixin][33]
+- [Test Helpers][34]
+  - [pollTaskFor][35]
+    - [Parameters][36]
+  - [setupLifelineValidation][37]
+    - [Parameters][38]
+- [queuedPollTasks][39]
 
 ## Run loop entanglement via \`\*Task\` functions
 
@@ -76,11 +80,200 @@ export default Component.extend({
 #### Parameters
 
 - `destroyable` **IDestroyable** the instance to register the task for
-- `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
+- `taskOrName` **([Function][40] \| [String][41])** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
   by timeout
-- `timeout` **[Number][38]** the time in the future to run the task (optional, default `0`)
+- `timeout` **[Number][42]** the time in the future to run the task (optional, default `0`)
+
+### scheduleTask
+
+Adds the provided function to the named queue for the provided object. The timer is
+properly canceled if the object is destroyed before it is invoked.
+
+Example:
+
+```js
+import Component from 'ember-component';
+import { scheduleTask, runDisposables } from 'ember-lifeline';
+
+export default Component.extend({
+  init() {
+    this._super(...arguments);
+
+    scheduleTask(this, 'actions', () => {
+      console.log(
+        'This runs at the end of the run loop (via the actions queue) if this component is still displayed'
+      );
+    });
+  },
+
+  willDestroy() {
+    this._super(...arguments);
+
+    runDisposables(this);
+  },
+});
+```
+
+#### Parameters
+
+- `destroyable` **IDestroyable** the instance to register the task for
+- `queueName` **[String][41]** the queue to schedule the task into
+- `taskOrName` **([Function][40] \| [String][41])** a function representing the task, or string
+  specifying a property representing the task,
+  which is run at the provided time specified
+  by timeout
+- `args` **...any** arguments to pass to the task
+
+### throttleTask
+
+Runs the function with the provided name immediately, and only once in the time window
+specified by the spacing argument.
+
+Example:
+
+```js
+import Component from 'ember-component';
+import { throttleTask, runDisposables } from 'ember-lifeline';
+
+export default Component.extend({
+  logMe() {
+    console.log('This will run once immediately, then only once every 300ms.');
+  },
+
+  click() {
+    throttleTask(this, 'logMe', 300);
+  },
+
+  destroy() {
+    this._super(...arguments);
+
+    runDisposables(this);
+  },
+});
+```
+
+#### Parameters
+
+- `destroyable` **IDestroyable** the instance to register the task for
+- `taskName` **[String][41]** the name of the task to throttle
+- `throttleArgs` **...any?** arguments to pass to the throttled method
+- `spacing` **[Number][42]** the time in the future to run the task
+- `immediate` **[Boolean][43]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
+
+### cancelTask
+
+Cancel a previously scheduled task.
+
+Example:
+
+```js
+import Component from 'ember-component';
+import { runTask, cancelTask } from 'ember-lifeline';
+
+export default Component.extend({
+  didInsertElement() {
+    this._cancelId = runTask(
+      this,
+      () => {
+        console.log(
+          'This runs after 5 seconds if this component is still displayed'
+        );
+      },
+      5000
+    );
+  },
+
+  disable() {
+    cancelTask(this, this._cancelId);
+  },
+
+  willDestroy() {
+    this._super(...arguments);
+
+    runDisposables(this);
+  },
+});
+```
+
+#### Parameters
+
+- `destroyable` **IDestroyable** the entangled object that was provided with the original \*Task call
+- `cancelId` **number** the id returned from the \*Task call
+
+### debounceTask
+
+Runs the function with the provided name after the timeout has expired on the last
+invocation. The timer is properly canceled if the object is destroyed before it is
+invoked.
+
+Example:
+
+```js
+import Component from 'ember-component';
+import { debounceTask, runDisposables } from 'ember-lifeline';
+
+export default Component.extend({
+  logMe() {
+    console.log('This will only run once every 300ms.');
+  },
+
+  click() {
+    debounceTask(this, 'logMe', 300);
+  },
+
+  willDestroy() {
+    this._super(...arguments);
+
+    runDisposables(this);
+  },
+});
+```
+
+#### Parameters
+
+- `destroyable` **IDestroyable** the instance to register the task for
+- `name` **[String][41]** the name of the task to debounce
+- `debounceArgs` **...any** arguments to pass to the debounced method
+- `spacing` **[Number][42]** the amount of time to wait before calling the method (in milliseconds)
+- `immediate` **[Boolean][43]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
+
+### cancelDebounce
+
+Cancel a previously debounced task.
+
+Example:
+
+```js
+import Component from 'ember-component';
+import { debounceTask, cancelDebounce } from 'ember-lifeline';
+
+export default Component.extend({
+  logMe() {
+    console.log('This will only run once every 300ms.');
+  },
+
+  click() {
+    debounceTask(this, 'logMe', 300);
+  },
+
+  disable() {
+    cancelDebounce(this, 'logMe');
+  },
+
+  willDestroy() {
+    this._super(...arguments);
+
+    runDisposables(this);
+  },
+});
+```
+
+#### Parameters
+
+- `destroyable` **IDestroyable** the instance to register the task for
+- `methodName` **[String][41]** the name of the debounced method to cancel
 
 ### pollTask
 
@@ -147,186 +340,61 @@ test('foo-bar watches things', async function(assert) {
 #### Parameters
 
 - `destroyable` **IDestroyable** the entangled object that was provided with the original \*Task call
-- `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
+- `taskOrName` **TaskOrName** a function representing the task, or string
   specifying a property representing the task,
   which is run at the provided time specified
   by timeout
-- `token` **Token** the Token for the pollTask, either a String or Number
-
-### pollTaskFor
-
-#### Parameters
-
-- `token`
-
-### setShouldPoll
-
-#### Parameters
-
-- `callback`
-
-### scheduleTask
-
-Adds the provided function to the named queue for the provided object. The timer is
-properly canceled if the object is destroyed before it is invoked.
-
-Example:
-
-```js
-import Component from 'ember-component';
-import { scheduleTask, runDisposables } from 'ember-lifeline';
-
-export default Component.extend({
-  init() {
-    this._super(...arguments);
-
-    scheduleTask(this, 'actions', () => {
-      console.log(
-        'This runs at the end of the run loop (via the actions queue) if this component is still displayed'
-      );
-    });
-  },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
-});
-```
-
-#### Parameters
-
-- `destroyable` **IDestroyable** the instance to register the task for
-- `queueName` **[String][37]** the queue to schedule the task into
-- `taskOrName` **([Function][36] \| [String][37])** a function representing the task, or string
-  specifying a property representing the task,
-  which is run at the provided time specified
-  by timeout
-- `args` **...any** arguments to pass to the task
-
-### debounceTask
-
-Runs the function with the provided name after the timeout has expired on the last
-invocation. The timer is properly canceled if the object is destroyed before it is
-invoked.
-
-Example:
-
-```js
-import Component from 'ember-component';
-import { debounceTask, runDisposables } from 'ember-lifeline';
-
-export default Component.extend({
-  logMe() {
-    console.log('This will only run once every 300ms.');
-  },
-
-  click() {
-    debounceTask(this, 'logMe', 300);
-  },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
-});
-```
-
-#### Parameters
-
-- `destroyable` **IDestroyable** the instance to register the task for
-- `name` **[String][37]** the name of the task to debounce
-- `debounceArgs` **...any** arguments to pass to the debounced method
-- `spacing` **[Number][38]** the amount of time to wait before calling the method (in milliseconds)
-- `immediate` **[Boolean][39]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
-
-### throttleTask
-
-Runs the function with the provided name immediately, and only once in the time window
-specified by the spacing argument.
-
-Example:
-
-```js
-import Component from 'ember-component';
-import { throttleTask, runDisposables } from 'ember-lifeline';
-
-export default Component.extend({
-  logMe() {
-    console.log('This will run once immediately, then only once every 300ms.');
-  },
-
-  click() {
-    throttleTask(this, 'logMe', 300);
-  },
-
-  destroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
-});
-```
-
-#### Parameters
-
-- `destroyable` **IDestroyable** the instance to register the task for
-- `taskName` **[String][37]** the name of the task to throttle
-- `throttleArgs` **...any?** arguments to pass to the throttled method
-- `spacing` **[Number][38]** the time in the future to run the task
-- `immediate` **[Boolean][39]?** Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to true.
-
-### cancelTask
-
-#### Parameters
-
-- `destroyable`
-- `cancelId`
+- `token` **Token** the Token for the pollTask, either a string or number
 
 ### cancelPoll
 
-#### Parameters
+Clears a previously setup polling task.
 
-- `destroyable`
-- `_token`
-
-### cancelDebounce
-
-Cancel a previously debounced task.
+**NOTE**: This does not cancel any nested `runTask` calls. You're required to cancel any
+cancelable behaviors, including any calls to `runTask` using `cancelTask`.
 
 Example:
 
 ```js
-import Component from 'ember-component';
-import { debounceTask, cancelDebounce } from 'ember-lifeline';
-
+import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+ *
 export default Component.extend({
-  logMe() {
-    console.log('This will only run once every 300ms.');
+  api: injectService(),
+ *
+  enableAutoRefresh() {
+    this._pollToken = pollTask(this, (next) => {
+      this.get('api').request('get', 'some/path')
+        .then(() => {
+          runTask(this, next, 1800);
+        })
+    });
   },
-
-  click() {
-    debounceTask(this, 'logMe', 300);
+ *
+  disableAutoRefresh() {
+    cancelPoll(this, this._pollToken);
   },
-
-  disable() {
-    cancelDebounce(this, 'logMe');
-  },
-
+ *
   willDestroy() {
     this._super(...arguments);
-
+ *
     runDisposables(this);
-  },
+  }
 });
 ```
 
 #### Parameters
 
-- `destroyable` **IDestroyable** the instance to register the task for
-- `methodName` **[String][37]** the name of the debounced method to cancel
+- `destroyable` **IDestroyable** the entangled object that was provided with the original \*Task call
+- `token` **Token** the Token for the pollTask, either a string or number
+
+### setShouldPoll
+
+Allows for overriding of the polling behavior to explicitly control
+whether polling should occur or not.
+
+#### Parameters
+
+- `callback` **[Function][40]**
 
 ## DOM event handler entanglement
 
@@ -372,8 +440,8 @@ export default Service.extend({
 
 - `destroyable` **IDestroyable** the instance to attach the listener for
 - `target` **EventTarget** the EventTarget, e.g. DOM element or `window`
-- `eventName` **[String][37]** the event name to listen for
-- `callback` **[Function][36]** the callback to run for that event
+- `eventName` **[String][41]** the event name to listen for
+- `callback` **[Function][40]** the callback to run for that event
 - `options` **any** additional options provided to the browser's `addEventListener`
 
 ### removeEventListener
@@ -385,8 +453,8 @@ lifeline's DOM entanglement tracking.
 
 - `destroyable` **IDestroyable** the instance to remove the listener for
 - `target` **EventTarget** the EventTarget, e.g. DOM element or `window`
-- `eventName` **[String][37]** the event name to listen for
-- `callback` **[Function][36]** the callback to run for that event
+- `eventName` **[String][41]** the event name to listen for
+- `callback` **[Function][40]** the callback to run for that event
 - `options` **any** additional options provided to the browser's `removeEventListener`
 
 ## Disposables
@@ -401,8 +469,8 @@ the object is destroyed.
 
 #### Parameters
 
-- `obj` **any** the instance to store the disposable for
-- `dispose` **any** a function that disposes of instance resources
+- `obj` **IDestroyable** the instance to store the disposable for
+- `dispose` **[Function][40]** a function that disposes of instance resources
 
 ### runDisposables
 
@@ -410,7 +478,7 @@ Runs all disposables for a given instance.
 
 #### Parameters
 
-- `obj` **any** the instance to run the disposables for
+- `obj` **IDestroyable** the instance to run the disposables for
 
 ## Mixins
 
@@ -433,42 +501,62 @@ destroyed.
 These capabilities are very commonly needed, so this mixin is by default
 included into all `Ember.View`, `Ember.Component`, and `Ember.Service` instances.
 
+## Test Helpers
+
+### pollTaskFor
+
+#### Parameters
+
+- `token`
+
+### setupLifelineValidation
+
+#### Parameters
+
+- `hooks`
+
+## queuedPollTasks
+
 [1]: #run-loop-entanglement-via-task-functions
 [2]: #runtask
 [3]: #parameters
-[4]: #polltask
+[4]: #scheduletask
 [5]: #parameters-1
-[6]: #polltaskfor
+[6]: #throttletask
 [7]: #parameters-2
-[8]: #setshouldpoll
+[8]: #canceltask
 [9]: #parameters-3
-[10]: #scheduletask
+[10]: #debouncetask
 [11]: #parameters-4
-[12]: #debouncetask
+[12]: #canceldebounce
 [13]: #parameters-5
-[14]: #throttletask
+[14]: #polltask
 [15]: #parameters-6
-[16]: #canceltask
+[16]: #cancelpoll
 [17]: #parameters-7
-[18]: #cancelpoll
+[18]: #setshouldpoll
 [19]: #parameters-8
-[20]: #canceldebounce
-[21]: #parameters-9
-[22]: #dom-event-handler-entanglement
-[23]: #addeventlistener
+[20]: #dom-event-handler-entanglement
+[21]: #addeventlistener
+[22]: #parameters-9
+[23]: #removeeventlistener
 [24]: #parameters-10
-[25]: #removeeventlistener
-[26]: #parameters-11
-[27]: #disposables
-[28]: #registerdisposable
+[25]: #disposables
+[26]: #registerdisposable
+[27]: #parameters-11
+[28]: #rundisposables
 [29]: #parameters-12
-[30]: #rundisposables
-[31]: #parameters-13
-[32]: #mixins
-[33]: #disposablemixin
-[34]: #contextboundeventlistenersmixin
-[35]: #contextboundtasksmixin
-[36]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
-[37]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-[38]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
-[39]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[30]: #mixins
+[31]: #disposablemixin
+[32]: #contextboundeventlistenersmixin
+[33]: #contextboundtasksmixin
+[34]: #test-helpers
+[35]: #polltaskfor
+[36]: #parameters-13
+[37]: #setuplifelinevalidation
+[38]: #parameters-14
+[39]: #queuedpolltasks
+[40]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[41]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[42]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[43]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
