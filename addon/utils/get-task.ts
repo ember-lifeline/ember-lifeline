@@ -1,5 +1,11 @@
 import { TaskOrName, IDestroyable } from '../types';
 
+/**
+ * @function getTask
+ * @param obj
+ * @param taskOrName
+ * @param taskName
+ */
 export default function getTask(
   obj: IDestroyable,
   taskOrName: TaskOrName,

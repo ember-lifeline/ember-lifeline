@@ -52,74 +52,74 @@ export let queuedPollTasks: {
 } = Object.create(null);
 
 /**
-   Sets up a function that can perform polling logic in a testing safe way.
-   The task is invoked synchronously with an argument (generally called `next`).
-   In normal development/production when `next` is invoked, it will trigger the
-   task again (recursively). However, when in test mode the recursive polling
-   functionality is disabled, and usage of the `pollTaskFor` helper is required.
-
-   Example:
-
-   ```js
-  import { pollTask, runTask, runDisposables } from 'ember-lifeline';
-
-  export default Component.extend({
-     api: injectService(),
-
-     init() {
-       this._super(...arguments);
-
-       let token = pollTask(this, (next) => {
-         this.get('api').request('get', 'some/path')
-           .then(() => {
-             runTask(this, next, 1800);
-           })
-       });
-
-       this._pollToken = token;
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   Test Example:
-
-   ```js
-   import wait from 'ember-test-helpers/wait';
-   import { pollTaskFor } from 'ember-lifeline';
-
-   //...snip...
-
-   test('foo-bar watches things', async function(assert) {
-     await render(hbs`{{foo-bar}}`);
-
-     return wait()
-       .then(() => {
-         assert.equal(serverRequests, 1, 'called initially');
-
-         pollTaskFor(this._pollToken);
-         return wait();
-       })
-       .then(() => {
-         assert.equal(serverRequests, 2, 'called again');
-       });
-   });
-   ```
-
-   @method pollTask
-   @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
-   @param { Function | String } taskOrName a function representing the task, or string
-                                           specifying a property representing the task,
-                                           which is run at the provided time specified
-                                           by timeout
-   @param { Token } token the Token for the pollTask, either a String or Number
-   @public
-   */
+ * Sets up a function that can perform polling logic in a testing safe way.
+ * The task is invoked synchronously with an argument (generally called `next`).
+ * In normal development/production when `next` is invoked, it will trigger the
+ * task again (recursively). However, when in test mode the recursive polling
+ * functionality is disabled, and usage of the `pollTaskFor` helper is required.
+ *
+ * Example:
+ *
+ * ```js
+ * import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   api: injectService(),
+ *
+ *   init() {
+ *     this._super(...arguments);
+ *
+ *     let token = pollTask(this, (next) => {
+ *       this.get('api').request('get', 'some/path')
+ *         .then(() => {
+ *           runTask(this, next, 1800);
+ *         })
+ *     });
+ *
+ *     this._pollToken = token;
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * Test Example:
+ *
+ * ```js
+ * import wait from 'ember-test-helpers/wait';
+ * import { pollTaskFor } from 'ember-lifeline';
+ *
+ * //...snip...
+ *
+ * test('foo-bar watches things', async function(assert) {
+ *   await render(hbs`{{foo-bar}}`);
+ *
+ *   return wait()
+ *     .then(() => {
+ *       assert.equal(serverRequests, 1, 'called initially');
+ *
+ *       pollTaskFor(this._pollToken);
+ *       return wait();
+ *     })
+ *     .then(() => {
+ *       assert.equal(serverRequests, 2, 'called again');
+ *     });
+ * });
+ * ```
+ *
+ * @method pollTask
+ * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
+ * @param { TaskOrName } taskOrName a function representing the task, or string
+ *                                  specifying a property representing the task,
+ *                                  which is run at the provided time specified
+ *                                  by timeout
+ * @param { Token } token the Token for the pollTask, either a string or number
+ * @public
+ */
 export function pollTask(
   destroyable: IDestroyable,
   taskOrName: TaskOrName,
@@ -154,49 +154,52 @@ export function pollTask(
 }
 
 /**
-   Clears a previously setup polling task.
-
-   Example:
-
-   ```js
-  import { pollTask, runTask, runDisposables } from 'ember-lifeline';
-
-  export default Component.extend({
-     api: injectService(),
-
-     enableAutoRefresh() {
-       this._pollToken = pollTask(this, (next) => {
-         this.get('api').request('get', 'some/path')
-           .then(() => {
-             runTask(this, next, 1800);
-           })
-       });
-     },
-
-     disableAutoRefresh() {
-        cancelPoll(this, this._pollToken);
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @method cancelPoll
-   @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
-   @param { Token } _token the Token for the pollTask to be cleared, either a String or Number
-   @public
-   */
-export function cancelPoll(_token: Token);
-export function cancelPoll(destroyable: IDestroyable, _token: Token);
+ * Clears a previously setup polling task.
+ *
+ * NOTE: This does not cancel any nested `runTask` calls. You're required to cancel any
+ * cancelable behaviors, including any calls to `runTask` using `cancelTask`.
+ *
+ * Example:
+ *
+ * ```js
+ * import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   api: injectService(),
+ *
+ *   enableAutoRefresh() {
+ *     this._pollToken = pollTask(this, (next) => {
+ *       this.get('api').request('get', 'some/path')
+ *         .then(() => {
+ *           runTask(this, next, 1800);
+ *         })
+ *     });
+ *   },
+ *
+ *   disableAutoRefresh() {
+ *      cancelPoll(this, this._pollToken);
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @method cancelPoll
+ * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
+ * @param { Token } token the Token for the pollTask to be cleared, either a string or number
+ * @public
+ */
+export function cancelPoll(token: Token);
+export function cancelPoll(destroyable: IDestroyable, token: Token);
 export function cancelPoll(
   destroyable: IDestroyable | Token,
-  _token?: Token
+  token?: Token
 ): void | undefined {
-  let token: Token;
+  let pollToken: Token;
   if (typeof destroyable === 'number' || typeof destroyable === 'string') {
     deprecate(
       'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(destroyable, cancelId) and avoids a memory leak.',
@@ -206,16 +209,16 @@ export function cancelPoll(
         until: '4.0.0',
       }
     );
-    token = destroyable;
+    pollToken = destroyable;
   } else {
     let pollers: Set<Token> = registeredPollers.get(destroyable);
-    token = _token as Token;
+    pollToken = token as Token;
 
     if (pollers !== undefined) {
-      pollers.delete(token);
+      pollers.delete(pollToken);
     }
   }
-  delete queuedPollTasks[token];
+  delete queuedPollTasks[pollToken];
 }
 
 function getPollersDisposable(

@@ -13,7 +13,6 @@ interface PendingDebounce {
  * store pending debounces per instance.
  *
  * @private
- *
  */
 const registeredDebounces: IMap<
   IDestroyable,
@@ -21,41 +20,41 @@ const registeredDebounces: IMap<
 > = new WeakMap<IDestroyable, any>();
 
 /**
-   Runs the function with the provided name after the timeout has expired on the last
-   invocation. The timer is properly canceled if the object is destroyed before it is
-   invoked.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { debounceTask, runDisposables } from 'ember-lifeline';
-
-   export default Component.extend({
-     logMe() {
-       console.log('This will only run once every 300ms.');
-     },
-
-     click() {
-       debounceTask(this, 'logMe', 300);
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @method debounceTask
-   @param { IDestroyable } destroyable the instance to register the task for
-   @param { String } name the name of the task to debounce
-   @param { ...* } debounceArgs arguments to pass to the debounced method
-   @param { Number } spacing the amount of time to wait before calling the method (in milliseconds)
-   @param { Boolean } [immediate] Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
-   @public
-   */
+ * Runs the function with the provided name after the timeout has expired on the last
+ * invocation. The timer is properly canceled if the object is destroyed before it is
+ * invoked.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { debounceTask, runDisposables } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   logMe() {
+ *     console.log('This will only run once every 300ms.');
+ *   },
+ *
+ *   click() {
+ *     debounceTask(this, 'logMe', 300);
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @function debounceTask
+ * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { String } name the name of the task to debounce
+ * @param { ...* } debounceArgs arguments to pass to the debounced method
+ * @param { Number } spacing the amount of time to wait before calling the method (in milliseconds)
+ * @param { Boolean } [immediate] Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
+ * @public
+ */
 export function debounceTask(
   destroyable: IDestroyable,
   name: string,
@@ -114,40 +113,40 @@ export function debounceTask(
 }
 
 /**
-   Cancel a previously debounced task.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { debounceTask, cancelDebounce } from 'ember-lifeline';
-
-   export default Component.extend({
-     logMe() {
-       console.log('This will only run once every 300ms.');
-     },
-
-     click() {
-       debounceTask(this, 'logMe', 300);
-     },
-
-     disable() {
-        cancelDebounce(this, 'logMe');
-     },
-
-     willDestroy() {
-       this._super(...arguments);
-
-       runDisposables(this);
-     }
-   });
-   ```
-
-   @method cancelDebounce
-   @param { IDestroyable } destroyable the instance to register the task for
-   @param { String } methodName the name of the debounced method to cancel
-   @public
-   */
+ * Cancel a previously debounced task.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { debounceTask, cancelDebounce } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   logMe() {
+ *     console.log('This will only run once every 300ms.');
+ *   },
+ *
+ *   click() {
+ *     debounceTask(this, 'logMe', 300);
+ *   },
+ *
+ *   disable() {
+ *      cancelDebounce(this, 'logMe');
+ *   },
+ *
+ *   willDestroy() {
+ *     this._super(...arguments);
+ *
+ *     runDisposables(this);
+ *   }
+ * });
+ * ```
+ *
+ * @function cancelDebounce
+ * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { String } methodName the name of the debounced method to cancel
+ * @public
+ */
 export function cancelDebounce(
   destroyable: IDestroyable,
   name: string

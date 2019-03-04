@@ -8,7 +8,6 @@ import { IMap, IDestroyable } from './types';
  * store listener references per instance.
  *
  * @private
- *
  */
 const eventListeners: IMap<IDestroyable, Array<Object>> = new WeakMap<
   IDestroyable,
@@ -46,50 +45,50 @@ enum ListenerItemPosition {
 }
 
 /**
-   Attaches an event listener that will automatically be removed when the host
-   object is dropped from DOM.
-
-   Example:
-
-   ```js
-   import Component from 'ember-component';
-   import { addEventListener } from 'ember-lifeline';
-
-   export default Component.extend({
-     didInsertElement() {
-       addEventListener(this, '.some-item', 'click', (e) => {
-         console.log('.some-item was clicked');
-       });
-     }
-   });
-   ```
-
-   This can also be used in other ember types like services and controllers. In
-   order to use it there an html element reference must be used instead of a
-   css selector. This way we can be sure the element actually exists when the
-   listener is attached:
-
-   ```js
-   import Service from 'ember-service';
-   import { addEventListener } from 'ember-lifeline';
-
-   export default Service.extend({
-     init() {
-       this._super(...arguments);
-       const el = document.querySelector('.foo');
-       addEventListener(this, el, 'click');
-     }
-   });
-   ```
-
-   @public
-   @method addEventListener
-   @param { IDestroyable } destroyable the instance to attach the listener for
-   @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
-   @param { String } eventName the event name to listen for
-   @param { Function } callback the callback to run for that event
-   @param { any } options additional options provided to the browser's `addEventListener`
-   */
+ * Attaches an event listener that will automatically be removed when the host
+ * object is dropped from DOM.
+ *
+ * Example:
+ *
+ * ```js
+ * import Component from 'ember-component';
+ * import { addEventListener } from 'ember-lifeline';
+ *
+ * export default Component.extend({
+ *   didInsertElement() {
+ *     addEventListener(this, '.some-item', 'click', (e) => {
+ *       console.log('.some-item was clicked');
+ *     });
+ *   }
+ * });
+ * ```
+ *
+ * This can also be used in other ember types like services and controllers. In
+ * order to use it there an html element reference must be used instead of a
+ * css selector. This way we can be sure the element actually exists when the
+ * listener is attached:
+ *
+ * ```js
+ * import Service from 'ember-service';
+ * import { addEventListener } from 'ember-lifeline';
+ *
+ * export default Service.extend({
+ *   init() {
+ *     this._super(...arguments);
+ *     const el = document.querySelector('.foo');
+ *     addEventListener(this, el, 'click');
+ *   }
+ * });
+ * ```
+ *
+ * @public
+ * @function addEventListener
+ * @param { IDestroyable } destroyable the instance to attach the listener for
+ * @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
+ * @param { String } eventName the event name to listen for
+ * @param { Function } callback the callback to run for that event
+ * @param { any } options additional options provided to the browser's `addEventListener`
+ */
 export function addEventListener<T extends IDestroyable>(
   destroyable: T,
   target: EventTarget,
@@ -127,16 +126,17 @@ export function addEventListener<T extends IDestroyable>(
 }
 
 /**
-   Removes an event listener explicitly from the target, also removing it from
-   lifeline's DOM entanglement tracking.
-
-   @public
-   @param { IDestroyable } destroyable the instance to remove the listener for
-   @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
-   @param { String } eventName the event name to listen for
-   @param { Function } callback the callback to run for that event
-   @param { any } options additional options provided to the browser's `removeEventListener`
-   */
+ * Removes an event listener explicitly from the target, also removing it from
+ * lifeline's DOM entanglement tracking.
+ *
+ * @public
+ * @function removeEventListener
+ * @param { IDestroyable } destroyable the instance to remove the listener for
+ * @param { EventTarget } target the EventTarget, e.g. DOM element or `window`
+ * @param { String } eventName the event name to listen for
+ * @param { Function } callback the callback to run for that event
+ * @param { any } options additional options provided to the browser's `removeEventListener`
+ */
 export function removeEventListener<T extends IDestroyable>(
   destroyable: T,
   target: EventTarget,
