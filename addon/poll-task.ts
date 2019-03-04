@@ -43,6 +43,13 @@ function shouldPoll() {
   return !Ember.testing;
 }
 
+/**
+ * Allows for overriding of the polling behavior to explicitly control
+ * whether polling should occur or not.
+ *
+ * @param { Function } callback
+ * @public
+ */
 export function setShouldPoll(callback: Function): void {
   _shouldPollOverride = callback;
 }
@@ -177,7 +184,7 @@ export function pollTask(
  *   },
  *
  *   disableAutoRefresh() {
- *      cancelPoll(this, this._pollToken);
+ *     cancelPoll(this, this._pollToken);
  *   },
  *
  *   willDestroy() {

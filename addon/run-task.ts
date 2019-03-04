@@ -249,7 +249,7 @@ export function throttleTask(
  *   },
  *
  *   disable() {
- *      cancelTask(this, this._cancelId);
+ *     cancelTask(this, this._cancelId);
  *   },
  *
  *   willDestroy() {
