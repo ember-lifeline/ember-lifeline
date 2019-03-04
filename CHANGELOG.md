@@ -1,3 +1,16 @@
+
+v4.0.0 / 2019-03-04
+==================
+
+  * Lifeline's minimum node version is 8  
+  * Fixing TS errors related to handlebars types
+  * Updating blueprint to latest
+  * Updating param name and docs for poll
+  * Implements early return when \*Task functions called on destroyed objects
+  
+  * Fixes for issues #35 and #120
+  * Fixes for issues #130 and #168
+
 v3.1.0 / 2018-12-21
 ====================
   * Modified `throttleTask` to accept arguments to be passed to throttled method
