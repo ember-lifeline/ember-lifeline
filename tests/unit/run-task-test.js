@@ -317,7 +317,7 @@ module('ember-lifeline/run-task', function(hooks) {
     let cancelId;
 
     this.obj = this.obj = this.getComponent({
-      doStuff(...args) {
+      doStuff() {
         callCount++;
       },
     });
