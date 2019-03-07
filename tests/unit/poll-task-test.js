@@ -217,7 +217,7 @@ module('ember-lifeline/poll-task', function(hooks) {
     });
   });
 
-  test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
+  test('pollTask cannot advance a poll that has not been scheduled', async function(assert) {
     assert.expect(3);
 
     this.obj = this.getComponent();
@@ -233,9 +233,13 @@ module('ember-lifeline/poll-task', function(hooks) {
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-    assert.throws(function() {
-      pollTaskFor(token);
-    }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
+    assert.asyncThrows(
+      async () => await pollTaskFor(token),
+      new RegExp(
+        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
+      ),
+      'pollTaskFor throws when `next` has not been called'
+    );
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -254,9 +258,13 @@ module('ember-lifeline/poll-task', function(hooks) {
 
     cancelPoll(this.obj, token);
 
-    assert.throws(() => {
-      pollTaskFor(token);
-    }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
+    assert.asyncThrows(
+      async () => await pollTaskFor(token),
+      new RegExp(
+        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
+      ),
+      'pollTaskFor throws when `next` has not been called'
+    );
 
     this.obj = this.getComponent({ force: true });
 

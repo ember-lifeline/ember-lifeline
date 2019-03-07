@@ -397,7 +397,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask next tick can be incremented via test helper with callback', function(assert) {
+  test('pollTask next tick can be incremented via test helper with callback', async function(assert) {
     assert.expect(2);
     let component = this.getComponent();
     let calledTimes = 0;
@@ -414,21 +414,20 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-    return settled().then(function() {
-      pollTaskFor(token);
+    await settled();
+    await pollTaskFor(token);
 
-      assert.equal(
-        calledTimes,
-        2,
-        'poll task argument was invoked after ticking'
-      );
+    assert.equal(
+      calledTimes,
+      2,
+      'poll task argument was invoked after ticking'
+    );
 
-      // ensure that pending pollTask's are not running
-      return settled();
-    });
+    // ensure that pending pollTask's are not running
+    return settled();
   });
 
-  test('pollTask next tick can be incremented via test helper with method name', function(assert) {
+  test('pollTask next tick can be incremented via test helper with method name', async function(assert) {
     assert.expect(2);
     let calledTimes = 0;
     let component = this.getComponent({
@@ -447,18 +446,17 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-    return settled().then(function() {
-      pollTaskFor(token);
+    await settled();
+    await pollTaskFor(token);
 
-      assert.equal(
-        calledTimes,
-        2,
-        'poll task argument was invoked after ticking'
-      );
+    assert.equal(
+      calledTimes,
+      2,
+      'poll task argument was invoked after ticking'
+    );
 
-      // ensure that pending pollTask's are not running
-      return settled();
-    });
+    // ensure that pending pollTask's are not running
+    return settled();
   });
 
   test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
@@ -477,9 +475,13 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-    assert.throws(function() {
-      pollTaskFor(token);
-    }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
+    assert.asyncThrows(
+      async () => await pollTaskFor(token),
+      new RegExp(
+        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
+      ),
+      'pollTaskFor throws when `next` has not been called'
+    );
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -497,9 +499,13 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     run(component, 'destroy');
 
-    assert.throws(() => {
-      pollTaskFor(token);
-    }, `A pollTask with a token of ${token} was not found`);
+    assert.asyncThrows(
+      async () => await pollTaskFor(token),
+      new RegExp(
+        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
+      ),
+      'pollTaskFor throws when `next` has not been called'
+    );
 
     component = this.getComponent({ force: true });
 
@@ -524,9 +530,13 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     component.cancelPoll(token);
 
-    assert.throws(() => {
-      pollTaskFor(token);
-    }, new RegExp(`You cannot advance pollTask '${token}' when \`next\` has not been called.`));
+    assert.asyncThrows(
+      async () => await pollTaskFor(token),
+      new RegExp(
+        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
+      ),
+      'pollTaskFor throws when `next` has not been called'
+    );
 
     component = this.getComponent({ force: true });
 
