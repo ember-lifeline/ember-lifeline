@@ -475,13 +475,9 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-    assert.asyncThrows(
-      async () => await pollTaskFor(token),
-      new RegExp(
-        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
-      ),
-      'pollTaskFor throws when `next` has not been called'
-    );
+    assert.throws(function() {
+      pollTaskFor(token);
+    }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
@@ -499,13 +495,9 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     run(component, 'destroy');
 
-    assert.asyncThrows(
-      async () => await pollTaskFor(token),
-      new RegExp(
-        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
-      ),
-      'pollTaskFor throws when `next` has not been called'
-    );
+    assert.throws(function() {
+      pollTaskFor(token);
+    }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
     component = this.getComponent({ force: true });
 
@@ -530,13 +522,9 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     component.cancelPoll(token);
 
-    assert.asyncThrows(
-      async () => await pollTaskFor(token),
-      new RegExp(
-        `You cannot advance pollTask '${token}' when \`next\` has not been called.`
-      ),
-      'pollTaskFor throws when `next` has not been called'
-    );
+    assert.throws(function() {
+      pollTaskFor(token);
+    }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
     component = this.getComponent({ force: true });
 
