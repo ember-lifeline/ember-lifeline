@@ -1084,9 +1084,9 @@
     "@types/rsvp" "*"
 
 "@types/ember@*", "@types/ember@^3.0.1":
-  version "3.0.28"
-  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.28.tgz#62002c34187256f7d6bf5d1245c94fbd27f7a7b0"
-  integrity sha512-1loc3Za0/8yPJWS7GxSOQL6C2wBTMGOP+srNRJWJb8L5yOikSIlmd7Rg5RYNNDN7mv7nfws5yq4JAP4HhY3ASw==
+  version "3.0.29"
+  resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.0.29.tgz#a437a60a41f8df9cba52de267bfd0007566eae41"
+  integrity sha512-qW8quUN996GHQlNC4jnQlRcIeZUMW4lL8M16FMAbHEv3cEvY1aPX6GQc4TPt167eR1fAjykfB4cTG6OQFxGHXQ==
   dependencies:
     "@types/ember__application" "*"
     "@types/ember__array" "*"
