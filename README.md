@@ -514,7 +514,8 @@ tests that are not related to the polling behavior to continue uninterrupted. To
 functionality, import and use the provided `pollTaskFor` helper from `ember-lifeline/test-support`:
 
 ```js
-import moduleForComponent from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
 import { settled } from '@ember/test-helpers';
 import { pollTaskFor } from 'ember-lifeline/test-support';
 import Service from '@ember/service';
