@@ -468,14 +468,15 @@ import Component from '@ember/component';
 import { inject } from '@ember/service';
 import { runTask, pollTask, runDisposables } from 'ember-lifeline';
 
+export const POLL_TOKEN = 'zee token';
+
 export default Component.extend({
   time: inject(),
 
   init() {
     this._super(...arguments);
 
-    // you can optionally provide a user defined token as a third argument
-    this._pollToken = pollTask(this, 'updateTime');
+    pollTask(this, 'updateTime', POLL_TOKEN);
   },
 
   updateTime(next) {
@@ -510,20 +511,22 @@ cancelable behaviors, including any calls to `runTask` using `cancelTask`.
 In testing, the `updateTime` method would execute initially during the components instantiation (just like
 in development and production environments), but would not automatically start polling. This allows
 tests that are not related to the polling behavior to continue uninterrupted. To test the actual polling
-functionality, use the provided `pollTaskFor` helper:
+functionality, import and use the provided `pollTaskFor` helper from `ember-lifeline/test-support`:
 
 ```js
 import moduleForComponent from 'ember-qunit';
-import wait from 'ember-test-helpers/wait';
-import { pollTaskFor } from 'ember-lifeline';
+import { settled } from '@ember/test-helpers';
+import { pollTaskFor } from 'ember-lifeline/test-support';
 import Service from '@ember/service';
+import { POLL_TOKEN } from 'my-app/components/update-time';
 
 let fakeNow;
-moduleForComponent('updating-time', {
-  integration: true,
 
-  beforeEach() {
-    this.register(
+module('updating-time', function(hooks) {
+  setupRenderingTest(hooks);
+  
+  hooks.beforeEach(function() {
+    this.owner.register(
       'service:time',
       Service.extend({
         now() {
@@ -531,41 +534,25 @@ moduleForComponent('updating-time', {
         },
       })
     );
-  },
-});
+  }),
 
-test('updating-time updates', function(assert) {
-  fakeNow = new Date(2016);
+  test('updating-time updates', async function(assert) {
+    fakeNow = new Date(2016);
 
-  this.render(hbs`
-    {{#updating-time as |time|}}
-      {{time}}
-    {{/updating-time}}
-  `);
+    await render(hbs`
+      {{#updating-time as |time|}}
+        {{time}}
+      {{/updating-time}}
+    `);
 
-  assert.equal(
-    this.$()
-      .text()
-      .trim(),
-    fakeNow
-  );
+    assert.dom(this.element).hasText(fakeNow);
 
-  return wait()
-    .then(() => {
-      fakeNow = new Date(2017);
-      // you can optionally provide a user defined token
-      pollTaskFor(this._pollToken);
+    fakeNow = new Date(2017);
+    // you can optionally provide a user defined token
+    await pollTaskFor(POLL_TOKEN);
 
-      return wait();
-    })
-    .then(() => {
-      assert.equal(
-        this.$()
-          .text()
-          .trim(),
-        fakeNow
-      );
-    });
+    assert.dom(this.element).hasText(fakeNow);
+  });
 });
 ```
 
