@@ -1,4 +1,10 @@
 
+4.1.0 / 2019-03-08
+==================
+
+  * Updating docs for pollTaskFor (#375)
+  * Updates pollTaskFor to correctly await settled (#374)
+  
 v4.0.0 / 2019-03-04
 ==================
 
