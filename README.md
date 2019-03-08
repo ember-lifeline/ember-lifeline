@@ -516,7 +516,7 @@ functionality, import and use the provided `pollTaskFor` helper from `ember-life
 ```js
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { settled } from '@ember/test-helpers';
+import { render, settled } from '@ember/test-helpers';
 import { pollTaskFor } from 'ember-lifeline/test-support';
 import Service from '@ember/service';
 import { POLL_TOKEN } from 'my-app/components/update-time';
