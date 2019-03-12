@@ -4,25 +4,12 @@ import { _setRegisteredDisposables } from 'ember-lifeline';
 
 const FAILED_ASSERTION_MESSAGE =
   'One or more objects registered disposables that were not correctly disposed of. Please ensure that objects correctly run their registered disposables by calling `runDisposables` in the `destroy` method of the object.';
-let setupTestDone = false;
 
 export default function setupLifelineValidation(hooks) {
   let registeredDisposables = new Map();
   hooks.beforeEach(function() {
     _setRegisteredDisposables(registeredDisposables);
   });
-
-  if (!setupTestDone) {
-    let QUnit = require('qunit').default;
-
-    QUnit.testDone(function(details) {
-      if (details.failed === 0 && registeredDisposables.size > 0) {
-        throw new Error(FAILED_ASSERTION_MESSAGE);
-      }
-    });
-
-    setupTestDone = true;
-  }
 
   hooks.afterEach(function(assert) {
     try {
@@ -31,7 +18,13 @@ export default function setupLifelineValidation(hooks) {
         retainedObjects.push(k.toString() as never)
       );
 
-      assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);
+      if (retainedObjects.length > 0) {
+        if (assert.test.expected !== null) {
+          assert.test.expected += 1;
+        }
+
+        assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);
+      }
     } finally {
       _setRegisteredDisposables(new WeakMap());
     }

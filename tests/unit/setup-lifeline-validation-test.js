@@ -27,7 +27,7 @@ module('setupLifelineValidation', function(hooks) {
   });
 
   test('setupLifelineValidation fails when registeredDisposables is not cleared', function(assert) {
-    assert.expect(1);
+    assert.expect(0);
 
     registerDisposable(this.service, () => {});
   });
