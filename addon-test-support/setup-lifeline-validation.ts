@@ -12,24 +12,16 @@ export default function setupLifelineValidation(hooks) {
     _setRegisteredDisposables(registeredDisposables);
   });
 
-  if (!setupTestDone) {
-    let QUnit = require('qunit').default;
-
-    QUnit.testDone(function(details) {
-      if (details.failed === 0 && registeredDisposables.size > 0) {
-        throw new Error(FAILED_ASSERTION_MESSAGE);
-      }
-    });
-
-    setupTestDone = true;
-  }
-
   hooks.afterEach(function(assert) {
     try {
       let retainedObjects = [];
       registeredDisposables.forEach((_, k) =>
         retainedObjects.push(k.toString() as never)
       );
+
+      if (assert.test.expected !== null) {
+        assert.test.expected += 1;
+      }
 
       assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);
     } finally {
