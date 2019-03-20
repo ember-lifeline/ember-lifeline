@@ -9,7 +9,20 @@ const Router = AddonDocsRouter.extend(RouterScroll, {
 
 Router.map(function() {
   docsRoute(this, function() {
-    /* Your docs routes go here */
+    this.route('why-use-ember-lifeline');
+
+    this.route('how-it-works');
+    this.route('run-disposables');
+    this.route('run-task');
+    this.route('schedule-task');
+    this.route('debounce-task');
+    this.route('throttle-task');
+    this.route('poll-task');
+    this.route('register-disposable');
+    this.route('add-event-listener');
+    this.route('remove-event-listener');
+    this.route('mixins');
+    this.route('testing');
   });
   this.route('not-found', { path: '/*path' });
 });

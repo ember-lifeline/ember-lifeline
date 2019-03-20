@@ -2,8 +2,23 @@
 
 {{#docs-viewer as |viewer|}}
   {{#viewer.nav as |nav|}}
-    {{nav.item "Introduction" "docs.index"}}
-    {{nav.item "Usage" "docs.usage"}}
+    {{nav.section "Introduction"}}
+    {{nav.item "Quickstart" "docs.index"}}
+    {{nav.item "Why use ember-lifeline" "docs.why-use-ember-lifeline"}}
+
+    {{nav.section "Usage"}}
+    {{nav.item "How it works" "docs.how-it-works"}}
+    {{nav.item "runDisposables" "docs.run-disposables"}}
+    {{nav.item "runTask" "docs.run-task"}}
+    {{nav.item "scheduleTask" "docs.schedule-task"}}
+    {{nav.item "debounceTask" "docs.debounce-task"}}
+    {{nav.item "throttleTask" "docs.throttle-task"}}
+    {{nav.item "pollTask" "docs.poll-task"}}
+    {{nav.item "registerDisposable" "docs.register-disposable"}}
+    {{nav.item "addEventListener" "docs.add-event-listener"}}
+    {{nav.item "removeEventListener" "docs.remove-event-listener"}}
+    {{nav.item "mixins" "docs.mixins"}}
+    {{nav.item "testing" "docs.testing"}}
   {{/viewer.nav}}
 
   {{#viewer.main}}
