@@ -1,6 +1,6 @@
 # `scheduleTask`
 
-**tl;dr Call `scheduleTask(obj, queueName, fnOrMethodName, args*)` on any object to schedule work on the run loop.**
+**TL;DR - Call `scheduleTask(obj, queueName, fnOrMethodName, args*)` on any object to schedule work on the run loop.**
 
 Use `scheduleTask` where you might use `Ember.run.schedule`.
 
@@ -79,3 +79,5 @@ export default Component.extend({
 
 Scheduling work on the `afterRender` queue has well known, negative performance implications.
 Therefore, _`scheduleTask` is prohibited from scheduling work on the `afterRender` queue._
+
+When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

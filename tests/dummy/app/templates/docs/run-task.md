@@ -1,6 +1,6 @@
 # `runTask`
 
-**tl;dr Call `runTask(obj, fn, timeout)` on any object to schedule work.**
+**TL;DR - Call `runTask(obj, fn, timeout)` on any object to schedule work.**
 
 Use `runTask` where you might use `setTimeout`, `setInterval`, or
 `Ember.run.later`.
@@ -112,3 +112,5 @@ export default Component.extend({
 ```
 
 Once you've ensured your object calls `runDisposables` in its `destroy` method, there's no need to worry about cancellation or the `isDestroyed` status of the object itself.
+
+When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

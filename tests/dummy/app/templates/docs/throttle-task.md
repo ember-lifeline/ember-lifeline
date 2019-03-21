@@ -1,6 +1,6 @@
 # `throttleTask`
 
-**tl;dr Call `throttleTask(obj, methodName, args*, spacing, immediate)` on any object to throttle work.**
+**TL;DR - Call `throttleTask(obj, methodName, args*, spacing, immediate)` on any object to throttle work.**
 
 When a task is throttled, it is executed immediately. For the length of the
 timeout, additional throttle calls are ignored. Again, like debounce, throttle
@@ -61,3 +61,5 @@ export default Component.extend({
   },
 });
 ```
+
+When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

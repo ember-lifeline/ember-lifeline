@@ -1,6 +1,6 @@
 # `addEventListener`
 
-**tl;dr call `addEventListener(obj, element, eventName, fn, options)` on a
+**TL;DR - Call `addEventListener(obj, element, eventName, fn, options)` on a
 component or route to add a DOM event listener that will be automatically
 removed when the component is un-rendered.**
 
@@ -75,3 +75,5 @@ addEventListener(this, document.body, 'click', fn);
 // Attach to window
 addEventListener(this, window, 'scroll', fn);
 ```
+
+When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

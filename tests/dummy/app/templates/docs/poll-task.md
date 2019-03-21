@@ -1,6 +1,6 @@
 # `pollTask`
 
-**tl;dr call `pollTask(obj, fn [, token])` on any object to setup polling.**
+**TL;DR - Call `pollTask(obj, fn [, token])` on any object to setup polling.**
 
 Use `pollTask` where you might reach for recursive `runTask(obj, fn, ms)`, `Ember.run.later`, `setTimeout`, and/or `setInterval`.
 
@@ -180,3 +180,5 @@ module('updating-time', function(hooks) {
 ```
 
 Note: If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
+
+When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

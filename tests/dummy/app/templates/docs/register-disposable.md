@@ -1,6 +1,6 @@
 # `registerDisposable`
 
-**tl;dr call `registerDisposable(obj, fn)` on any object to register a function you want to run when the object is destroying.**
+**TL;DR - Call `registerDisposable(obj, fn)` on any object to register a function you want to run when the object is destroying.**
 
 Use `registerDisposable` as a replacement for explictly disposing of any externally managed resources. A disposable is a function that disposes of resources that are outside of Ember's lifecyle. This essentially means you can register a function that you want to run to automatically tear down any resources when the Ember object is destroyed.
 

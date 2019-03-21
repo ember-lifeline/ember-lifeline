@@ -1,6 +1,6 @@
 # `debounceTask`
 
-**tl;dr Call `debounceTask(obj, methodName, args*, wait, immediate)` on any object to debounce work.**
+**TL;DR - Call `debounceTask(obj, methodName, args*, wait, immediate)` on any object to debounce work.**
 
 Debouncing is a common async pattern often used to manage user input. When a
 task is debounced with a timeout of 100ms, it first schedules the work for
@@ -44,3 +44,5 @@ export default Component.extend({
 
 However if the component is destroyed, any pending debounce task will be
 cancelled.
+
+When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

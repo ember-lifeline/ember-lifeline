@@ -1,8 +1,8 @@
-import Component from '@ember/component';
 import layout from '../templates/components/run-task-demo';
+// BEGIN-SNIPPET run-task-demo.js
+import Component from '@ember/component';
 import { runTask, runDisposables } from 'ember-lifeline';
 
-// BEGIN-SNIPPET run-task-demo.js
 export default Component.extend({
   layout,
 
