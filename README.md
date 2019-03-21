@@ -72,8 +72,12 @@ export default Component.extend({
 
 For more information and examples, please visit the documentation site.
 
+## Contributing
+
+See the [Contributing](CONTRIBUTING.md) guide for details.
+
 ## Credit
 
-This addon was developed internally at Twitch, written originally by [@mixonic](https://github.com/mixonic) and [@rwjblue](https://github.com/rwjblue).
+This addon was developed internally at Twitch, written originally by [@mixonic](https://github.com/mixonic) and [@rwjblue](https://github.com/rwjblue). It's since been further developed and maintained by [scalvert](https://github.com/scalvert).
 
 The name `ember-lifeline` was suggested by [@nathanhammod](https://github.com/nathanhammond).
