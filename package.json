@@ -1,6 +1,6 @@
 {
   "name": "ember-lifeline",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Ember.js addon for lifecycle aware async tasks and DOM events.",
   "keywords": [
     "ember-addon"
