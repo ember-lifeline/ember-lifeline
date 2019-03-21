@@ -18,6 +18,8 @@ lifecycles, and the Ember runloop. These tools should provide a simple developer
 experience that allows engineers to focus on the business domain, and think less
 about the weird parts of working in a long-lived app.
 
+The [documentation website](https://ember-lifeline.github.io/ember-lifeline/) contains more examples and API information.
+
 ## Installation
 
     ember install ember-lifeline
@@ -70,7 +72,7 @@ export default Component.extend({
 });
 ```
 
-For more information and examples, please visit the documentation site.
+For more information and examples, please visit the [documentation website](https://ember-lifeline.github.io/ember-lifeline/).
 
 ## Contributing
 
