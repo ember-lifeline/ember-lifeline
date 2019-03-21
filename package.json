@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ember-lifeline/ember-lifeline.git"
+    "url": "https://github.com/ember-lifeline/ember-lifeline.git"
   },
   "scripts": {
     "build": "ember build",
