@@ -39,7 +39,7 @@ unfortunate. With `addEventListener` the above example can be re-written as:
 
 ```js
 import Component from '@ember/component';
-import { addEventListener } from 'ember-lifeline';
+import { addEventListener, runDisposables } from 'ember-lifeline';
 
 export default Component.extend({
   didInsertElement() {
