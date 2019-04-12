@@ -7,7 +7,7 @@ The API is divided into two main parts:
 - Run loop entanglement
 - DOM event handler entanglement
 
-Additionally, lifeline exposes a primative, `disposables`, that allows you to entangle functionality of your choosing.
+Additionally, lifeline exposes a primitive, `disposables`, that allows you to entangle functionality of your choosing.
 
 ## Mixins
 
