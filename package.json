@@ -47,7 +47,7 @@
     "@types/qunit": "^2.5.1",
     "@types/rsvp": "^4.0.1",
     "broccoli-asset-rev": "^3.0.0",
-    "documentation": "^9.1.1",
+    "documentation": "^10.0.0",
     "ember-cli": "~3.9.0",
     "ember-cli-addon-docs": "^0.6.8",
     "ember-cli-addon-docs-yuidoc": "^0.2.1",
