@@ -2,7 +2,7 @@ import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import { addEventListener, removeEventListener } from '../dom-event-listeners';
 import { runDisposables } from '../utils/disposable';
-import { IDestroyable } from '../types';
+import { IDestroyable, RunMethod } from '../types';
 
 type MaybeIsComponent = IDestroyable & {
   isComponent?: boolean;

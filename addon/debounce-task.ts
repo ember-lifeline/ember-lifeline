@@ -1,6 +1,6 @@
 import { assert } from '@ember/debug';
 import { cancel, debounce } from '@ember/runloop';
-import { IDestroyable, IMap } from './types';
+import { IDestroyable, IMap, EmberRunTimer } from './types';
 import { registerDisposable } from './utils/disposable';
 
 interface PendingDebounce {
