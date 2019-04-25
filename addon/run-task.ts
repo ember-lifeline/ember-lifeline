@@ -1,7 +1,14 @@
 import { deprecate } from '@ember/application/deprecations';
 import { assert } from '@ember/debug';
 import { cancel, later, schedule, throttle } from '@ember/runloop';
-import { IDestroyable, IMap, TaskOrName, Timer } from './types';
+import {
+  IDestroyable,
+  IMap,
+  TaskOrName,
+  Timer,
+  EmberRunTimer,
+  EmberRunQueues,
+} from './types';
 import { registerDisposable } from './utils/disposable';
 import getTask from './utils/get-task';
 
