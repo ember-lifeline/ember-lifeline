@@ -50,6 +50,28 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       testedOptions: { passive: false },
     },
   ].forEach(({ testName, testedOptions }) => {
+    test(`${testName} throws if callback is undefined`, async function(assert) {
+      assert.expect(1);
+
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<span class="foo"></span>`
+      );
+      await render(hbs`{{under-test}}`);
+      let component = this.componentInstance;
+      let childElement = find('.foo');
+
+      assert.throws(() => {
+        addEventListener(
+          component,
+          childElement,
+          'click',
+          undefined,
+          testedOptions
+        );
+      }, /Assertion Failed: Must provide a callback to run for the given event name/);
+    });
+
     test(`${testName} adds event listener to child element`, async function(assert) {
       assert.expect(4);
 
