@@ -386,6 +386,31 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       assert.equal(calls, 0, 'callback was not called');
     });
 
+    test(`${testName.replace(
+      'add',
+      'remove'
+    )} throws if callback is undefined`, async function(assert) {
+      assert.expect(1);
+
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<span class="foo"></span>`
+      );
+      await render(hbs`{{under-test}}`);
+      let component = this.componentInstance;
+      let element = find('.foo');
+
+      assert.throws(() => {
+        removeEventListener(
+          component,
+          element,
+          'click',
+          undefined,
+          testedOptions
+        );
+      }, /Assertion Failed: Must provide a callback to run for the given event name/);
+    });
+
     test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function(assert) {
       assert.expect(5);
 
