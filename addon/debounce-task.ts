@@ -94,7 +94,7 @@ export function debounceTask(
   let debouncedTask: Function;
 
   if (!pendingDebounces.has(name)) {
-    debouncedTask = (...args) => {
+    debouncedTask = (...args: any[]) => {
       pendingDebounces.delete(name);
       destroyable[name](...args);
     };

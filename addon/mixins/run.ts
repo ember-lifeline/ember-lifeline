@@ -1,8 +1,9 @@
 import Mixin from '@ember/object/mixin';
 import { runTask, scheduleTask, throttleTask, cancelTask } from '../run-task';
-import { pollTask, cancelPoll } from '../poll-task';
+import { pollTask, cancelPoll, Token } from '../poll-task';
 import { debounceTask, cancelDebounce } from '../debounce-task';
 import { runDisposables } from '../utils/disposable';
+import { TaskOrName, EmberRunQueues } from '../types';
 
 /**
  * ContextBoundTasksMixin provides a mechanism to run tasks (ala `setTimeout` or
@@ -43,7 +44,7 @@ export default Mixin.create({
    * @param { Number } [timeout=0] the time in the future to run the task
    * @public
    */
-  runTask(taskOrName, timeout = 0) {
+  runTask(taskOrName: TaskOrName, timeout = 0) {
     return runTask(this, taskOrName, timeout);
   },
 
@@ -73,7 +74,7 @@ export default Mixin.create({
    * @param { Number } cancelId the id returned from the runTask or scheduleTask call
    * @public
    */
-  cancelTask(cancelId) {
+  cancelTask(cancelId: number) {
     cancelTask(cancelId);
   },
 
@@ -106,7 +107,11 @@ export default Mixin.create({
    * @param { ...* } args arguments to pass to the task
    * @public
    */
-  scheduleTask(queueName, taskOrName, ...args) {
+  scheduleTask(
+    queueName: EmberRunQueues,
+    taskOrName: TaskOrName,
+    ...args: any[]
+  ) {
     return scheduleTask(this, queueName, taskOrName, ...args);
   },
 
@@ -138,7 +143,7 @@ export default Mixin.create({
    * @param { Number } wait the amount of time to wait before calling the method (in milliseconds)
    * @public
    */
-  debounceTask(name, ...debounceArgs) {
+  debounceTask(name: string, ...debounceArgs: any[]) {
     debounceTask(this, name, ...debounceArgs);
   },
 
@@ -167,10 +172,10 @@ export default Mixin.create({
    * ```
    *
    * @method cancelDebounce
-   * @param { String } methodName the name of the debounced method to cancel
+   * @param { String } name the name of the debounced method to cancel
    * @public
    */
-  cancelDebounce(name) {
+  cancelDebounce(name: string) {
     cancelDebounce(this, name);
   },
 
@@ -200,7 +205,7 @@ export default Mixin.create({
    * @param { Number } [timeout] the time in the future to run the task
    * @public
    */
-  throttleTask(name, timeout) {
+  throttleTask(name: string, timeout: number) {
     return throttleTask(this, name, timeout);
   },
 
@@ -232,7 +237,7 @@ export default Mixin.create({
    * @param { Number } cancelId the id returned from the throttleTask call
    * @public
    */
-  cancelThrottle(cancelId) {
+  cancelThrottle(cancelId: number) {
     cancelTask(cancelId);
   },
 
@@ -294,9 +299,10 @@ export default Mixin.create({
    *                                         specifying a property representing the task,
    *                                         which is run at the provided time specified
    *                                         by timeout
+   * @param { Token } token the token used to uniquely identify the pollTask
    * @public
    */
-  pollTask(taskOrName, token) {
+  pollTask(taskOrName: TaskOrName, token: Token) {
     return pollTask(this, taskOrName, token);
   },
 
@@ -332,7 +338,7 @@ export default Mixin.create({
    * @param { String } token the token for the pollTask to be cleared
    * @public
    */
-  cancelPoll(token) {
+  cancelPoll(token: Token) {
     cancelPoll(token);
   },
 

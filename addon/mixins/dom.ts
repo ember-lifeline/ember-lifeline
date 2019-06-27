@@ -9,10 +9,11 @@ type MaybeIsComponent = IDestroyable & {
   tagName?: string;
   _currentState?: any;
   _states?: any;
-  element?: HTMLElement;
+  element?: Element;
 };
 
 type TargetOrString = EventTarget | string;
+type ElementOrTarget = Element | EventTarget;
 
 /**
  * ContextBoundEventListenersMixin provides a mechanism to attach event listeners
@@ -87,7 +88,7 @@ export default Mixin.create({
       this.isComponent || typeof target !== 'string'
     );
 
-    let element: HTMLElement;
+    let element: ElementOrTarget;
 
     // If no element is provided, we assume we're adding the event listener to the component's element. This
     // addresses use cases where we want to bind events like `scroll` to the component's root element.
@@ -95,9 +96,9 @@ export default Mixin.create({
       options = callback;
       callback = eventName;
       eventName = <string>target;
-      element = <HTMLElement>this.element;
+      element = this.element!;
     } else {
-      element = findElement(<HTMLElement>this.element, target);
+      element = findElement(this.element!, target);
     }
 
     addEventListener(this, element, eventName, callback, options);
@@ -117,16 +118,16 @@ export default Mixin.create({
     callback: RunMethod<MaybeIsComponent>,
     options?: Object
   ): void {
-    let element: HTMLElement;
+    let element: ElementOrTarget;
 
     // If no element is provided, we assume we're adding the event listener to the component's element. This
     // addresses use cases where we want to bind events like `scroll` to the component's root element.
     if (this.isComponent && typeof eventName === 'function') {
       callback = eventName;
       eventName = <string>target;
-      element = <HTMLElement>this.element;
+      element = this.element!;
     } else {
-      element = findElement(<HTMLElement>this.element, target);
+      element = findElement(this.element!, target);
     }
 
     removeEventListener(this, element, eventName, callback, options);
@@ -140,22 +141,30 @@ export default Mixin.create({
 });
 
 function findElement(
-  contextElement: HTMLElement,
+  contextElement: Element,
   selector: TargetOrString
-): HTMLElement {
+): ElementOrTarget {
   let selectorType: string = typeof selector;
-  let element;
+  let element!: ElementOrTarget;
 
   if (selectorType === 'string') {
-    element = contextElement.querySelector(<string>selector);
-  } else if ((selector as HTMLElement).nodeType || selector instanceof Window) {
+    let maybeElement: EventTarget | null = contextElement.querySelector(<
+      string
+    >selector);
+
+    if (maybeElement === null) {
+      throw new Error(
+        `Called addEventListener with selector not found in DOM: ${selector}`
+      );
+    }
+
+    element = maybeElement;
+  } else if (
+    (selector instanceof Element && selector.nodeType) ||
+    selector instanceof Window
+  ) {
     element = selector;
   }
 
-  assert(
-    `Called addEventListener with selector not found in DOM: ${selector}`,
-    !!element
-  );
-
-  return element;
+  return element!;
 }
