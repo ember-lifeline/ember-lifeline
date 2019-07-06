@@ -132,7 +132,7 @@ export function pollTask(
   taskOrName: TaskOrName,
   token: Token = getNextToken()
 ): Token {
-  let next;
+  let next: Function;
   let task = getTask(destroyable, taskOrName, 'pollTask');
   let tick = () => task.call(destroyable, next);
 
@@ -200,8 +200,11 @@ export function pollTask(
  * @param { Token } token the Token for the pollTask to be cleared, either a string or number
  * @public
  */
-export function cancelPoll(token: Token);
-export function cancelPoll(destroyable: IDestroyable, token: Token);
+export function cancelPoll(token: Token): void | undefined;
+export function cancelPoll(
+  destroyable: IDestroyable,
+  token: Token
+): void | undefined;
 export function cancelPoll(
   destroyable: IDestroyable | Token,
   token?: Token

@@ -8,6 +8,7 @@ export interface IMap<K extends object, V> {
 export interface IDestroyable {
   isDestroyed: boolean;
   isDestroying: boolean;
+  [key: string]: any;
 }
 
 export type TaskOrName = Function | string;

@@ -272,8 +272,8 @@ export function throttleTask(
  * @param { Number } cancelId the id returned from the *Task call
  * @public
  */
-export function cancelTask(cancelId: Timer);
-export function cancelTask(destroyable: IDestroyable, cancelId: Timer);
+export function cancelTask(cancelId: Timer): void | undefined;
+export function cancelTask(destroyable: IDestroyable, cancelId: Timer): void | undefined;
 export function cancelTask(
   destroyable: IDestroyable | Timer,
   cancelId?: any
