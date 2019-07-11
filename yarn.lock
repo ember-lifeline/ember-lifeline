@@ -5055,9 +5055,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation@^12.0.0:
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/documentation/-/documentation-12.0.0.tgz#0f4ac3a3922259745d717c6c5ca7bb1d5415b374"
-  integrity sha512-aaoAkNH1/hsPkXYbexgqZ4IjiPLLD8foaVO0fPtsYRho1dqSdJbQVnzWmaTbpBR1TnQ00nCliqCsSoOFLmYHfQ==
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/documentation/-/documentation-12.0.1.tgz#4abe263d5415f3ed7ee737829921ef6159e6a335"
+  integrity sha512-+kmdw8ZOZr5QSuX8ErTC9Q9CzQ/fGhSjeRx/W+bHwZamZbJKaEuzylt+VCH0fCIn1/3Ep3K5RdUxIsgrOkQXfw==
   dependencies:
     "@babel/core" "^7.1.2"
     "@babel/generator" "^7.1.3"
