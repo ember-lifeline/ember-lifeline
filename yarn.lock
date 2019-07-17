@@ -1884,7 +1884,7 @@ ansi-regex@^4.1.0:
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.1.0.tgz#8b9f8f08cf1acb843756a839ca8c7e3168c51997"
   integrity sha512-1apePfXM1UOSqw0o9IiFAovVz9M5S1Dg+4TrDwfMewQ6p/rmMueb7tWZjQ1rx4Loy1ArBggoqGpfqqdI4rondg==
 
-ansi-styles@^2.0.1, ansi-styles@^2.2.1:
+ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
   integrity sha1-tDLdM1i2NM914eRmQ2gkBTPB3b4=
@@ -5005,11 +5005,6 @@ detective@^4.0.0:
     acorn "^5.2.1"
     defined "^1.0.0"
 
-diff@^1.3.2:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/diff/-/diff-1.4.0.tgz#7f28d2eb9ee7b15a97efd89ce63dcfdaa3ccbabf"
-  integrity sha1-fyjS657nsVqX79ic5j3P2qPMur8=
-
 diff@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.1.tgz#0c667cb467ebbb5cea7f14f135cc2dba7780a8ff"
@@ -5030,14 +5025,6 @@ dir-glob@^2.2.1:
   integrity sha512-f9LBi5QWzIW3I6e//uxZoLBlUt9kcp66qo0sSCxL6YZKc75R1c4MFCoe/LaZiBGmgujvQdxc5Bn3QhfyvK5Hsw==
   dependencies:
     path-type "^3.0.0"
-
-disparity@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/disparity/-/disparity-2.0.0.tgz#57ddacb47324ae5f58d2cc0da886db4ce9eeb718"
-  integrity sha1-V92stHMkrl9Y0swNqIbbTOnutxg=
-  dependencies:
-    ansi-styles "^2.0.1"
-    diff "^1.3.2"
 
 doctrine-temporary-fork@2.1.0:
   version "2.1.0"
@@ -5062,9 +5049,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation@^12.0.0:
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/documentation/-/documentation-12.0.1.tgz#4abe263d5415f3ed7ee737829921ef6159e6a335"
-  integrity sha512-+kmdw8ZOZr5QSuX8ErTC9Q9CzQ/fGhSjeRx/W+bHwZamZbJKaEuzylt+VCH0fCIn1/3Ep3K5RdUxIsgrOkQXfw==
+  version "12.0.2"
+  resolved "https://registry.yarnpkg.com/documentation/-/documentation-12.0.2.tgz#855604b37cc7da0184fa5eb71a1799d95d53edc6"
+  integrity sha512-Sjh3Mj+BmKwAYt3Y4xrFW59BwrOHqj12lKRh3TOSjU8GedpR1WL1i7v1r1BUxN9Ig997knUabJ9oP+H6I4sDAg==
   dependencies:
     "@babel/core" "^7.1.2"
     "@babel/generator" "^7.1.3"
@@ -5096,7 +5083,7 @@ documentation@^12.0.0:
     chalk "^2.3.0"
     chokidar "^2.0.4"
     concat-stream "^1.6.0"
-    disparity "^2.0.0"
+    diff "^4.0.1"
     doctrine-temporary-fork "2.1.0"
     get-port "^4.0.0"
     git-url-parse "^10.0.1"
