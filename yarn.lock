@@ -6175,14 +6175,13 @@ ember-router-generator@^1.2.3:
     recast "^0.11.3"
 
 ember-router-scroll@^1.0.0, ember-router-scroll@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/ember-router-scroll/-/ember-router-scroll-1.1.0.tgz#17f7ead22a4e9f43a8956d942ca37b5e507bada5"
-  integrity sha512-1eFbmsfY/DN95/3zhrMZSTGFavwtgWf7HrfM7SFipu/+Dn7w8Y5dWtqbk/hqE8FTDMiklFR52VcjTHEffRu0sw==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/ember-router-scroll/-/ember-router-scroll-1.2.0.tgz#9985cc82dfc52eebadbd4ed8c7b1755ff992dc0a"
+  integrity sha512-pNZZdBld/xjGX5tRPGxtgv90m9L6wiYojjsaXlJjqDJSW9vDbTzR7Js9L8u36l3KMPmOKy3BknYNX0ldb2nYhQ==
   dependencies:
     ember-app-scheduler "^1.0.5"
     ember-cli-babel "^7.1.2"
     ember-compatibility-helpers "^1.1.2"
-    ember-getowner-polyfill "^2.2.0"
 
 ember-router-service-polyfill@^1.0.2:
   version "1.0.3"
