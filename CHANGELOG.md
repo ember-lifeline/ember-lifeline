@@ -1,4 +1,31 @@
 
+4.1.5 / 2019-6-19
+==================
+
+  * Refining styling of documentation
+  * Added tests to ensure undefined callbacks are thrown when add/remove DOM events
+
+4.1.4 / 2019-4-25
+==================
+
+  * Further exposing types to consumers
+
+4.1.3 / 2019-3-22
+==================
+
+  * Fix bug in documentation - page title correction
+
+4.1.2 / 2019-3-21
+==================
+
+  * Converts our documentation to use ember-cli-addon-docs (#387)
+  * Fixing setupLifelineValidation import in readme (#382)
+
+4.1.1 / 2019-03-12
+==================
+
+  * Fixing assertion count error for setupLifelineValidation (#377)
+
 4.1.0 / 2019-03-08
 ==================
 
