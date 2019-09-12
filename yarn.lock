@@ -6321,9 +6321,9 @@ ember-router-generator@^2.0.0:
     recast "^0.18.1"
 
 ember-router-scroll@^1.1.0, ember-router-scroll@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/ember-router-scroll/-/ember-router-scroll-1.2.1.tgz#47c2293d4cb32d47ea7c103dc6af597af6eee4a7"
-  integrity sha512-QgZ7wzCLuV52ctudjcxiNLScE2uqv8z+8AX1RVfWGcMqoSYv+FqtlvEMx0zJyXwEpQH2Oy1yDABMKeFiFP4VXg==
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/ember-router-scroll/-/ember-router-scroll-1.3.0.tgz#1f29be3ce865e7074b0b0f44c22836dd3721c749"
+  integrity sha512-ApnpZ9QJo3AqRw1pUfFRiFgsBvzEaqKSvnvE+BO8AJ8MR6aec4gy0Jc4ZYg92Rec9o6tzLq9sRIaG4aVtuCvDw==
   dependencies:
     ember-app-scheduler "^1.0.5"
     ember-cli-babel "^7.1.2"
