@@ -5,28 +5,38 @@
   "keywords": [
     "ember-addon"
   ],
-  "license": "MIT",
-  "contributors": [
-    "Robert Jackson <me@rwjblue.com>",
-    "Steve Calvert <steve.calvert@gmail.com>"
-  ],
-  "directories": {
-    "test": "tests"
+  "homepage": "https://github.com/ember-lifeline/ember-lifeline#readme",
+  "bugs": {
+    "url": "https://github.com/ember-lifeline/ember-lifeline/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ember-lifeline/ember-lifeline.git"
   },
+  "license": "MIT",
+  "contributors": [
+    "Robert Jackson <me@rwjblue.com>",
+    "Steve Calvert <steve.calvert@gmail.com>"
+  ],
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
     "build": "ember build",
+    "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --document-exported \"addon-test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint .",
-    "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --document-exported \"addon-test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
+    "prepublishOnly": "ember ts:precompile",
+    "postpublish": "ember ts:clean",
     "start": "ember serve",
     "test": "ember test",
-    "test:all": "ember try:each",
-    "prepublishOnly": "ember ts:precompile",
-    "postpublish": "ember ts:clean"
+    "test:all": "ember try:each"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "package.json,{app,addon,config,tests}/**/*.{js,json}": [
@@ -86,30 +96,38 @@
     "lint-staged": "^9.0.0",
     "loader.js": "^4.7.0",
     "prettier": "^1.10.2",
+    "release-it": "^12.2.1",
+    "release-it-lerna-changelog": "^1.0.3",
     "typescript": "^3.0.1"
   },
   "resolutions": {
-    "@types/ember__object": "~3.0.6",
     "@types/ember__component": "~3.0.4",
-    "@types/ember__routing": "~3.0.6",
     "@types/ember__error": "~3.0.2",
+    "@types/ember__object": "~3.0.6",
+    "@types/ember__routing": "~3.0.6",
     "@types/jquery": "~3.3.22",
     "favicons": "5.3.0"
   },
   "engines": {
     "node": ">= 10.*"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "ember-addon": {
     "configPath": "tests/dummy/config"
   },
-  "main": "index.js",
-  "bugs": {
-    "url": "https://github.com/ember-lifeline/ember-lifeline/issues"
-  },
-  "homepage": "https://github.com/ember-lifeline/ember-lifeline#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "CHANGELOG.md"
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true
     }
   }
 }
