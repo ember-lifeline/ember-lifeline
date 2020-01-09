@@ -5396,9 +5396,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 documentation@^12.0.0:
-  version "12.1.3"
-  resolved "https://registry.yarnpkg.com/documentation/-/documentation-12.1.3.tgz#b4434e813c9724d9216685d187742b029c9efa7f"
-  integrity sha512-OjXjmSxY6EGRR1YRxrnOLcWZhMsGtSplP2vwxM70ZEKh+uDvXDIGDG3rdIuPq0/lxgKhpEacctXR0PVCxOzv5A==
+  version "12.1.4"
+  resolved "https://registry.yarnpkg.com/documentation/-/documentation-12.1.4.tgz#ec0aafbd9d3879a44189d2d4434953ae3a258598"
+  integrity sha512-GGS635tR8bBR/m/AuUZ6MCZmFXZA25Wk9S/TTHNe+EMkTCoDdlcft56dZCjF7voCmfnMqKRo8sXAukf/ciA5IA==
   dependencies:
     "@babel/core" "^7.1.2"
     "@babel/generator" "^7.1.3"
@@ -8561,17 +8561,12 @@ heimdalljs@^0.3.0:
   dependencies:
     rsvp "~3.2.1"
 
-highlight.js@^9.15.10:
+highlight.js@^9.15.10, highlight.js@^9.15.5:
   version "9.17.1"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.17.1.tgz#14a4eded23fd314b05886758bb906e39dd627f9a"
   integrity sha512-TA2/doAur5Ol8+iM3Ov7qy3jYcr/QiJ2eDTdRF4dfbjG7AaaB99J5G+zSl11ljbl6cIcahgPY6SKb3sC3EJ0fw==
   dependencies:
     handlebars "^4.5.3"
-
-highlight.js@^9.15.5:
-  version "9.15.6"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.15.6.tgz#72d4d8d779ec066af9a17cb14360c3def0aa57c4"
-  integrity sha512-zozTAWM1D6sozHo8kqhfYgsac+B+q0PmsjXeyDrYIHHcBN0zTVT66+s2GW1GZv7DbyaROdLXKdabwS/WqPyIdQ==
 
 himalaya@1.1.0:
   version "1.1.0"
