@@ -1,3 +1,17 @@
+## v5.0.0 (2020-01-09)
+
+#### :boom: Breaking Change
+* [#621](https://github.com/ember-lifeline/ember-lifeline/pull/621) Dropping support for Node 8 ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#622](https://github.com/ember-lifeline/ember-lifeline/pull/622) chore(release): Update release-it changelog configuration ([@scalvert](https://github.com/scalvert))
+* [#620](https://github.com/ember-lifeline/ember-lifeline/pull/620) Adding release-it configuration ([@scalvert](https://github.com/scalvert))
+* [#470](https://github.com/ember-lifeline/ember-lifeline/pull/470) task(types): Turning noImplicitAny on to flush out remaining type inconsistencies ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 2
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
 
 4.1.5 / 2019-6-19
 ==================
