@@ -124,7 +124,8 @@
       }
     },
     "git": {
-      "tagName": "v${version}"
+      "tagName": "v${version}",
+      "changelog": "git log --pretty=format:\"* %s (%h)\" --no-merges --perl-regexp --author=\"^((?!dependabot-preview).*)$\" ${latestTag}...HEAD"
     },
     "github": {
       "release": true
