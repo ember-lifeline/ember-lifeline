@@ -1,6 +1,6 @@
 # ember-lifeline
 
-[![Build Status](https://travis-ci.org/ember-lifeline/ember-lifeline.svg?branch=master)](https://travis-ci.org/ember-lifeline/ember-lifeline)
+![CI Build](https://github.com/ember-lifeline/ember-lifeline/workflows/CI%20Build/badge.svg)
 [![Ember Observer Score](https://emberobserver.com/badges/ember-lifeline.svg)](https://emberobserver.com/addons/ember-lifeline)
 [![npm version](https://badge.fury.io/js/ember-lifeline.svg)](https://badge.fury.io/js/ember-lifeline)
 [![Monthly Downloads from NPM](https://img.shields.io/npm/dm/ember-lifeline.svg?style=flat-square)](https://www.npmjs.com/package/ember-lifeline)
