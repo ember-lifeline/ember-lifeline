@@ -7410,9 +7410,9 @@ eslint-module-utils@^2.4.0:
     pkg-dir "^2.0.0"
 
 eslint-plugin-ember-suave@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-ember-suave/-/eslint-plugin-ember-suave-2.0.0.tgz#6aa63219a148477b099746ed0c066a96fccff725"
-  integrity sha512-r5iMXiP2hMDpUvGtXHs0vwNQpLqibBefIJen194GfS2tIp8hY5erHLZPWq4D9RPcsdOtQ2KK7qVQHLv53Z3Uqw==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-ember-suave/-/eslint-plugin-ember-suave-2.0.1.tgz#825fa84696c3218d8f48b6cf3b5a12d70fc5b3cd"
+  integrity sha512-hjqwBfH0ELdilMKXvBERoZhAvwFSiGD0Bnkit8q/Bm6VWCOT/iIHkqSE9dsmKPgLv88wie76EohoEjebtspUlg==
   dependencies:
     eslint-plugin-ember "^6.4.1"
     eslint-plugin-import "^2.17.2"
