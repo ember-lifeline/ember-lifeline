@@ -7260,22 +7260,22 @@ ember-svg-jar@^2.2.3:
     path-posix "^1.0.0"
 
 ember-template-lint@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ember-template-lint/-/ember-template-lint-2.0.1.tgz#80f72e8964526819172c95ff597edd1a4cfeb0d8"
-  integrity sha512-RipRqS3vIXHJvAIQmWCV9j/ApoWBopfvY1m5RNg2z3KU1IV/a48plDyF9L8yY8qqDfRy5SAP4J/AbGuggXN6WQ==
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/ember-template-lint/-/ember-template-lint-2.1.0.tgz#b3d94c469884843bc7ba822df49e306eefd0a8e3"
+  integrity sha512-zljFYC1Vi0pMP0ijZ6cf55vJPLVgM7A7Uw5osfwDOckCLIbz2N2NnPuSU43h540VFt5ZE64R8DCu003wbN012w==
   dependencies:
     chalk "^3.0.0"
-    ember-template-recast "^4.1.0"
+    ember-template-recast "^4.1.1"
     find-up "^4.1.0"
     globby "^11.0.0"
     micromatch "^4.0.2"
     resolve "^1.15.1"
     strip-bom "^4.0.0"
 
-ember-template-recast@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/ember-template-recast/-/ember-template-recast-4.1.0.tgz#7d72fc40c56d7d0f3fa34b50a67608ff7e595faa"
-  integrity sha512-BSusv6T9N+toxTzzTQgRpKn4OFce8AFsuJ6tf6N9/YSAAJ63nSBKtXkAoFKSHBET6DgzFEjSe3F0ChCDtYMHWg==
+ember-template-recast@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/ember-template-recast/-/ember-template-recast-4.1.1.tgz#25dca7a460a3c9a4777945efd56ecdfbc2c40739"
+  integrity sha512-NbSlDestTX3GdGgcC1ohgmvJyhTrOQdDrs7XD3s6Lmr71LVfm9lhFovC8YbAII29+FA0S6GKNXs6POQ/soUDkA==
   dependencies:
     "@glimmer/syntax" "^0.47.9"
     async-promise-queue "^1.0.5"
