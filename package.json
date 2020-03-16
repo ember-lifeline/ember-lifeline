@@ -59,7 +59,7 @@
     "@types/rsvp": "^4.0.1",
     "broccoli-asset-rev": "^3.0.0",
     "documentation": "^12.0.0",
-    "ember-cli": "~3.16.0",
+    "ember-cli": "~3.17.0",
     "ember-cli-addon-docs": "^0.6.16",
     "ember-cli-addon-docs-yuidoc": "0.2.1",
     "ember-cli-dependency-checker": "^3.1.0",
