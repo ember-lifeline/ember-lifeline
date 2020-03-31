@@ -1711,10 +1711,10 @@
   resolved "https://registry.yarnpkg.com/@octokit/plugin-request-log/-/plugin-request-log-1.0.0.tgz#eef87a431300f6148c39a7f75f8cfeb218b2547e"
   integrity sha512-ywoxP68aOT3zHCLgWZgwUJatiENeHE7xJzYjfz8WI0goynp96wETBF+d95b8g/uL4QmS6owPVlaxiz3wyMAzcw==
 
-"@octokit/plugin-rest-endpoint-methods@^3.3.0":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-3.3.1.tgz#279920ee391bd7e944ae4aa7fa435ba0c51fbb6a"
-  integrity sha512-iLAXPLWBZaP6ocy1GFfZUCzyN4cwg3y2JE6yZjQo0zLE3UaewC3TI68/TnS4ilyhXDxh81Jr1qwPN1AqTp8t3w==
+"@octokit/plugin-rest-endpoint-methods@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-3.4.0.tgz#27b1dac7fba4d0d6e488967919b6a5bd3595ffbc"
+  integrity sha512-Tvctk0u5SVrSLAzi8SLo0KrLSBl5biAHBgWy3L65vsbO/2fjzr62HVkoDPyr+WRT+eHhhqpKAERF3dQWOIUOvQ==
   dependencies:
     "@octokit/types" "^2.0.1"
     deprecation "^2.3.1"
@@ -1742,15 +1742,15 @@
     once "^1.4.0"
     universal-user-agent "^5.0.0"
 
-"@octokit/rest@17.1.2":
-  version "17.1.2"
-  resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-17.1.2.tgz#f718ce8b0cf0f43d3b7ecc6241e087d7ca7d5eb0"
-  integrity sha512-Dm24iVakcVQwl1mrANYdaf1lvSeMwN9SxnEEh+EZQCfx5R8BE8E8w5Oe+LaKexbYZTv+MHqE7Af4LrSHSo9JgQ==
+"@octokit/rest@17.1.4":
+  version "17.1.4"
+  resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-17.1.4.tgz#b03eb97635de62b48428f998ad1cb9244edd2d10"
+  integrity sha512-LGghhepxoXyvi7ew0OdedrlwXQog8gvTbcdXoQ6RDKnzoYW2rBpcqeWC4fTuPUp9K0UEykcMix8kFnQ5b+64JQ==
   dependencies:
     "@octokit/core" "^2.4.3"
     "@octokit/plugin-paginate-rest" "^2.0.0"
     "@octokit/plugin-request-log" "^1.0.0"
-    "@octokit/plugin-rest-endpoint-methods" "^3.3.0"
+    "@octokit/plugin-rest-endpoint-methods" "3.4.0"
 
 "@octokit/types@^2.0.0":
   version "2.0.2"
@@ -14074,22 +14074,22 @@ regjsparser@^0.6.0:
     jsesc "~0.5.0"
 
 release-it-lerna-changelog@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/release-it-lerna-changelog/-/release-it-lerna-changelog-2.1.1.tgz#491848b59835190850f8becb7c7b1810fbced276"
-  integrity sha512-SVXfFsAXHgWyjVB8qdpnCEKgBe8XI+QlVflCnmswdjK3yCnswD817qO8M3WIdiCJ+f7neItRK6IXmJlH5Ax+bw==
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/release-it-lerna-changelog/-/release-it-lerna-changelog-2.1.2.tgz#7173be48422d873c5160ce5a3231863fcd8ef513"
+  integrity sha512-JxOVXjBcdsuwW6r2EgWhjF3ta3Fu3lxOt8yw9VdnEJjM6uOD7S0WMR4L5B3zu9Z+1UXF1VqOasUi0mMliU6fmw==
   dependencies:
     execa "^4.0.0"
     lerna-changelog "^1.0.1"
-    release-it "^13.3.0"
+    release-it "^13.3.2"
     tmp "^0.1.0"
 
-release-it@^13.0.1, release-it@^13.3.0:
-  version "13.3.2"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-13.3.2.tgz#18c69e709f541b654e1523a7fe3d972aac26968c"
-  integrity sha512-ktGgXpOqYpvwlL07IeIbYYFom4cIlYF+xHvDwV5HsxcLSBpFtCeGcTPhBl4ZgP4rSwiioQiDOdLJBku+1Lm3MQ==
+release-it@^13.0.1, release-it@^13.3.2:
+  version "13.5.1"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-13.5.1.tgz#459b9e624c4b03391cdaab78e84cd14e373700c8"
+  integrity sha512-20t+aKKZxE2Wwh6Vi9jF3DINNJSHHuDxSkrCYvIsbAbj9Aj2An1lsRKAsCMcOio4go1TxOAWd3+iVt7KC6F+wg==
   dependencies:
     "@iarna/toml" "2.2.3"
-    "@octokit/rest" "17.1.2"
+    "@octokit/rest" "17.1.4"
     async-retry "1.3.1"
     chalk "3.0.0"
     cosmiconfig "6.0.0"
@@ -14118,7 +14118,7 @@ release-it@^13.0.1, release-it@^13.3.0:
     uuid "7.0.2"
     window-size "1.1.1"
     yaml "1.8.3"
-    yargs-parser "18.1.1"
+    yargs-parser "18.1.2"
 
 remark-html@^8.0.0:
   version "8.0.0"
@@ -17117,10 +17117,10 @@ yaml@1.8.3, yaml@^1.7.2:
   dependencies:
     "@babel/runtime" "^7.8.7"
 
-yargs-parser@18.1.1, yargs-parser@^18.1.1:
-  version "18.1.1"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.1.tgz#bf7407b915427fc760fcbbccc6c82b4f0ffcbd37"
-  integrity sha512-KRHEsOM16IX7XuLnMOqImcPNbLVXMNHYAoFc3BKR8Ortl5gzDbtXvvEoGx9imk5E+X1VeNKNlcHr8B8vi+7ipA==
+yargs-parser@18.1.2:
+  version "18.1.2"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.2.tgz#2f482bea2136dbde0861683abea7756d30b504f1"
+  integrity sha512-hlIPNR3IzC1YuL1c2UwwDKpXlNFBqD1Fswwh1khz5+d8Cq/8yc/Mn0i+rQXduu8hcrFKvO7Eryk+09NecTQAAQ==
   dependencies:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
@@ -17137,6 +17137,14 @@ yargs-parser@^13.1.1:
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.1.tgz#d26058532aa06d365fe091f6a1fc06b2f7e5eca0"
   integrity sha512-oVAVsHz6uFrg3XQheFII8ESO2ssAf9luWuAd6Wexsu4F3OtIW0o8IribPXYrD4WC24LWtPrJlGy87y5udK+dxQ==
+  dependencies:
+    camelcase "^5.0.0"
+    decamelize "^1.2.0"
+
+yargs-parser@^18.1.1:
+  version "18.1.1"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.1.tgz#bf7407b915427fc760fcbbccc6c82b4f0ffcbd37"
+  integrity sha512-KRHEsOM16IX7XuLnMOqImcPNbLVXMNHYAoFc3BKR8Ortl5gzDbtXvvEoGx9imk5E+X1VeNKNlcHr8B8vi+7ipA==
   dependencies:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
