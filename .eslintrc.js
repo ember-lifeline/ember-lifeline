@@ -50,6 +50,7 @@ module.exports = {
       extends: 'plugin:node/recommended',
     },
     {
+      // typescript files
       files: ['**/*.ts'],
       parser: '@typescript-eslint/parser',
       plugins: ['@typescript-eslint'],
@@ -58,5 +59,12 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': 'error',
       },
     },
+    {
+      // mixins
+      files: ['addon/mixins/*.[jt]s', 'tests/unit/mixins/*.js'],
+      rules: {
+        'ember/no-new-mixins': 'off',
+      }
+    }
   ],
 };
