@@ -1,3 +1,21 @@
+## v5.1.0 (2020-05-05)
+
+#### :rocket: Enhancement
+* [#652](https://github.com/ember-lifeline/ember-lifeline/pull/652) chore(deps): bump ember-cli-typescript from 2.0.2 to 3.1.3 ([@dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
+#### :house: Internal
+* [#774](https://github.com/ember-lifeline/ember-lifeline/pull/774) Update minimum versions of our devDependencies ([@rwjblue](https://github.com/rwjblue))
+* [#773](https://github.com/ember-lifeline/ember-lifeline/pull/773) Update @types/* devDependencies. ([@rwjblue](https://github.com/rwjblue))
+* [#772](https://github.com/ember-lifeline/ember-lifeline/pull/772) Update release-it setup. ([@rwjblue](https://github.com/rwjblue))
+* [#770](https://github.com/ember-lifeline/ember-lifeline/pull/770) Fix linting configuration. ([@rwjblue](https://github.com/rwjblue))
+* [#623](https://github.com/ember-lifeline/ember-lifeline/pull/623) Converting to github actions ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 3
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+- [@dependabot-preview[bot]](https://github.com/apps/dependabot-preview)
+
+
 ## v5.0.0 (2020-01-09)
 
 #### :boom: Breaking Change
