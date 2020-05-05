@@ -96,8 +96,8 @@
     "lint-staged": "^10.0.0",
     "loader.js": "^4.7.0",
     "prettier": "^2.0.5",
-    "release-it": "^13.0.1",
-    "release-it-lerna-changelog": "^2.0.0",
+    "release-it": "^13.5.8",
+    "release-it-lerna-changelog": "^2.3.0",
     "typescript": "~3.8.3"
   },
   "resolutions": {
@@ -120,15 +120,16 @@
   "release-it": {
     "plugins": {
       "release-it-lerna-changelog": {
-        "infile": "CHANGELOG.md"
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
       }
     },
     "git": {
-      "tagName": "v${version}",
-      "changelog": "git log --pretty=format:\"* %s (%h)\" --no-merges --perl-regexp --author=\"^((?!dependabot-preview).*)$\" ${latestTag}...HEAD"
+      "tagName": "v${version}"
     },
     "github": {
-      "release": true
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
     }
   }
 }
