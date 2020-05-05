@@ -235,8 +235,8 @@ function getPollersDisposable(
   destroyable: IDestroyable,
   pollers: Set<Token>
 ): Function {
-  return function() {
-    pollers.forEach(token => {
+  return function () {
+    pollers.forEach((token) => {
       cancelPoll(destroyable, token);
     });
   };

@@ -197,7 +197,7 @@ function assertArguments(
 }
 
 function getEventListenersDisposable(listeners: Array<Object>): Function {
-  return function() {
+  return function () {
     if (listeners !== undefined) {
       /* Drop non-passive event listeners */
       for (let i = 0; i < listeners.length; i += LISTENER_ITEM_LENGTH) {

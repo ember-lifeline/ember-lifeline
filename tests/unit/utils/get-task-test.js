@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
 import getTask from 'ember-lifeline/utils/get-task';
 
-module('ember-lifeline/utils/get-task', function() {
-  test('getTask returns passed in task function as task', function(assert) {
+module('ember-lifeline/utils/get-task', function () {
+  test('getTask returns passed in task function as task', function (assert) {
     assert.expect(1);
 
     let task = () => {};
@@ -10,7 +10,7 @@ module('ember-lifeline/utils/get-task', function() {
     assert.equal(task, getTask(null, task, 'foo'), 'tasks are equal');
   });
 
-  test('getTask returns passed in task from the instance', function(assert) {
+  test('getTask returns passed in task from the instance', function (assert) {
     assert.expect(1);
 
     let instance = { fooTask: () => {} };
@@ -22,7 +22,7 @@ module('ember-lifeline/utils/get-task', function() {
     );
   });
 
-  test('getTask throws when task not found', function(assert) {
+  test('getTask throws when task not found', function (assert) {
     assert.expect(1);
 
     assert.throws(() => {

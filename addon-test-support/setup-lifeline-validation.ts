@@ -7,11 +7,11 @@ const FAILED_ASSERTION_MESSAGE =
 
 export default function setupLifelineValidation(hooks: NestedHooks) {
   let registeredDisposables = new Map();
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     _setRegisteredDisposables(registeredDisposables);
   });
 
-  hooks.afterEach(function(assert: Assert) {
+  hooks.afterEach(function (assert: Assert) {
     let test = QUnit.config.current;
 
     try {

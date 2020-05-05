@@ -61,7 +61,7 @@ module.exports = {
       files: ['addon/mixins/*.[jt]s', 'tests/unit/mixins/*.js'],
       rules: {
         'ember/no-new-mixins': 'off',
-      }
-    }
+      },
+    },
   ],
 };

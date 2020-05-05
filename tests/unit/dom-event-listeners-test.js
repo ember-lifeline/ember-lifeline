@@ -12,10 +12,10 @@ import {
 } from 'ember-lifeline';
 import { PASSIVE_SUPPORTED } from 'ember-lifeline/dom-event-listeners';
 
-module('ember-lifeline/dom-event-listeners', function(hooks) {
+module('ember-lifeline/dom-event-listeners', function (hooks) {
   setupRenderingTest(hooks);
 
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     let testContext = this;
     let name = 'component:under-test';
 
@@ -50,7 +50,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       testedOptions: { passive: false },
     },
   ].forEach(({ testName, testedOptions }) => {
-    test(`${testName} throws if callback is undefined`, async function(assert) {
+    test(`${testName} throws if callback is undefined`, async function (assert) {
       assert.expect(1);
 
       this.owner.register(
@@ -72,7 +72,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       }, /Assertion Failed: Must provide a callback to run for the given event name/);
     });
 
-    test(`${testName} adds event listener to child element`, async function(assert) {
+    test(`${testName} adds event listener to child element`, async function (assert) {
       assert.expect(4);
 
       this.owner.register(
@@ -91,7 +91,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         component,
         childElement,
         'click',
-        event => {
+        (event) => {
           calls++;
           hadRunloop = !!run.currentRunLoop;
           handledEvent = event;
@@ -111,7 +111,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       );
     });
 
-    test(`${testName} adds event listener to child element with multiple handler args`, async function(assert) {
+    test(`${testName} adds event listener to child element with multiple handler args`, async function (assert) {
       assert.expect(4);
 
       this.owner.register(
@@ -153,7 +153,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       );
     });
 
-    test(`${testName} adds event listener to non-child element`, async function(assert) {
+    test(`${testName} adds event listener to non-child element`, async function (assert) {
       assert.expect(5);
 
       this.set('show', true);
@@ -170,7 +170,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         component,
         element,
         'click',
-        event => {
+        (event) => {
           ranCallback++;
           hadRunloop = !!run.currentRunLoop;
           handledEvent = event;
@@ -198,7 +198,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       assert.equal(ranCallback, 1, 'callback was not called a second time');
     });
 
-    test(`${testName} throws when called with incorrect arguments`, async function(assert) {
+    test(`${testName} throws when called with incorrect arguments`, async function (assert) {
       assert.expect(5);
 
       await render(hbs`{{under-test}}`);
@@ -213,7 +213,13 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       }, /Must provide an element \(not a DOM selector\)/);
 
       assert.throws(() => {
-        addEventListener(component, () => {}, 'click', () => {}, testedOptions);
+        addEventListener(
+          component,
+          () => {},
+          'click',
+          () => {},
+          testedOptions
+        );
       }, /Must provide an element \(not a DOM selector\)/);
 
       assert.throws(() => {
@@ -237,7 +243,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       }, /Must provide a callback to run for the given event name/);
     });
 
-    test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, async function(assert) {
+    test(`${testName} listeners on different contexts can be torn down without impacting other contexts`, async function (assert) {
       assert.expect(2);
 
       let testContext = this;
@@ -295,7 +301,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       assert.equal(calls, 3, 'one more callback called for remaining context');
     });
 
-    test(`${testName} listeners are called with correct scope`, async function(assert) {
+    test(`${testName} listeners are called with correct scope`, async function (assert) {
       assert.expect(2);
 
       let testContext = this;
@@ -335,8 +341,8 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
 
       let { subjectA, subjectB } = this;
       let target = find('.foo');
-      let assertScope = scope => {
-        return function() {
+      let assertScope = (scope) => {
+        return function () {
           assert.equal(this, scope);
         };
       };
@@ -362,7 +368,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     test(`${testName.replace(
       'add',
       'remove'
-    )} removes event listener from child element`, async function(assert) {
+    )} removes event listener from child element`, async function (assert) {
       assert.expect(1);
 
       this.owner.register(
@@ -389,7 +395,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     test(`${testName.replace(
       'add',
       'remove'
-    )} throws if callback is undefined`, async function(assert) {
+    )} throws if callback is undefined`, async function (assert) {
       assert.expect(1);
 
       this.owner.register(
@@ -411,7 +417,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       }, /Assertion Failed: Must provide a callback to run for the given event name/);
     });
 
-    test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function(assert) {
+    test(`${testName} adds event listener when an element is passed in from a service and removes listener when instance is destroyed`, async function (assert) {
       assert.expect(5);
 
       let serviceName = 'service:under-test';
@@ -441,7 +447,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
         service,
         find('.foo'),
         'click',
-        event => {
+        (event) => {
           calls++;
           hadRunloop = !!run.currentRunLoop;
           handledEvent = event;
@@ -472,7 +478,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     });
   });
 
-  test('addEventListener(_,_,{passive: false}) permits stopPropogation', async function(assert) {
+  test('addEventListener(_,_,{passive: false}) permits stopPropogation', async function (assert) {
     assert.expect(2);
 
     this.owner.register(
@@ -492,7 +498,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
       component,
       inner,
       'click',
-      e => {
+      (e) => {
         innerCalls++;
         e.stopPropagation();
       },
@@ -508,7 +514,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
   });
 
   if (PASSIVE_SUPPORTED) {
-    test('addEventListener(_,_,{once: true}) is only called once', async function(assert) {
+    test('addEventListener(_,_,{once: true}) is only called once', async function (assert) {
       assert.expect(2);
 
       this.owner.register(
@@ -534,7 +540,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     });
   }
 
-  test('addEventListener to window', async function(assert) {
+  test('addEventListener to window', async function (assert) {
     assert.expect(1);
 
     this.owner.register('template:components/under-test', hbs`<span></span>`);
@@ -552,7 +558,7 @@ module('ember-lifeline/dom-event-listeners', function(hooks) {
     assert.equal(calls, 1, 'callback was called');
   });
 
-  test('runDisposables more than once', async function(assert) {
+  test('runDisposables more than once', async function (assert) {
     let iterations = 3;
     assert.expect(iterations * 2);
 

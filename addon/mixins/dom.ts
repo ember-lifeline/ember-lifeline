@@ -148,9 +148,9 @@ function findElement(
   let element!: ElementOrTarget;
 
   if (selectorType === 'string') {
-    let maybeElement: EventTarget | null = contextElement.querySelector(<
-      string
-    >selector);
+    let maybeElement: EventTarget | null = contextElement.querySelector(
+      <string>selector
+    );
 
     if (maybeElement === null) {
       throw new Error(

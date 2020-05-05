@@ -3,7 +3,7 @@
 
 const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
-module.exports = function(defaults) {
+module.exports = function (defaults) {
   let options = {};
 
   if (defaults.project.findAddonByName('ember-native-dom-event-dispatcher')) {

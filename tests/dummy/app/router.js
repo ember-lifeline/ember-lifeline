@@ -7,8 +7,8 @@ const Router = AddonDocsRouter.extend(RouterScroll, {
   rootURL: config.rootURL,
 });
 
-Router.map(function() {
-  docsRoute(this, function() {
+Router.map(function () {
+  docsRoute(this, function () {
     this.route('why-use-ember-lifeline');
 
     this.route('how-it-works');

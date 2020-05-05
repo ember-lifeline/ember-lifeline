@@ -5,11 +5,11 @@ import { ContextBoundTasksMixin, setShouldPoll } from 'ember-lifeline';
 import { pollTaskFor } from 'ember-lifeline/test-support';
 import { settled } from '@ember/test-helpers';
 
-module('ember-lifeline/mixins/run', function(hooks) {
-  hooks.beforeEach(function() {
+module('ember-lifeline/mixins/run', function (hooks) {
+  hooks.beforeEach(function () {
     this.BaseObject = EmberObject.extend(ContextBoundTasksMixin);
 
-    this.getComponent = function({ force } = {}) {
+    this.getComponent = function ({ force } = {}) {
       if (force && this._component) {
         run(this._component, 'destroy');
         this._component = null;
@@ -23,12 +23,12 @@ module('ember-lifeline/mixins/run', function(hooks) {
     };
   });
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function () {
     run(this.getComponent(), 'destroy');
     setShouldPoll(null);
   });
 
-  test('invokes async tasks', function(assert) {
+  test('invokes async tasks', function (assert) {
     assert.expect(2);
 
     let component = this.getComponent();
@@ -44,7 +44,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('invokes named functions as async tasks', function(assert) {
+  test('invokes named functions as async tasks', function (assert) {
     assert.expect(3);
     let done = assert.async();
     let component = this.getComponent({
@@ -62,7 +62,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('invokes async tasks with delay', function(assert) {
+  test('invokes async tasks with delay', function (assert) {
     assert.expect(3);
     let component = this.getComponent();
     let done = assert.async();
@@ -81,7 +81,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('cancels tasks added with `runTask`', function(assert) {
+  test('cancels tasks added with `runTask`', function (assert) {
     assert.expect(2);
     let component = this.getComponent();
     let done = assert.async();
@@ -101,7 +101,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('runTask tasks can be canceled', function(assert) {
+  test('runTask tasks can be canceled', function (assert) {
     assert.expect(1);
     let component = this.getComponent();
     let done = assert.async();
@@ -119,7 +119,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('scheduleTask invokes async tasks', function(assert) {
+  test('scheduleTask invokes async tasks', function (assert) {
     assert.expect(3);
 
     let component = this.getComponent();
@@ -137,7 +137,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.ok(hasRun, 'callback was called');
   });
 
-  test('scheduleTask invokes named functions as async tasks', function(assert) {
+  test('scheduleTask invokes named functions as async tasks', function (assert) {
     assert.expect(5);
 
     let component = this.getComponent({
@@ -158,7 +158,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.ok(hasRun, 'callback was called');
   });
 
-  test('cancels tasks added with `scheduleTask`', function(assert) {
+  test('cancels tasks added with `scheduleTask`', function (assert) {
     assert.expect(2);
     let component = this.getComponent();
     let hasRun = false;
@@ -176,7 +176,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('scheduleTask tasks can be canceled', function(assert) {
+  test('scheduleTask tasks can be canceled', function (assert) {
     assert.expect(1);
     let component = this.getComponent();
     let hasRun = false;
@@ -192,7 +192,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.notOk(hasRun, 'callback should have been canceled previously');
   });
 
-  test('throttleTask can be canceled', function(assert) {
+  test('throttleTask can be canceled', function (assert) {
     assert.expect(3);
 
     let done = assert.async();
@@ -218,7 +218,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('No error should be thrown by QUnit (throttles should be cleaned up)', function(assert) {
+  test('No error should be thrown by QUnit (throttles should be cleaned up)', function (assert) {
     assert.expect(0);
 
     let component = this.getComponent({
@@ -228,7 +228,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     component.throttleTask('doStuff', 5);
   });
 
-  test('debounceTask runs tasks', function(assert) {
+  test('debounceTask runs tasks', function (assert) {
     assert.expect(4);
 
     let done = assert.async();
@@ -255,7 +255,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('debounceTask should cancel properly on teardown', function(assert) {
+  test('debounceTask should cancel properly on teardown', function (assert) {
     let done = assert.async();
     assert.expect(2);
 
@@ -278,7 +278,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('debounceTask can be canceled', function(assert) {
+  test('debounceTask can be canceled', function (assert) {
     let done = assert.async();
     assert.expect(2);
 
@@ -301,7 +301,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, 10);
   });
 
-  test('debounceTask triggers an assertion when a string is not the first argument', function(assert) {
+  test('debounceTask triggers an assertion when a string is not the first argument', function (assert) {
     let component = this.getComponent({
       doStuff() {},
     });
@@ -311,7 +311,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, /without a string as the first argument/);
   });
 
-  test('debounceTask triggers an assertion the function name provided does not exist on the object', function(assert) {
+  test('debounceTask triggers an assertion the function name provided does not exist on the object', function (assert) {
     let component = this.getComponent();
 
     assert.throws(() => {
@@ -319,13 +319,13 @@ module('ember-lifeline/mixins/run', function(hooks) {
     }, /is not a function/);
   });
 
-  test('pollTask provides ability to poll with callback provided', function(assert) {
+  test('pollTask provides ability to poll with callback provided', function (assert) {
     assert.expect(2);
     setShouldPoll(() => true);
     let component = this.getComponent();
     let calledTimes = 0;
 
-    component.pollTask(next => {
+    component.pollTask((next) => {
       calledTimes++;
 
       if (calledTimes === 5) {
@@ -341,7 +341,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask provides ability to poll with method provided', function(assert) {
+  test('pollTask provides ability to poll with method provided', function (assert) {
     assert.expect(3);
     setShouldPoll(() => true);
     let calledTimes = 0;
@@ -366,12 +366,12 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask calls callback once in testing mode', function(assert) {
+  test('pollTask calls callback once in testing mode', function (assert) {
     assert.expect(2);
     let component = this.getComponent();
     let calledTimes = 0;
 
-    component.pollTask(next => {
+    component.pollTask((next) => {
       calledTimes++;
 
       if (calledTimes > 1) {
@@ -384,7 +384,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
     // test string form
-    component.run = function(next) {
+    component.run = function (next) {
       calledTimes++;
 
       component.runTask(next, 5);
@@ -397,12 +397,12 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask next tick can be incremented via test helper with callback', async function(assert) {
+  test('pollTask next tick can be incremented via test helper with callback', async function (assert) {
     assert.expect(2);
     let component = this.getComponent();
     let calledTimes = 0;
 
-    let token = component.pollTask(next => {
+    let token = component.pollTask((next) => {
       calledTimes++;
 
       if (calledTimes > 2) {
@@ -427,7 +427,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask next tick can be incremented via test helper with method name', async function(assert) {
+  test('pollTask next tick can be incremented via test helper with method name', async function (assert) {
     assert.expect(2);
     let calledTimes = 0;
     let component = this.getComponent({
@@ -459,7 +459,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask cannot advance a poll that has not been scheduled', function(assert) {
+  test('pollTask cannot advance a poll that has not been scheduled', function (assert) {
     assert.expect(3);
 
     let component = this.getComponent();
@@ -475,7 +475,7 @@ module('ember-lifeline/mixins/run', function(hooks) {
 
     assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
 
-    assert.throws(function() {
+    assert.throws(function () {
       pollTaskFor(token);
     }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
@@ -485,23 +485,23 @@ module('ember-lifeline/mixins/run', function(hooks) {
     return settled();
   });
 
-  test('pollTask does not leak when destroyed', function(assert) {
+  test('pollTask does not leak when destroyed', function (assert) {
     assert.expect(3);
     let component = this.getComponent();
 
-    let token = component.pollTask(next => {
+    let token = component.pollTask((next) => {
       component.runTask(next);
     });
 
     run(component, 'destroy');
 
-    assert.throws(function() {
+    assert.throws(function () {
       pollTaskFor(token);
     }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
     component = this.getComponent({ force: true });
 
-    token = component.pollTask(next => {
+    token = component.pollTask((next) => {
       assert.ok(true, 'pollTask was called');
       component.runTask(next, 5);
     });
@@ -512,23 +512,23 @@ module('ember-lifeline/mixins/run', function(hooks) {
     });
   });
 
-  test('pollTask can be manually cleared', function(assert) {
+  test('pollTask can be manually cleared', function (assert) {
     assert.expect(3);
     let component = this.getComponent();
 
-    let token = component.pollTask(next => {
+    let token = component.pollTask((next) => {
       component.runTask(next);
     });
 
     component.cancelPoll(token);
 
-    assert.throws(function() {
+    assert.throws(function () {
       pollTaskFor(token);
     }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
     component = this.getComponent({ force: true });
 
-    token = component.pollTask(next => {
+    token = component.pollTask((next) => {
       assert.ok(true, 'pollTask was called');
       component.runTask(next, 5);
     });

@@ -273,7 +273,10 @@ export function throttleTask(
  * @public
  */
 export function cancelTask(cancelId: Timer): void | undefined;
-export function cancelTask(destroyable: IDestroyable, cancelId: Timer): void | undefined;
+export function cancelTask(
+  destroyable: IDestroyable,
+  cancelId: Timer
+): void | undefined;
 export function cancelTask(
   destroyable: IDestroyable | Timer,
   cancelId?: any
@@ -303,8 +306,8 @@ function getTimersDisposable(
   destroyable: IDestroyable,
   timers: Set<EmberRunTimer>
 ): Function {
-  return function() {
-    timers.forEach(cancelId => {
+  return function () {
+    timers.forEach((cancelId) => {
       cancelTask(destroyable, cancelId);
     });
     timers.clear();

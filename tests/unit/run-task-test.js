@@ -10,11 +10,11 @@ import {
 } from 'ember-lifeline';
 import { module, test } from 'qunit';
 
-module('ember-lifeline/run-task', function(hooks) {
-  hooks.beforeEach(function() {
+module('ember-lifeline/run-task', function (hooks) {
+  hooks.beforeEach(function () {
     this.BaseObject = EmberObject.extend();
 
-    this.getComponent = function() {
+    this.getComponent = function () {
       if (this._component) {
         return this._component;
       }
@@ -23,11 +23,11 @@ module('ember-lifeline/run-task', function(hooks) {
     };
   });
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function () {
     runDisposables(this.obj);
   });
 
-  test('invokes async tasks', function(assert) {
+  test('invokes async tasks', function (assert) {
     assert.expect(2);
 
     this.obj = this.getComponent();
@@ -47,7 +47,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('invokes named functions as async tasks', function(assert) {
+  test('invokes named functions as async tasks', function (assert) {
     assert.expect(3);
 
     let done = assert.async();
@@ -66,7 +66,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('invokes async tasks with delay', function(assert) {
+  test('invokes async tasks with delay', function (assert) {
     assert.expect(3);
 
     this.obj = this.getComponent();
@@ -90,7 +90,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run yet');
   });
 
-  test('runTask returns early on destroyed object', function(assert) {
+  test('runTask returns early on destroyed object', function (assert) {
     assert.expect(2);
 
     this.obj = this.getComponent();
@@ -115,7 +115,7 @@ module('ember-lifeline/run-task', function(hooks) {
     }, 10);
   });
 
-  test('runTask tasks can be canceled', function(assert) {
+  test('runTask tasks can be canceled', function (assert) {
     assert.expect(1);
 
     this.obj = this.getComponent();
@@ -138,7 +138,7 @@ module('ember-lifeline/run-task', function(hooks) {
     }, 10);
   });
 
-  test('runTask tasks removed their cancelIds when run', function(assert) {
+  test('runTask tasks removed their cancelIds when run', function (assert) {
     assert.expect(1);
 
     let map = new Map();
@@ -161,7 +161,7 @@ module('ember-lifeline/run-task', function(hooks) {
     );
   });
 
-  test('scheduleTask invokes async tasks', function(assert) {
+  test('scheduleTask invokes async tasks', function (assert) {
     assert.expect(3);
 
     this.obj = this.getComponent();
@@ -179,7 +179,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.ok(hasRun, 'callback was called');
   });
 
-  test('scheduleTask invokes named functions as async tasks', function(assert) {
+  test('scheduleTask invokes named functions as async tasks', function (assert) {
     assert.expect(5);
 
     let obj = (this.obj = this.getComponent({
@@ -200,7 +200,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.ok(hasRun, 'callback was called');
   });
 
-  test('scheduleTask returns early on destroyed object', function(assert) {
+  test('scheduleTask returns early on destroyed object', function (assert) {
     assert.expect(2);
 
     let cancelId;
@@ -219,7 +219,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.notOk(hasRun, 'callback should not have run');
   });
 
-  test('scheduleTask tasks can be canceled', function(assert) {
+  test('scheduleTask tasks can be canceled', function (assert) {
     assert.expect(1);
     this.obj = this.getComponent();
     let hasRun = false;
@@ -235,7 +235,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.notOk(hasRun, 'callback should have been canceled previously');
   });
 
-  test('scheduleTask tasks removed their cancelIds when run', function(assert) {
+  test('scheduleTask tasks removed their cancelIds when run', function (assert) {
     assert.expect(1);
 
     let map = new Map();
@@ -256,7 +256,7 @@ module('ember-lifeline/run-task', function(hooks) {
     });
   });
 
-  test('throttleTask actually throttles', function(assert) {
+  test('throttleTask actually throttles', function (assert) {
     let callCount = 0;
     let callArgs;
     this.obj = this.getComponent({
@@ -280,7 +280,7 @@ module('ember-lifeline/run-task', function(hooks) {
     );
   });
 
-  test('throttleTask triggers an assertion when a string is not the first argument', function(assert) {
+  test('throttleTask triggers an assertion when a string is not the first argument', function (assert) {
     this.obj = this.getComponent({ doStuff() {} });
 
     assert.throws(() => {
@@ -288,7 +288,7 @@ module('ember-lifeline/run-task', function(hooks) {
     }, /without a string as the first argument/);
   });
 
-  test('throttleTask triggers an assertion the function name provided does not exist on the object', function(assert) {
+  test('throttleTask triggers an assertion the function name provided does not exist on the object', function (assert) {
     this.obj = this.getComponent();
 
     assert.throws(() => {
@@ -296,7 +296,7 @@ module('ember-lifeline/run-task', function(hooks) {
     }, /is not a function/);
   });
 
-  test('throttleTask triggers an assertion when spacing argument is not a number or not passed', function(assert) {
+  test('throttleTask triggers an assertion when spacing argument is not a number or not passed', function (assert) {
     assert.expect(2);
 
     this.obj = this.getComponent({ doStuff() {} });
@@ -310,7 +310,7 @@ module('ember-lifeline/run-task', function(hooks) {
     }, /with incorrect `spacing` argument. Expected Number and received `\[object Object\]`/);
   });
 
-  test('throttleTask returns early on destroyed object', function(assert) {
+  test('throttleTask returns early on destroyed object', function (assert) {
     assert.expect(2);
 
     let callCount = 0;
@@ -332,7 +332,7 @@ module('ember-lifeline/run-task', function(hooks) {
     assert.equal(callCount, 0, 'throttled method was not called');
   });
 
-  test('throttleTask passes arguments to method', function(assert) {
+  test('throttleTask passes arguments to method', function (assert) {
     let calledWithArgs;
 
     this.obj = this.getComponent({

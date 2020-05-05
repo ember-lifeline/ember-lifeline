@@ -4,13 +4,13 @@ import { setupTest } from 'ember-qunit';
 import { registerDisposable } from 'ember-lifeline';
 import { setupLifelineValidation } from 'ember-lifeline/test-support';
 
-module('setupLifelineValidation', function(hooks) {
+module('setupLifelineValidation', function (hooks) {
   setupLifelineValidation(hooks);
   setupTest(hooks);
 
-  hooks.beforeEach(function(assert) {
+  hooks.beforeEach(function (assert) {
     let originalPushResult = assert.pushResult;
-    assert.pushResult = function(resultInfo) {
+    assert.pushResult = function (resultInfo) {
       // Inverts the result so we can test failing assertions
       resultInfo.result = !resultInfo.result;
       resultInfo.message = `Failed: ${resultInfo.message}`;
@@ -26,7 +26,7 @@ module('setupLifelineValidation', function(hooks) {
     this.service = factory.create();
   });
 
-  test('setupLifelineValidation fails when registeredDisposables is not cleared', function(assert) {
+  test('setupLifelineValidation fails when registeredDisposables is not cleared', function (assert) {
     assert.expect(0);
 
     registerDisposable(this.service, () => {});
