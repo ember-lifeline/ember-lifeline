@@ -1801,7 +1801,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/ember-qunit@^3.0.2":
+"@types/ember-qunit@^3.4.8":
   version "3.4.8"
   resolved "https://registry.yarnpkg.com/@types/ember-qunit/-/ember-qunit-3.4.8.tgz#81dbfa76f0729ec5c455039457ba747fb7b44ec1"
   integrity sha512-eAFYXit9vIXLiJiLzmI3Y37+AprHX0aVkgkC9cZzOLPAFeTSJ9T6Mso0o9EvrlAeFe/opg9uGp/QUgbX7X7IAw==
@@ -1809,7 +1809,7 @@
     "@types/ember" "*"
     "@types/ember-test-helpers" "*"
 
-"@types/ember-test-helpers@*", "@types/ember-test-helpers@^1.0.0":
+"@types/ember-test-helpers@*", "@types/ember-test-helpers@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@types/ember-test-helpers/-/ember-test-helpers-1.0.7.tgz#6a630257d07b1de10111e8012aec85c50db54a4b"
   integrity sha512-qxBdoXv+cW4J907s9CftS6qrgkkXWROT6I1TV2yW5eErCMu9YvPU7X8z4qFQ/ZVZOgoT5lVnsgYX1a36RJE8xw==
@@ -1827,7 +1827,7 @@
     "@types/jquery" "*"
     "@types/rsvp" "*"
 
-"@types/ember@*", "@types/ember@^3.0.1", "@types/ember@^3.0.23":
+"@types/ember@*", "@types/ember@^3.0.23", "@types/ember@^3.1.2":
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/@types/ember/-/ember-3.1.2.tgz#b795e41f4a5569447c006e293195e62dc139cced"
   integrity sha512-Z4jxklUlnoWEkenLaMDDmzguL3UUcAIaCiu28nNYlIovWTGmvKuJgUKSqd+03j4jjzaz+yz0fepM408XULew/A==
@@ -1870,7 +1870,7 @@
     "@types/ember__array" "*"
     "@types/ember__object" "*"
 
-"@types/ember__component@*", "@types/ember__component@~3.0.4":
+"@types/ember__component@*":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/ember__component/-/ember__component-3.0.5.tgz#ae0a64d53ec3bff7a100347fac52320cba068c22"
   integrity sha512-pGDNR2OkPjNIcpdV/XEtzU/yE5n+vzRcYHtUCaA7dn0qoMAAiMPkJjeNMGkWQIv1q+aLyXvjiV9elcP2i1HA9g==
@@ -1903,12 +1903,12 @@
     "@types/ember__engine" "*"
     "@types/ember__object" "*"
 
-"@types/ember__error@*", "@types/ember__error@~3.0.2":
+"@types/ember__error@*":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/ember__error/-/ember__error-3.0.3.tgz#73e5d9f05212d7965e7c2f4df39abdbf5ea41ab1"
   integrity sha512-P1+YLJJ9xzc8w5mKYtXsrS070MOTjsNeoGoEHnj7nO5IfeyC34yTHdceW9hoBMRLZs2tZ+cjElUNdR1kxpl+oA==
 
-"@types/ember__object@*", "@types/ember__object@~3.0.6":
+"@types/ember__object@*":
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/@types/ember__object/-/ember__object-3.0.8.tgz#b62daeb8c86e377831c8320ba6dfaae9613bee8e"
   integrity sha512-Rc6tQfFzXYJi7UtWrMd2ZZjlC3x2NI32UeqCwR/CxoH0pivmXStnjVDf/W3k601zRG0XYVUeDXpo8vb/Nhwfeg==
@@ -1921,7 +1921,7 @@
   resolved "https://registry.yarnpkg.com/@types/ember__polyfills/-/ember__polyfills-3.0.5.tgz#8f2c97b42f089afed53b4c137a6d7bbf4f7aa12e"
   integrity sha512-yffc3Alk/Z12LwpRXvchcqrmou5fo37wZMoFiAOiqBYzJO3JL9gcYcrYuwg0eBdR/EwOr3aUeE8S+XAqXx3pIQ==
 
-"@types/ember__routing@*", "@types/ember__routing@~3.0.6":
+"@types/ember__routing@*":
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/@types/ember__routing/-/ember__routing-3.0.7.tgz#73f54958ae0a7d28a8da0f91e928a8a48eab02b9"
   integrity sha512-JZV5uIsh12FVBKrcKcaxnV8oiqo/13wvlr4UGfw4Xts7lM3/wbAy3uchfpZtkAImBHeXuxGF51YoIBc2ROCK0w==
@@ -1956,7 +1956,7 @@
   resolved "https://registry.yarnpkg.com/@types/ember__template/-/ember__template-3.0.0.tgz#d499ebf000faa371c1c98124633b9864be69b968"
   integrity sha512-aWNg/kL2QToE0fwI8MVgAr2upWyAUwqRv2sp3CpypsMTOC1lZizIehz8QI6w1m1+Eh1WYs/89gvuM3mTc4OyIw==
 
-"@types/ember__test-helpers@^0.7.8":
+"@types/ember__test-helpers@^0.7.10":
   version "0.7.10"
   resolved "https://registry.yarnpkg.com/@types/ember__test-helpers/-/ember__test-helpers-0.7.10.tgz#2ade4fc848d35aafef42db97574a5845dcafdab7"
   integrity sha512-e+NVsScAO+BcWCki9CuepScJ4akiKORrFyYaEvpoRSyyM5UpvY4Ov175hXxcNFv5JSyIvPUvhZtOH2W3BlLHhA==
@@ -2036,7 +2036,7 @@
   resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.0.tgz#9140779736aa2655635ee756e2467d787cfe8a2a"
   integrity sha512-c3Xy026kOF7QOTn00hbIllV1dLR9hG9NkSrLQgCVs8NF6sBU+VGWjD3wLPhmh1TYAc7ugCFsvHYMN4VcBN1U1A==
 
-"@types/jquery@*", "@types/jquery@~3.3.22":
+"@types/jquery@*":
   version "3.3.29"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.29.tgz#680a2219ce3c9250483722fccf5570d1e2d08abd"
   integrity sha512-FhJvBninYD36v3k6c+bVk1DSZwh7B5Dpb/Pyk3HKVsiohn0nhbefZZ+3JXbWQhFyt0MxSl2jRDdGQPHeOHFXrQ==
@@ -2090,7 +2090,7 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
-"@types/qunit@^2.5.1":
+"@types/qunit@^2.9.1":
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/@types/qunit/-/qunit-2.9.1.tgz#6083a42907ae6c9eecece794844bc3f8659e6c03"
   integrity sha512-v51Fz/orMOkBGzrRvskky3UN0I81ka6rokAxkcuVyLHAh0qNKp+Roqympg/gTia8vGOIEbeSykevI0VKiIF13Q==
@@ -2115,7 +2115,7 @@
     "@types/glob" "*"
     "@types/node" "*"
 
-"@types/rsvp@*", "@types/rsvp@^4.0.1", "@types/rsvp@^4.0.2":
+"@types/rsvp@*", "@types/rsvp@^4.0.2", "@types/rsvp@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@types/rsvp/-/rsvp-4.0.3.tgz#4a1223158453257bce09d42b9eef7cfa6d257482"
   integrity sha512-OpRwxbgx16nL/0/7ol0WoLLyLaMXBvtPOHjqLljnzAB/E7Qk1wtjytxgBhOTBMZvuLXnJUqfnjb4W/QclNFvSA==
