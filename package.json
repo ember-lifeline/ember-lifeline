@@ -26,7 +26,7 @@
     "build": "ember build",
     "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --document-exported \"addon-test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
     "lint:hbs": "ember-template-lint .",
-    "lint:js": "eslint .",
+    "lint:js": "eslint . --ext js,ts",
     "prepublishOnly": "ember ts:precompile",
     "postpublish": "ember ts:clean",
     "start": "ember serve",
@@ -39,8 +39,8 @@
     }
   },
   "lint-staged": {
-    "package.json,{app,addon,config,tests}/**/*.{js,json}": [
-      "prettier --single-quote --trailing-comma es5 --write",
+    "package.json,{app,addon,config,tests}/**/*.{ts,js,json}": [
+      "prettier --write",
       "git add"
     ]
   },
@@ -57,6 +57,8 @@
     "@types/ember__test-helpers": "^0.7.8",
     "@types/qunit": "^2.5.1",
     "@types/rsvp": "^4.0.1",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
     "broccoli-asset-rev": "^3.0.0",
     "documentation": "^12.0.0",
     "ember-cli": "~3.18.0",
@@ -85,17 +87,16 @@
     "ember-source-channel-url": "^2.0.1",
     "ember-template-lint": "^2.0.1",
     "ember-try": "^1.0.0",
-    "eslint": "^6.0.0",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-ember": "^6.2.0",
-    "eslint-plugin-ember-suave": "^2.0.0",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-prettier": "^3.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-ember": "^8.4.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.3",
     "fs.extra": "^1.3.2",
     "husky": "^4.0.7",
     "lint-staged": "^10.0.0",
     "loader.js": "^4.7.0",
-    "prettier": "^1.10.2",
+    "prettier": "^2.0.5",
     "release-it": "^13.0.1",
     "release-it-lerna-changelog": "^2.0.0",
     "typescript": "^3.0.1"

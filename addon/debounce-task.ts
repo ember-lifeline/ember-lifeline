@@ -168,11 +168,11 @@ export function cancelDebounce(
 function getDebouncesDisposable(
   debounces: Map<string, PendingDebounce>
 ): Function {
-  return function() {
+  return function () {
     if (debounces.size === 0) {
       return;
     }
 
-    debounces.forEach(p => cancel(p.cancelId));
+    debounces.forEach((p) => cancel(p.cancelId));
   };
 }

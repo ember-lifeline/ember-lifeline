@@ -7,8 +7,8 @@ import {
   _setRegisteredDisposables,
 } from 'ember-lifeline';
 
-module('ember-lifeline/utils/disposable', function(hooks) {
-  hooks.beforeEach(function() {
+module('ember-lifeline/utils/disposable', function (hooks) {
+  hooks.beforeEach(function () {
     this.obj = EmberObject.extend({
       destroy() {
         runDisposables(this);
@@ -22,7 +22,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     _setRegisteredDisposables(this.registeredDisposables);
   });
 
-  hooks.afterEach(function(assert) {
+  hooks.afterEach(function (assert) {
     run(this.obj, 'destroy');
 
     let retainedObjects = [];
@@ -39,40 +39,40 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     _setRegisteredDisposables(new WeakMap());
   });
 
-  hooks.after(function() {
+  hooks.after(function () {
     _setRegisteredDisposables(new WeakMap());
   });
 
-  test('registerDisposable asserts params are not present', function(assert) {
+  test('registerDisposable asserts params are not present', function (assert) {
     assert.expect(4);
 
-    assert.throws(function() {
+    assert.throws(function () {
       registerDisposable();
     }, /Called `registerDisposable` where `obj` is not an object/);
 
-    assert.throws(function() {
+    assert.throws(function () {
       registerDisposable({}, null);
     }, /Called `registerDisposable` where `dispose` is not a function/);
 
     registerDisposable(this.obj, () => {});
     run(this.obj, 'destroy');
 
-    assert.throws(function() {
+    assert.throws(function () {
       registerDisposable(this.obj, () => {});
     }, /Called `registerDisposable` on a destroyed object/);
   });
 
-  test('registerDisposable correctly allocates array if not allocated', function(assert) {
+  test('registerDisposable correctly allocates array if not allocated', function (assert) {
     assert.expect(3);
 
     assert.equal(this.registeredDisposables.get(this.obj), undefined);
 
-    registerDisposable(this.obj, function() {});
+    registerDisposable(this.obj, function () {});
 
     assert.equal(this.registeredDisposables.get(this.obj).constructor, Array);
   });
 
-  test('registerDisposable adds disposable to disposables', function(assert) {
+  test('registerDisposable adds disposable to disposables', function (assert) {
     assert.expect(2);
 
     let dispose = () => {};
@@ -86,7 +86,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     );
   });
 
-  test('registerDisposable adds unique disposable to disposables', function(assert) {
+  test('registerDisposable adds unique disposable to disposables', function (assert) {
     assert.expect(3);
 
     let dispose = () => {};
@@ -104,7 +104,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     assert.notEqual(dispose, otherDisposable, 'disposable returned is unique');
   });
 
-  test('runDisposables runs all disposables when destroying', function(assert) {
+  test('runDisposables runs all disposables when destroying', function (assert) {
     assert.expect(3);
 
     let callCount = 0;
@@ -126,7 +126,7 @@ module('ember-lifeline/utils/disposable', function(hooks) {
     assert.equal(callCount, 2, 'no disposables are registered');
   });
 
-  test('destroy integration runs all disposables when destroying', function(assert) {
+  test('destroy integration runs all disposables when destroying', function (assert) {
     assert.expect(3);
 
     let callCount = 0;

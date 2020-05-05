@@ -39,7 +39,6 @@ function shouldPoll() {
     return _shouldPollOverride();
   }
 
-  // eslint-disable-next-line ember-suave/no-direct-property-access
   return !Ember.testing;
 }
 
@@ -235,8 +234,8 @@ function getPollersDisposable(
   destroyable: IDestroyable,
   pollers: Set<Token>
 ): Function {
-  return function() {
-    pollers.forEach(token => {
+  return function () {
+    pollers.forEach((token) => {
       cancelPoll(destroyable, token);
     });
   };

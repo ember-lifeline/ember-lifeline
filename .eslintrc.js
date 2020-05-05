@@ -5,20 +5,16 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['ember', 'prettier'],
-  extends: ['eslint:recommended', 'plugin:ember/recommended', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'plugin:ember/recommended',
+    'plugin:prettier/recommended',
+  ],
   env: {
     browser: true,
     node: false,
   },
-  rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        trailingComma: 'es5',
-      },
-    ],
-  },
+  rules: {},
   overrides: [
     // node files
     {
@@ -47,13 +43,24 @@ module.exports = {
         node: true,
       },
       plugins: ['node'],
-      rules: Object.assign(
-        {},
-        require('eslint-plugin-node').configs.recommended.rules,
-        {
-          // add your custom rules and overrides for node files here
-        }
-      ),
+      extends: 'plugin:node/recommended',
+    },
+    {
+      // typescript files
+      files: ['**/*.ts'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      rules: {
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'error',
+      },
+    },
+    {
+      // mixins
+      files: ['addon/mixins/*.[jt]s', 'tests/unit/mixins/*.js'],
+      rules: {
+        'ember/no-new-mixins': 'off',
+      },
     },
   ],
 };
