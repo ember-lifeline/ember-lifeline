@@ -99,7 +99,7 @@
     "prettier": "^2.0.5",
     "release-it": "^13.0.1",
     "release-it-lerna-changelog": "^2.0.0",
-    "typescript": "^3.0.1"
+    "typescript": "~3.8.3"
   },
   "resolutions": {
     "@types/ember__component": "~3.0.4",
