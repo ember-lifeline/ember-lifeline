@@ -1,5 +1,4 @@
-// @ts-ignore
-import require from 'require';
+/* globals QUnit */
 import { _setRegisteredDisposables } from 'ember-lifeline';
 
 const FAILED_ASSERTION_MESSAGE =

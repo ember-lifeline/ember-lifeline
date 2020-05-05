@@ -39,7 +39,6 @@ function shouldPoll() {
     return _shouldPollOverride();
   }
 
-  // eslint-disable-next-line ember-suave/no-direct-property-access
   return !Ember.testing;
 }
 

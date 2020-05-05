@@ -23,7 +23,7 @@ export const PASSIVE_SUPPORTED: boolean = (() => {
       'passive',
       {
         get() {
-          ret = true;
+          return (ret = true);
         },
       }
     );
