@@ -4005,7 +4005,7 @@ broccoli-file-creator@^2.1.1:
     broccoli-plugin "^1.1.0"
     mkdirp "^0.5.1"
 
-broccoli-filter@^1.2.2, broccoli-filter@^1.2.3, broccoli-filter@^1.2.4:
+broccoli-filter@^1.2.2, broccoli-filter@^1.2.3, broccoli-filter@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/broccoli-filter/-/broccoli-filter-1.3.0.tgz#71e3a8e32a17f309e12261919c5b1006d6766de6"
   integrity sha512-VXJXw7eBfG82CFxaBDjYmyN7V72D4In2zwLVQJd/h3mBfF3CMdRTsv2L20lmRTtCv1sAHcB+LgMso90e/KYiLw==
@@ -6495,18 +6495,18 @@ ember-cli-addon-docs-yuidoc@0.2.1:
     lodash "^4.17.5"
     yuidocjs "^0.10.2"
 
-ember-cli-addon-docs@^0.6.16:
-  version "0.6.16"
-  resolved "https://registry.yarnpkg.com/ember-cli-addon-docs/-/ember-cli-addon-docs-0.6.16.tgz#846a86d75d205890b2977816423899f4ed5e511e"
-  integrity sha512-I3ZJC+eQA+epiU+TbKFGOXY3O0JyicwLEv9TT0vxY7XO60TW6Lt79mXRx8aJz5RNp5Qzvp/q4zhW83cL+bmRvg==
+ember-cli-addon-docs@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/ember-cli-addon-docs/-/ember-cli-addon-docs-0.7.0.tgz#30ba6ea734a71d75244d3b7ebc20a74934538b7c"
+  integrity sha512-/c+czcpcXB6gQ/jvNG7X9kBYcbceF0PF0RTC6XQcJn1H8NlfvOUehS93xPjk8wfNE38A4RyQnUAon2PqFxBo/Q==
   dependencies:
     "@glimmer/syntax" "^0.42.2"
     broccoli-bridge "^1.0.0"
     broccoli-caching-writer "^3.0.3"
-    broccoli-debug "^0.6.4"
-    broccoli-filter "^1.2.4"
+    broccoli-debug "^0.6.5"
+    broccoli-filter "^1.3.0"
     broccoli-funnel "^2.0.2"
-    broccoli-merge-trees "^3.0.1"
+    broccoli-merge-trees "^3.0.2"
     broccoli-persistent-filter "^2.3.1"
     broccoli-plugin "1.3.1 - 3"
     broccoli-source "^3.0.0"
@@ -6516,16 +6516,17 @@ ember-cli-addon-docs@^0.6.16:
     ember-assign-polyfill "^2.6.0"
     ember-auto-import "^1.5.3"
     ember-cli-autoprefixer "^0.8.1"
-    ember-cli-babel "^7.12.0"
+    ember-cli-babel "^7.18.0"
     ember-cli-clipboard "^0.13.0"
-    ember-cli-htmlbars "^4.0.7"
+    ember-cli-htmlbars "^4.2.3"
     ember-cli-postcss "^5.0.0"
     ember-cli-sass "10.0.1"
     ember-cli-string-helpers "^4.0.5"
     ember-cli-string-utils "^1.1.0"
+    ember-cli-version-checker "^3.1.3"
     ember-code-snippet "^3.0.0"
     ember-component-css "^0.7.4"
-    ember-composable-helpers "^2.3.1"
+    ember-composable-helpers "^2.4.0"
     ember-concurrency "^0.9.0 || ^0.10.0 || ^1.0.0"
     ember-data "2.x - 3.x"
     ember-fetch "^6.7.1"
@@ -6535,26 +6536,27 @@ ember-cli-addon-docs@^0.6.16:
     ember-keyboard "^4.0.0"
     ember-modal-dialog "^3.0.0-beta.4"
     ember-named-arguments-polyfill "^1.0.0"
+    ember-on-modifier "^1.0.0"
     ember-responsive "^3.0.5"
     ember-router-generator "^2.0.0"
     ember-router-scroll "^1.3.3"
     ember-svg-jar "^2.2.3"
-    ember-tether "^1.0.0-beta.2"
+    ember-tether "^1.0.0"
     ember-truth-helpers "^2.1.0"
     esm "^3.2.25"
     execa "^3.2.0"
     fs-extra "^8.1.0"
     git-repo-info "^2.1.1"
     highlight.js "^9.15.10"
-    hosted-git-info "^3.0.2"
+    hosted-git-info "^3.0.4"
     html-entities "^1.2.1"
     inflected "^2.0.3"
-    jsdom "^15.2.0"
+    jsdom "^15.2.1"
     json-api-serializer "^2.2.1"
     liquid-fire "^0.29.5 || ^0.30.0 || ^0.31.0"
     lodash "^4.17.15"
     lunr "^2.3.7"
-    marked "^0.7.0"
+    marked "^0.8.2"
     pad-start "^1.0.2"
     parse-git-config "^3.0.0"
     quick-temp "^0.1.8"
@@ -6562,7 +6564,7 @@ ember-cli-addon-docs@^0.6.16:
     sass "^1.22.10"
     semver "^6.3.0"
     striptags "^3.1.1"
-    tailwindcss "^1.0"
+    tailwindcss "^1.2.0"
     walk-sync "^2.0.2"
     yuidocjs "^0.10.2"
 
@@ -6625,7 +6627,7 @@ ember-cli-babel@^6.0.0-beta.4, ember-cli-babel@^6.10.0, ember-cli-babel@^6.11.0,
     ember-cli-version-checker "^2.1.2"
     semver "^5.5.0"
 
-ember-cli-babel@^7.1.0, ember-cli-babel@^7.1.2, ember-cli-babel@^7.1.3, ember-cli-babel@^7.1.4, ember-cli-babel@^7.11.0, ember-cli-babel@^7.12.0, ember-cli-babel@^7.18.0, ember-cli-babel@^7.19.0, ember-cli-babel@^7.7.3:
+ember-cli-babel@^7.1.0, ember-cli-babel@^7.1.2, ember-cli-babel@^7.1.3, ember-cli-babel@^7.1.4, ember-cli-babel@^7.10.0, ember-cli-babel@^7.11.0, ember-cli-babel@^7.12.0, ember-cli-babel@^7.18.0, ember-cli-babel@^7.19.0, ember-cli-babel@^7.7.3:
   version "7.19.0"
   resolved "https://registry.yarnpkg.com/ember-cli-babel/-/ember-cli-babel-7.19.0.tgz#e6eddea18a867231fcf90a80689e92b98be9a63b"
   integrity sha512-HiWKuoyy35vGEr+iCw6gUnQ3pS5qslyTlKEDW8cVoMbvZNGYBgRxHed5nklVUh+BS74AwR9lsp25BTAagYAP9Q==
@@ -6783,7 +6785,7 @@ ember-cli-htmlbars@^3.0.0, ember-cli-htmlbars@^3.0.1:
     json-stable-stringify "^1.0.1"
     strip-bom "^3.0.0"
 
-ember-cli-htmlbars@^4.0.7:
+ember-cli-htmlbars@^4.2.3:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/ember-cli-htmlbars/-/ember-cli-htmlbars-4.3.1.tgz#4af8adc21ab3c4953f768956b7f7d207782cb175"
   integrity sha512-CW6AY/yzjeVqoRtItOKj3hcYzc5dWPRETmeCzr2Iqjt5vxiVtpl0z5VTqHqIlT5fsFx6sGWBQXNHIe+ivYsxXQ==
@@ -7152,7 +7154,7 @@ ember-component-css@^0.7.4:
     rsvp "^4.8.4"
     walk-sync "^1.0.1"
 
-ember-composable-helpers@^2.3.1:
+ember-composable-helpers@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/ember-composable-helpers/-/ember-composable-helpers-2.4.0.tgz#024bd6a8c338cc9cdf10f1141b119b8f72de205f"
   integrity sha512-91ZqFnNG1EDL3WzxXWTgAy6EonPS7htWHletI5SOw5ezEzKbt6EGNBwT6QPhwariugtR8LEfYNQ9lXEiCZrX1w==
@@ -7308,6 +7310,15 @@ ember-modal-dialog@^3.0.0-beta.4:
     ember-ignore-children-helper "^1.0.1"
     ember-wormhole "^0.5.5"
 
+ember-modifier-manager-polyfill@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/ember-modifier-manager-polyfill/-/ember-modifier-manager-polyfill-1.2.0.tgz#cf4444e11a42ac84f5c8badd85e635df57565dda"
+  integrity sha512-bnaKF1LLKMkBNeDoetvIJ4vhwRPKIIumWr6dbVuW6W6p4QV8ZiO+GdF8J7mxDNlog9CeL9Z/7wam4YS86G8BYA==
+  dependencies:
+    ember-cli-babel "^7.10.0"
+    ember-cli-version-checker "^2.1.2"
+    ember-compatibility-helpers "^1.2.0"
+
 ember-named-arguments-polyfill@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/ember-named-arguments-polyfill/-/ember-named-arguments-polyfill-1.0.0.tgz#0b81fb81a7cef2c89e9e1d0278b579e708bf4ded"
@@ -7323,6 +7334,16 @@ ember-native-dom-helpers@0.6.3:
   dependencies:
     broccoli-funnel "^1.1.0"
     ember-cli-babel "^6.6.0"
+
+ember-on-modifier@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ember-on-modifier/-/ember-on-modifier-1.0.1.tgz#b99e9c9d7919a9f536bfc9d4a68704462eceb0fe"
+  integrity sha512-4JKUb/DBmdZkLfljN2Dj6gKmqq2vZ0/3TOwRs1+jUIXTUg1MaBMUVD1XYwzUm+a7abW9/JkQNUEVZZu13SwFMg==
+  dependencies:
+    broccoli-funnel "^2.0.2"
+    ember-cli-babel "^7.19.0"
+    ember-cli-version-checker "^4.1.0"
+    ember-modifier-manager-polyfill "^1.2.0"
 
 ember-qunit@^4.6.0:
   version "4.6.0"
@@ -7487,7 +7508,7 @@ ember-test-waiters@^1.1.1:
     ember-cli-babel "^7.11.0"
     semver "^6.3.0"
 
-ember-tether@^1.0.0-beta.2:
+ember-tether@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/ember-tether/-/ember-tether-1.0.0.tgz#6117ea7351927887cb74fa5d46097dd300280c2d"
   integrity sha1-YRfqc1GSeIfLdPpdRgl90wAoDC0=
@@ -9450,7 +9471,7 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.8.tgz#7539bd4bc1e0e0a895815a2e0262420b12858488"
   integrity sha512-f/wzC2QaWBs7t9IYqB4T3sR1xviIViXJRJTWBlx2Gf3g0Xi5vI7Yy4koXQ1c9OYDGHN9sBy1DQ2AB8fqZBWhUg==
 
-hosted-git-info@^3.0.2:
+hosted-git-info@^3.0.2, hosted-git-info@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-3.0.4.tgz#be4973eb1fd2737b11c9c7c19380739bb249f60d"
   integrity sha512-4oT62d2jwSDBbLLFLZE+1vPuQ1h8p9wjrJ8Mqx5TjsyWmBMV5B13eJqn8pvluqubLf3cJPTfiYCIwNwDNmzScQ==
@@ -10449,7 +10470,7 @@ jsdom@^12.0.0:
     ws "^6.1.0"
     xml-name-validator "^3.0.0"
 
-jsdom@^15.2.0:
+jsdom@^15.2.1:
   version "15.2.1"
   resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-15.2.1.tgz#d2feb1aef7183f86be521b8c6833ff5296d07ec5"
   integrity sha512-fAl1W0/7T2G5vURSyxBzrJ1LSdQn6Tr5UX/xD4PXDx/PDgwygedfW6El/KIj3xJ7FU61TTYnc/l/B7P49Eqt6g==
@@ -11366,10 +11387,10 @@ markdown-table@^1.1.0:
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-1.1.3.tgz#9fcb69bcfdb8717bfd0398c6ec2d93036ef8de60"
   integrity sha512-1RUZVgQlpJSPWYbFSpmudq5nHY1doEIv89gBtF0s4gW1GF2XorxcA/70M5vq7rLv0a6mhOUccRsqkwhwLCIQ2Q==
 
-marked@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.7.0.tgz#b64201f051d271b1edc10a04d1ae9b74bb8e5c0e"
-  integrity sha512-c+yYdCZJQrsRjTPhUx7VKkApw9bwDkNbHUKo1ovgcfDjb2kc8rLuRbIFyXL5WOEUwzSSKo3IXpph2K6DqB/KZg==
+marked@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.8.2.tgz#4faad28d26ede351a7a1aaa5fec67915c869e355"
+  integrity sha512-EGwzEeCcLniFX51DhTpmTom+dSA/MG/OBUDjnWtHbEnjAH180VzUeAw+oE4+Zv+CoYBWyRlYOTR0N8SO9R1PVw==
 
 match-media@^0.2.0:
   version "0.2.0"
@@ -15205,7 +15226,7 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tailwindcss@^1.0:
+tailwindcss@^1.2.0:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-1.4.4.tgz#a866f281f99ee7058fa3301ef0ce34b16141deb6"
   integrity sha512-49Hy/+WnqQhxtGGjcGlhRlE7+hooX2A0/JOeJnA78fCEqDRlhURWujHY05aCl+lJ6G2qQ+1wlQTg4PqMPUcFVA==
