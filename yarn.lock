@@ -10816,10 +10816,10 @@ linkify-it@~1.2.0:
   dependencies:
     uc.micro "^1.0.1"
 
-lint-staged@^10.2.3:
-  version "10.2.3"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-10.2.3.tgz#22fb3e251b915e64a46d3eead03a5e37e969eac3"
-  integrity sha512-dX5CeCIDtKoNv5IQpOMq/YUP8PXc58/QW+iWapv8KzgYcbgUWJwhPaFjX5aUS9pAa8cpGH7Jur3Puw3tugTGIg==
+lint-staged@^10.2.4:
+  version "10.2.4"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-10.2.4.tgz#0ed5d1cf06bdac0d3fbb003931bb6df3771fbf42"
+  integrity sha512-doTMGKXQAT34c3S3gwDrTnXmCZp/z1/92D8suPqqh755sKPT18ew1NoPNHxJdrvv1D4WrJ7CEnx79Ns3EdEFbg==
   dependencies:
     chalk "^4.0.0"
     commander "^5.1.0"
@@ -10827,7 +10827,7 @@ lint-staged@^10.2.3:
     debug "^4.1.1"
     dedent "^0.7.0"
     execa "^4.0.1"
-    listr2 "2.0.1"
+    listr2 "^2.0.2"
     log-symbols "^4.0.0"
     micromatch "^4.0.2"
     normalize-path "^3.0.0"
@@ -10849,10 +10849,10 @@ lint-staged@^10.2.3:
     match-media "^0.2.0"
     velocity-animate "^1.5.2"
 
-listr2@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/listr2/-/listr2-2.0.1.tgz#06a05868795da04d91a8ad86ab299c166602ad80"
-  integrity sha512-APezMtg3gQTamAgixvFKPpq8ipQJix5dJcEw4S+UzF4k5fNn1Bm0ssULO01ekr3PkDT/hoT0bMKBb8hNFDAl2g==
+listr2@^2.0.2:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/listr2/-/listr2-2.0.3.tgz#466ba6b72477ee36dfc54c57ef5183016514eafa"
+  integrity sha512-2dKxql0jPuiAyMLYUkzzvoDroenO+aiecNnNfjn+S4jK5P9uuHKN55u4eVX8Czb9JsgAjGx7yPQYMIEzHMmKSA==
   dependencies:
     "@samverschueren/stream-to-observable" "^0.3.0"
     chalk "^4.0.0"
@@ -10863,11 +10863,11 @@ listr2@2.0.1:
     figures "^3.2.0"
     indent-string "^4.0.0"
     log-update "^4.0.0"
+    nanoid "^3.1.9"
     p-map "^4.0.0"
     pad "^3.2.0"
     rxjs "^6.5.5"
     through "^2.3.8"
-    uuid "^8.0.0"
 
 livereload-js@^2.3.0:
   version "2.4.0"
@@ -11938,6 +11938,11 @@ nan@^2.12.1:
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.1.tgz#d7be34dfa3105b91494c3147089315eff8874b01"
   integrity sha512-isWHgVjnFjh2x2yuJ/tj3JbwoHu3UC2dX5G/88Cm24yB6YopVgxvBObDY7n5xW6ExmFhJpSEQqFPvq9zaXc8Jw==
+
+nanoid@^3.1.9:
+  version "3.1.9"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.9.tgz#1f148669c70bb2072dc5af0666e46edb6cd31fb2"
+  integrity sha512-fFiXlFo4Wkuei3i6w9SQI6yuzGRTGi8Z2zZKZpUxv/bQlBi4jtbVPBSNFZHQA9PNjofWqtIa8p+pnsc0kgZrhQ==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -16127,7 +16132,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@8.0.0, uuid@^8.0.0:
+uuid@8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.0.0.tgz#bc6ccf91b5ff0ac07bbcdbf1c7c4e150db4dbb6c"
   integrity sha512-jOXGuXZAWdsTH7eZLtyXMqUb9EcWMGZNbL9YcGBJl4MH4nrxHmZJhEHvyLFrkxo+28uLb/NYRcStH48fnD0Vzw==
