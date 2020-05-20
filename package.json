@@ -97,7 +97,7 @@
     "prettier": "^2.0.5",
     "release-it": "^13.6.1",
     "release-it-lerna-changelog": "^2.3.0",
-    "typescript": "~3.9.2"
+    "typescript": "~3.9.3"
   },
   "resolutions": {
     "favicons": "5.3.0"
