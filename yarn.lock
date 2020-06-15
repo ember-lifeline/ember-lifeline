@@ -7777,13 +7777,14 @@ eslint-config-prettier@^6.11.0:
   dependencies:
     get-stdin "^6.0.0"
 
-eslint-plugin-ember@^8.5.2:
-  version "8.5.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-ember/-/eslint-plugin-ember-8.5.2.tgz#9e0c0e43f74e8fe3d5e35903f33edd043f86dec3"
-  integrity sha512-dLA3W2GpPYRszKL9smw/S0aj0KxUiL1vlvQMDWsiuvcCCwgE/fGZ2FbdmicR/ssMnW5elRfNVPKQdS2B91AMxA==
+eslint-plugin-ember@^8.7.0:
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-ember/-/eslint-plugin-ember-8.7.0.tgz#71b8c7a79e64fbf1c6e29a1a0c3e3546ed207b77"
+  integrity sha512-DUQISEtMi1ysIhnL1pdXcrYYnv7qf7AgKC1PMC2e8FzX7h39gQlC6x3+6sAij2wYGAsl1tShVk6hgLFWC61vEw==
   dependencies:
     "@ember-data/rfc395-data" "^0.0.4"
     ember-rfc176-data "^0.3.13"
+    lodash.kebabcase "^4.1.1"
     snake-case "^3.0.3"
 
 eslint-plugin-es@^3.0.0:
@@ -11063,6 +11064,11 @@ lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
   integrity sha1-eeTriMNqgSKvhvhEqpvNhRtfu1U=
+
+lodash.kebabcase@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.kebabcase/-/lodash.kebabcase-4.1.1.tgz#8489b1cb0d29ff88195cceca448ff6d6cc295c36"
+  integrity sha1-hImxyw0p/4gZXM7KRI/21swpXDY=
 
 lodash.keys@^3.0.0:
   version "3.1.2"
