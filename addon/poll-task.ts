@@ -3,7 +3,7 @@ import Ember from 'ember';
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { IMap, TaskOrName, IDestroyable } from './types';
-import { registerDestructor } from 'ember-destroyable-polyfill';
+import { registerDestructor } from '@ember/destroyable';
 import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 
 export type Token = string | number;
