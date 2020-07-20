@@ -1,6 +1,6 @@
 import { assert } from '@ember/debug';
 import { bind } from '@ember/runloop';
-import { registerDestructor } from 'ember-destroyable-polyfill';
+import { registerDestructor } from '@ember/destroyable';
 import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 import { IMap, IDestroyable, RunMethod } from './types';
 
