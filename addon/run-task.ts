@@ -10,7 +10,6 @@ import {
   EmberRunQueues,
 } from './types';
 import { registerDestructor } from '@ember/destroyable';
-import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 import getTask from './utils/get-task';
 
 const NULL_TIMER_ID = -1;
@@ -306,7 +305,7 @@ export function cancelTask(
 function getTimersDisposable(
   destroyable: IDestroyable,
   timers: Set<EmberRunTimer>
-): Destructor<IDestroyable> {
+) {
   return function () {
     timers.forEach((cancelId) => {
       cancelTask(destroyable, cancelId);

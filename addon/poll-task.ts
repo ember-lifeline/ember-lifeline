@@ -4,7 +4,6 @@ import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { IMap, TaskOrName, IDestroyable } from './types';
 import { registerDestructor } from '@ember/destroyable';
-import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 
 export type Token = string | number;
 
@@ -231,10 +230,7 @@ export function cancelPoll(
   delete queuedPollTasks[pollToken];
 }
 
-function getPollersDisposable(
-  destroyable: IDestroyable,
-  pollers: Set<Token>
-): Destructor<IDestroyable> {
+function getPollersDisposable(destroyable: IDestroyable, pollers: Set<Token>) {
   return function () {
     pollers.forEach((token) => {
       cancelPoll(destroyable, token);

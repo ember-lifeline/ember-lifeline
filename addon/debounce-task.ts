@@ -2,7 +2,6 @@ import { assert } from '@ember/debug';
 import { cancel, debounce } from '@ember/runloop';
 import { IDestroyable, IMap, EmberRunTimer } from './types';
 import { registerDestructor } from '@ember/destroyable';
-import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 
 interface PendingDebounce {
   debouncedTask: Function;
@@ -166,9 +165,7 @@ export function cancelDebounce(
   cancel(cancelId);
 }
 
-function getDebouncesDisposable(
-  debounces: Map<string, PendingDebounce>
-): Destructor<IDestroyable> {
+function getDebouncesDisposable(debounces: Map<string, PendingDebounce>) {
   return function () {
     if (debounces.size === 0) {
       return;

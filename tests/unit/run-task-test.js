@@ -8,6 +8,7 @@ import {
   _setRegisteredTimers,
 } from 'ember-lifeline';
 import { module, test } from 'qunit';
+import { destroy } from '@ember/destroyable';
 
 module('ember-lifeline/run-task', function (hooks) {
   hooks.beforeEach(function () {
@@ -20,6 +21,10 @@ module('ember-lifeline/run-task', function (hooks) {
 
       return (this._component = this.BaseObject.create(...arguments));
     };
+  });
+
+  hooks.afterEach(function () {
+    destroy(this.obj);
   });
 
   test('invokes async tasks', function (assert) {
