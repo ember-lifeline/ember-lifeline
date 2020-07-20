@@ -9,7 +9,8 @@ import {
   EmberRunTimer,
   EmberRunQueues,
 } from './types';
-import { registerDisposable } from './utils/disposable';
+import { registerDestructor } from '@ember/destroyable';
+import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 import getTask from './utils/get-task';
 
 const NULL_TIMER_ID = -1;
@@ -305,7 +306,7 @@ export function cancelTask(
 function getTimersDisposable(
   destroyable: IDestroyable,
   timers: Set<EmberRunTimer>
-): Function {
+): Destructor<IDestroyable> {
   return function () {
     timers.forEach((cancelId) => {
       cancelTask(destroyable, cancelId);
@@ -320,7 +321,7 @@ function getTimers(destroyable: IDestroyable): Set<EmberRunTimer> {
   if (!timers) {
     timers = new Set<EmberRunTimer>();
     registeredTimers.set(destroyable, timers);
-    registerDisposable(destroyable, getTimersDisposable(destroyable, timers));
+    registerDestructor(destroyable, getTimersDisposable(destroyable, timers));
   }
 
   return timers;

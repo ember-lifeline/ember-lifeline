@@ -2,8 +2,9 @@ import Ember from 'ember';
 
 import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
-import { registerDisposable } from './utils/disposable';
 import { IMap, TaskOrName, IDestroyable } from './types';
+import { registerDestructor } from 'ember-destroyable-polyfill';
+import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 
 export type Token = string | number;
 
@@ -141,7 +142,7 @@ export function pollTask(
     pollers = new Set();
     registeredPollers.set(destroyable, pollers);
 
-    registerDisposable(destroyable, getPollersDisposable(destroyable, pollers));
+    registerDestructor(destroyable, getPollersDisposable(destroyable, pollers));
   }
 
   pollers.add(token);
@@ -233,7 +234,7 @@ export function cancelPoll(
 function getPollersDisposable(
   destroyable: IDestroyable,
   pollers: Set<Token>
-): Function {
+): Destructor<IDestroyable> {
   return function () {
     pollers.forEach((token) => {
       cancelPoll(destroyable, token);

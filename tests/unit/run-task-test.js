@@ -2,7 +2,6 @@ import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import {
   cancelTask,
-  runDisposables,
   runTask,
   scheduleTask,
   throttleTask,
@@ -21,10 +20,6 @@ module('ember-lifeline/run-task', function (hooks) {
 
       return (this._component = this.BaseObject.create(...arguments));
     };
-  });
-
-  hooks.afterEach(function () {
-    runDisposables(this.obj);
   });
 
   test('invokes async tasks', function (assert) {

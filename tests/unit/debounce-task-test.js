@@ -1,5 +1,5 @@
 import EmberObject from '@ember/object';
-import { cancelDebounce, debounceTask, runDisposables } from 'ember-lifeline';
+import { cancelDebounce, debounceTask } from 'ember-lifeline';
 import { module, test } from 'qunit';
 
 module('ember-lifeline/debounce-task', function (hooks) {
@@ -13,10 +13,6 @@ module('ember-lifeline/debounce-task', function (hooks) {
 
       return (this._component = this.BaseObject.create(...arguments));
     };
-  });
-
-  hooks.afterEach(function () {
-    runDisposables(this.obj);
   });
 
   test('debounceTask runs tasks', function (assert) {

@@ -26,6 +26,7 @@
       "ember-lifeline/*": ["addon/*"],
       "ember-lifeline/test-support": ["addon-test-support"],
       "ember-lifeline/test-support/*": ["addon-test-support/*"],
+      "@ember/destroyable": ["node_modules/ember-destroyable-polyfill"],
       "*": ["types/*"]
     }
   },

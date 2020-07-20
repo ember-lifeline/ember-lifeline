@@ -1,6 +1,7 @@
 import { assert } from '@ember/debug';
 import { bind } from '@ember/runloop';
-import { registerDisposable } from './utils/disposable';
+import { registerDestructor } from 'ember-destroyable-polyfill';
+import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 import { IMap, IDestroyable, RunMethod } from './types';
 
 /**
@@ -111,7 +112,7 @@ export function addEventListener<T extends IDestroyable>(
 
   // Register a disposable every time we go from zero to one.
   if (listeners.length === 0) {
-    registerDisposable(
+    registerDestructor(
       destroyable as any,
       getEventListenersDisposable(listeners)
     );
@@ -196,7 +197,9 @@ function assertArguments(
   assert('Must provide a callback to run for the given event name', !!callback);
 }
 
-function getEventListenersDisposable(listeners: Array<Object>): Function {
+function getEventListenersDisposable(
+  listeners: Array<Object>
+): Destructor<IDestroyable> {
   return function () {
     if (listeners !== undefined) {
       /* Drop non-passive event listeners */
