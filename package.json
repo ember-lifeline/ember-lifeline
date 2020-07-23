@@ -40,8 +40,7 @@
   },
   "lint-staged": {
     "package.json,{app,addon,config,tests}/**/*.{ts,js,json}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "dependencies": {
