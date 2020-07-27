@@ -1,5 +1,5 @@
 import Mixin from '@ember/object/mixin';
-import { registerDisposable, runDisposables } from '../utils/disposable';
+import { registerDisposable } from '../utils/disposable';
 
 /**
  * DisposableMixin provides a mechanism register disposables with automatic disposing when the
@@ -51,11 +51,5 @@ export default Mixin.create({
    */
   registerDisposable(dispose: Function): void {
     registerDisposable(this, dispose);
-  },
-
-  destroy(): void {
-    runDisposables(this);
-
-    this._super(...arguments);
   },
 });

@@ -1,33 +1,16 @@
-/* globals QUnit */
-import { _setRegisteredDisposables } from 'ember-lifeline';
-
-const FAILED_ASSERTION_MESSAGE =
-  'One or more objects registered disposables that were not correctly disposed of. Please ensure that objects correctly run their registered disposables by calling `runDisposables` in the `destroy` method of the object.';
+import {
+  enableDestroyableTracking,
+  assertDestroyablesDestroyed,
+} from 'ember-destroyable-polyfill';
+import { settled } from '@ember/test-helpers';
 
 export default function setupLifelineValidation(hooks: NestedHooks) {
-  let registeredDisposables = new Map();
   hooks.beforeEach(function () {
-    _setRegisteredDisposables(registeredDisposables);
+    enableDestroyableTracking();
   });
 
-  hooks.afterEach(function (assert: Assert) {
-    let test = QUnit.config.current;
-
-    try {
-      let retainedObjects: unknown[] = [];
-      registeredDisposables.forEach((_, k) =>
-        retainedObjects.push(k.toString())
-      );
-
-      if (retainedObjects.length > 0) {
-        if (test.expected !== null) {
-          test.expected += 1;
-        }
-
-        assert.deepEqual(retainedObjects, [], FAILED_ASSERTION_MESSAGE);
-      }
-    } finally {
-      _setRegisteredDisposables(new WeakMap());
-    }
+  hooks.afterEach(async function () {
+    await settled();
+    assertDestroyablesDestroyed();
   });
 }

@@ -2,7 +2,6 @@ import Mixin from '@ember/object/mixin';
 import { runTask, scheduleTask, throttleTask, cancelTask } from '../run-task';
 import { pollTask, cancelPoll, Token } from '../poll-task';
 import { debounceTask, cancelDebounce } from '../debounce-task';
-import { runDisposables } from '../utils/disposable';
 import { TaskOrName, EmberRunQueues } from '../types';
 
 /**
@@ -340,11 +339,5 @@ export default Mixin.create({
    */
   cancelPoll(token: Token) {
     cancelPoll(token);
-  },
-
-  destroy() {
-    runDisposables(this);
-
-    this._super(...arguments);
   },
 });
