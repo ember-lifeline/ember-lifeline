@@ -3,7 +3,7 @@ import { deprecate } from '@ember/debug';
 import { runTask, scheduleTask, throttleTask, cancelTask } from '../run-task';
 import { pollTask, cancelPoll, Token } from '../poll-task';
 import { debounceTask, cancelDebounce } from '../debounce-task';
-import { TaskOrName, EmberRunQueues } from '../types';
+import { TaskOrName, EmberRunQueues, EmberRunTimer } from '../types';
 
 /**
  * ContextBoundTasksMixin provides a mechanism to run tasks (ala `setTimeout` or
@@ -84,11 +84,11 @@ export default Mixin.create({
    * ```
    *
    * @method cancelTask
-   * @param { Number } cancelId the id returned from the runTask or scheduleTask call
+   * @param { EmberRunTimer } cancelId the id returned from the runTask or scheduleTask call
    * @public
    */
-  cancelTask(cancelId: number) {
-    cancelTask(cancelId);
+  cancelTask(cancelId: EmberRunTimer) {
+    cancelTask(this, cancelId);
   },
 
   /**
@@ -247,11 +247,11 @@ export default Mixin.create({
    * ```
    *
    * @method cancelThrottle
-   * @param { Number } cancelId the id returned from the throttleTask call
+   * @param { EmberRunTimer } cancelId the id returned from the throttleTask call
    * @public
    */
-  cancelThrottle(cancelId: number) {
-    cancelTask(cancelId);
+  cancelThrottle(cancelId: EmberRunTimer) {
+    cancelTask(this, cancelId);
   },
 
   /**
@@ -348,10 +348,10 @@ export default Mixin.create({
    * ```
    *
    * @method cancelPoll
-   * @param { String } token the token for the pollTask to be cleared
+   * @param { Token } token the token for the pollTask to be cleared
    * @public
    */
   cancelPoll(token: Token) {
-    cancelPoll(token);
+    cancelPoll(this, token);
   },
 });

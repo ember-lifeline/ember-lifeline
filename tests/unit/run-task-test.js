@@ -130,7 +130,7 @@ module('ember-lifeline/run-task', function (hooks) {
       5
     );
 
-    cancelTask(cancelId);
+    cancelTask(this.obj, cancelId);
 
     window.setTimeout(() => {
       assert.notOk(hasRun, 'callback should have been canceled previously');
@@ -229,7 +229,7 @@ module('ember-lifeline/run-task', function (hooks) {
         hasRun = true;
       });
 
-      cancelTask(timer);
+      cancelTask(this.obj, timer);
     });
 
     assert.notOk(hasRun, 'callback should have been canceled previously');

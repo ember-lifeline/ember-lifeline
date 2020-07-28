@@ -1,4 +1,3 @@
-import { deprecate } from '@ember/application/deprecations';
 import { assert } from '@ember/debug';
 import { cancel, later, schedule, throttle } from '@ember/runloop';
 import {
@@ -272,33 +271,13 @@ export function throttleTask(
  * @param { Number } cancelId the id returned from the *Task call
  * @public
  */
-export function cancelTask(cancelId: Timer): void | undefined;
 export function cancelTask(
   destroyable: IDestroyable,
-  cancelId: Timer
-): void | undefined;
-export function cancelTask(
-  destroyable: IDestroyable | Timer,
-  cancelId?: any
+  cancelId: EmberRunTimer
 ): void | undefined {
-  if (cancelId === NULL_TIMER_ID) {
-    return;
-  }
+  let timers: Set<EmberRunTimer> = getTimers(<IDestroyable>destroyable);
 
-  if (typeof cancelId === 'undefined') {
-    deprecate(
-      'ember-lifeline cancelTask called without an object. New syntax is cancelTask(destroyable, cancelId) and avoids a memory leak.',
-      true,
-      {
-        id: 'ember-lifeline-cancel-task-without-object',
-        until: '4.0.0',
-      }
-    );
-    cancelId = destroyable;
-  } else {
-    let timers: Set<EmberRunTimer> = getTimers(<IDestroyable>destroyable);
-    timers.delete(cancelId);
-  }
+  timers.delete(cancelId);
   cancel(cancelId);
 }
 

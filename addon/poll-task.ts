@@ -1,6 +1,4 @@
 import Ember from 'ember';
-
-import { deprecate } from '@ember/application/deprecations';
 import getTask from './utils/get-task';
 import { IMap, TaskOrName, IDestroyable } from './types';
 import { registerDestructor } from '@ember/destroyable';
@@ -199,34 +197,18 @@ export function pollTask(
  * @param { Token } token the Token for the pollTask to be cleared, either a string or number
  * @public
  */
-export function cancelPoll(token: Token): void | undefined;
 export function cancelPoll(
   destroyable: IDestroyable,
   token: Token
-): void | undefined;
-export function cancelPoll(
-  destroyable: IDestroyable | Token,
-  token?: Token
 ): void | undefined {
   let pollToken: Token;
-  if (typeof destroyable === 'number' || typeof destroyable === 'string') {
-    deprecate(
-      'ember-lifeline cancelPoll called without an object. New syntax is cancelPoll(destroyable, cancelId) and avoids a memory leak.',
-      true,
-      {
-        id: 'ember-lifeline-cancel-poll-without-object',
-        until: '4.0.0',
-      }
-    );
-    pollToken = destroyable;
-  } else {
-    let pollers: Set<Token> = registeredPollers.get(destroyable);
-    pollToken = token as Token;
+  let pollers: Set<Token> = registeredPollers.get(destroyable);
+  pollToken = token as Token;
 
-    if (pollers !== undefined) {
-      pollers.delete(pollToken);
-    }
+  if (pollers !== undefined) {
+    pollers.delete(pollToken);
   }
+
   delete queuedPollTasks[pollToken];
 }
 
