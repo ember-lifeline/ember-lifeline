@@ -1,24 +1,7 @@
-import { assert } from '@ember/debug';
-import { IMap, IDestroyable } from '../types';
-
-/**
- * A map of instances/array of disposables. Only exported for
- * testing purposes.
- *
- * @public
- */
-let registeredDisposables: IMap<Object, any> = new WeakMap();
-
-/**
- * Test use only. Allows for swapping out the WeakMap to a Map, giving
- * us the ability to detect whether disposables have all been called.
- *
- * @private
- * @param {IMap} mapForTesting A map used to ensure correctness when testing.
- */
-export function _setRegisteredDisposables(mapForTesting: IMap<Object, any>) {
-  registeredDisposables = mapForTesting;
-}
+import { assert, deprecate } from '@ember/debug';
+import { IDestroyable } from '../types';
+import { registerDestructor } from 'ember-destroyable-polyfill';
+import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
 
 /**
  * Registers a new disposable function to run for an instance. Will
@@ -49,9 +32,16 @@ export function registerDisposable(
     !obj.isDestroying
   );
 
-  let disposables: Function[] = getRegisteredDisposables(obj);
+  deprecate(
+    'ember-lifeline registerDisposable is deprecated. Please import registerDestructor from @ember/destroyable',
+    false,
+    {
+      id: 'ember-lifeline-deprecated-register-disposable',
+      until: '7.0.0',
+    }
+  );
 
-  disposables.push(dispose);
+  registerDestructor(obj, <Destructor<IDestroyable>>dispose);
 }
 
 /**
@@ -61,26 +51,13 @@ export function registerDisposable(
  * @public
  * @param {IDestroyable} obj the instance to run the disposables for
  */
-export function runDisposables(obj: IDestroyable): void | undefined {
-  let disposables: Function[] = registeredDisposables.get(obj);
-
-  if (disposables === undefined) {
-    return;
-  }
-
-  registeredDisposables.delete(obj);
-
-  for (let i: number = 0; i < disposables.length; i++) {
-    disposables[i]();
-  }
-}
-
-function getRegisteredDisposables(obj: IDestroyable): Function[] {
-  let disposables: Function[] = registeredDisposables.get(obj);
-
-  if (disposables === undefined) {
-    registeredDisposables.set(obj, (disposables = []));
-  }
-
-  return disposables;
+export function runDisposables(): void | undefined {
+  deprecate(
+    'ember-lifeline runDisposables is deprecated. Explicitly invoking disposables is no longer required.',
+    false,
+    {
+      id: 'ember-lifeline-deprecated-run-disposable',
+      until: '7.0.0',
+    }
+  );
 }

@@ -6,7 +6,6 @@ import {
   pollTask,
   cancelPoll,
   setShouldPoll,
-  runDisposables,
   _setRegisteredPollers,
 } from 'ember-lifeline';
 import { pollTaskFor } from 'ember-lifeline/test-support';
@@ -14,13 +13,7 @@ import { settled } from '@ember/test-helpers';
 
 module('ember-lifeline/poll-task', function (hooks) {
   hooks.beforeEach(function () {
-    this.BaseObject = EmberObject.extend({
-      destroy() {
-        this._super(...arguments);
-
-        runDisposables(this);
-      },
-    });
+    this.BaseObject = EmberObject.extend();
 
     this.getComponent = function ({ force } = {}) {
       if (force && this._component) {

@@ -6,9 +6,9 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, triggerEvent } from '@ember/test-helpers';
 import {
-  runDisposables,
   addEventListener,
   removeEventListener,
+  runDisposables,
 } from 'ember-lifeline';
 import { PASSIVE_SUPPORTED } from 'ember-lifeline/dom-event-listeners';
 
@@ -25,12 +25,6 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         init() {
           this._super(...arguments);
           testContext.componentInstance = this;
-        },
-
-        destroy() {
-          this._super(...arguments);
-
-          runDisposables(this);
         },
       })
     );
@@ -254,11 +248,6 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
             this._super(...arguments);
             testContext.subjectA = this;
           },
-          destroy() {
-            this._super(...arguments);
-
-            runDisposables(this);
-          },
         })
       );
       this.owner.register(
@@ -267,11 +256,6 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
-          },
-          destroy() {
-            this._super(...arguments);
-
-            runDisposables(this);
           },
         })
       );
@@ -313,11 +297,6 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
             this._super(...arguments);
             testContext.subjectA = this;
           },
-          destroy() {
-            this._super(...arguments);
-
-            runDisposables(this);
-          },
         })
       );
       this.owner.register(
@@ -326,11 +305,6 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
           init() {
             this._super(...arguments);
             testContext.subjectB = this;
-          },
-          destroy() {
-            this._super(...arguments);
-
-            runDisposables(this);
           },
         })
       );
@@ -556,38 +530,5 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
     await triggerEvent(window, 'click');
     assert.equal(calls, 1, 'callback was called');
-  });
-
-  test('runDisposables more than once', async function (assert) {
-    let iterations = 3;
-    assert.expect(iterations * 2);
-
-    this.owner.register('template:components/under-test', hbs`<span></span>`);
-    await render(hbs`{{under-test}}`);
-    let component = this.componentInstance;
-
-    let calls = 0;
-    let listener = () => {
-      calls++;
-    };
-
-    // The value for calls should grow linearly with the loop counter.
-    for (let i = 1; i <= iterations; i++) {
-      addEventListener(component, window, 'click', listener);
-      await triggerEvent(window, 'click');
-      assert.equal(
-        calls,
-        i,
-        `callback was called after adding, iteration ${i}`
-      );
-
-      runDisposables(component);
-      await triggerEvent(window, 'click');
-      assert.equal(
-        calls,
-        i,
-        `callback was not called after calling runDisposables, iteration ${i}`
-      );
-    }
   });
 });

@@ -1,7 +1,7 @@
 import { assert } from '@ember/debug';
 import { cancel, debounce } from '@ember/runloop';
 import { IDestroyable, IMap, EmberRunTimer } from './types';
-import { registerDisposable } from './utils/disposable';
+import { registerDestructor } from '@ember/destroyable';
 
 interface PendingDebounce {
   debouncedTask: Function;
@@ -88,7 +88,7 @@ export function debounceTask(
   if (!pendingDebounces) {
     pendingDebounces = new Map();
     registeredDebounces.set(destroyable, pendingDebounces);
-    registerDisposable(destroyable, getDebouncesDisposable(pendingDebounces));
+    registerDestructor(destroyable, getDebouncesDisposable(pendingDebounces));
   }
 
   let debouncedTask: Function;
@@ -165,9 +165,7 @@ export function cancelDebounce(
   cancel(cancelId);
 }
 
-function getDebouncesDisposable(
-  debounces: Map<string, PendingDebounce>
-): Function {
+function getDebouncesDisposable(debounces: Map<string, PendingDebounce>) {
   return function () {
     if (debounces.size === 0) {
       return;

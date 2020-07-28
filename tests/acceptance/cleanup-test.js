@@ -7,13 +7,13 @@ module('Acceptance | cleaning up disposables', function (hooks) {
   setupLifelineValidation(hooks);
   setupApplicationTest(hooks);
 
-  test('visiting /', async function (assert) {
-    await visit('/');
-    assert.equal(currentURL(), '/');
+  test('visiting /foo', async function (assert) {
+    await visit('/foo');
+    assert.equal(currentURL(), '/foo');
   });
 
-  test('visiting /', async function (assert) {
-    await visit('/');
-    assert.equal(currentURL(), '/');
+  test('visiting /foo', async function (assert) {
+    await visit('/foo');
+    assert.equal(currentURL(), '/foo');
   });
 });

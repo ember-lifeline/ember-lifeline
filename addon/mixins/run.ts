@@ -1,8 +1,8 @@
 import Mixin from '@ember/object/mixin';
+import { deprecate } from '@ember/debug';
 import { runTask, scheduleTask, throttleTask, cancelTask } from '../run-task';
 import { pollTask, cancelPoll, Token } from '../poll-task';
 import { debounceTask, cancelDebounce } from '../debounce-task';
-import { runDisposables } from '../utils/disposable';
 import { TaskOrName, EmberRunQueues } from '../types';
 
 /**
@@ -17,6 +17,19 @@ import { TaskOrName, EmberRunQueues } from '../types';
  * @public
  */
 export default Mixin.create({
+  init(...args: any[]) {
+    this._super(...args);
+
+    deprecate(
+      "ember-lifeline ContextBoundTasksMixin is deprecated. Please use the functional equivalent of this mixin's methods instead.",
+      false,
+      {
+        id: 'ember-lifeline-deprecated-context-bound-tasks-mixin',
+        until: '7.0.0',
+      }
+    );
+  },
+
   /**
    * Runs the provided task function at the specified timeout (defaulting to 0).
    * The timer is properly canceled if the object is destroyed before it is invoked.
@@ -340,11 +353,5 @@ export default Mixin.create({
    */
   cancelPoll(token: Token) {
     cancelPoll(token);
-  },
-
-  destroy() {
-    runDisposables(this);
-
-    this._super(...arguments);
   },
 });
