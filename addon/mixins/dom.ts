@@ -1,5 +1,5 @@
 import Mixin from '@ember/object/mixin';
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { addEventListener, removeEventListener } from '../dom-event-listeners';
 import { IDestroyable, RunMethod } from '../types';
 
@@ -22,6 +22,19 @@ type ElementOrTarget = Element | EventTarget;
  * @public
  */
 export default Mixin.create({
+  init(...args: any[]) {
+    this._super(...args);
+
+    deprecate(
+      "ember-lifeline ContextBoundEventListenersMixin is deprecated. Please use the functional equivalent of this mixin's methods instead.",
+      false,
+      {
+        id: 'ember-lifeline-deprecated-context-bound-event-listeners-mixin',
+        until: '7.0.0',
+      }
+    );
+  },
+
   /**
    * Attaches an event listener that will automatically be removed when the host
    * object is dropped from DOM.

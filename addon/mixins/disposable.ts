@@ -1,4 +1,5 @@
 import Mixin from '@ember/object/mixin';
+import { deprecate } from '@ember/debug';
 import { registerDisposable } from '../utils/disposable';
 
 /**
@@ -9,6 +10,19 @@ import { registerDisposable } from '../utils/disposable';
  * @public
  */
 export default Mixin.create({
+  init(...args: any[]) {
+    this._super(...args);
+
+    deprecate(
+      "ember-lifeline DisposableMixin is deprecated. Please use the functional equivalent of this mixin's methods instead.",
+      false,
+      {
+        id: 'ember-lifeline-deprecated-disposable-mixin',
+        until: '7.0.0',
+      }
+    );
+  },
+
   /**
    * Adds a new disposable to the Ember object. A disposable is a function that
    * disposes of resources that are outside of Ember's lifecyle. This essentially
