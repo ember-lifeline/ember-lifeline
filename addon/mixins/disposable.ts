@@ -1,6 +1,7 @@
 import Mixin from '@ember/object/mixin';
 import { deprecate } from '@ember/debug';
 import { registerDisposable } from '../utils/disposable';
+import { IDestroyable } from 'ember-lifeline/types';
 
 /**
  * DisposableMixin provides a mechanism register disposables with automatic disposing when the
@@ -63,7 +64,7 @@ export default Mixin.create({
    * @param { Function } dispose
    * @public
    */
-  registerDisposable(dispose: Function): void {
+  registerDisposable(dispose: (destroyable: IDestroyable) => void): void {
     registerDisposable(this, dispose);
   },
 });
