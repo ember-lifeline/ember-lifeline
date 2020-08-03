@@ -1,3 +1,14 @@
+## v6.0.0 (2020-08-03)
+
+#### :boom: Breaking Change
+* [#859](https://github.com/ember-lifeline/ember-lifeline/pull/859) Removing deprecation warnings targeted for 4.0.0 ([@scalvert](https://github.com/scalvert))
+* [#852](https://github.com/ember-lifeline/ember-lifeline/pull/852) Convert internal destroyable implementation to use @ember/destroyable ([@scalvert](https://github.com/scalvert))
+* [#855](https://github.com/ember-lifeline/ember-lifeline/pull/855) Removes support for Ember 3.4 in ember-try config. ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v5.1.0 (2020-05-05)
 
 #### :rocket: Enhancement
