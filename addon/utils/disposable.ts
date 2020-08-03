@@ -1,7 +1,6 @@
 import { assert, deprecate } from '@ember/debug';
 import { IDestroyable } from '../types';
-import { registerDestructor } from 'ember-destroyable-polyfill';
-import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
+import { registerDestructor } from '@ember/destroyable';
 
 /**
  * Registers a new disposable function to run for an instance. Will
@@ -17,7 +16,7 @@ import { Destructor } from 'ember-destroyable-polyfill/-internal/destructors';
  */
 export function registerDisposable(
   obj: IDestroyable,
-  dispose: Function
+  dispose: (destroyable: IDestroyable) => void
 ): void | undefined {
   assert(
     'Called `registerDisposable` where `obj` is not an object',
@@ -41,7 +40,7 @@ export function registerDisposable(
     }
   );
 
-  registerDestructor(obj, <Destructor<IDestroyable>>dispose);
+  registerDestructor(obj, dispose);
 }
 
 /**
