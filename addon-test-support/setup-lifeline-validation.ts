@@ -1,7 +1,7 @@
 import {
   enableDestroyableTracking,
   assertDestroyablesDestroyed,
-} from 'ember-destroyable-polyfill';
+} from '@ember/destroyable';
 
 export default function setupLifelineValidation(hooks: NestedHooks) {
   hooks.beforeEach(function () {

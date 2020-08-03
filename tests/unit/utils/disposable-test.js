@@ -5,7 +5,7 @@ import { registerDisposable, runDisposables } from 'ember-lifeline';
 import {
   enableDestroyableTracking,
   assertDestroyablesDestroyed,
-} from 'ember-destroyable-polyfill';
+} from '@ember/destroyable';
 
 module('ember-lifeline/utils/disposable', function (hooks) {
   hooks.beforeEach(function () {
