@@ -94,7 +94,7 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "loader.js": "^4.7.0",
-    "prettier": "^2.1.0",
+    "prettier": "^2.1.1",
     "release-it": "^13.6.9",
     "release-it-lerna-changelog": "^2.3.0",
     "typescript": "~4.0.2"
