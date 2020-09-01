@@ -19,11 +19,6 @@ jobs:
         os: [ubuntu-latest, macOS-latest]
 
     steps:
-      - if: matrix.os == 'macOS-latest'
-        run: |
-          brew update
-          brew cask install google-chrome
-          brew cask install firefox
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
@@ -50,6 +45,8 @@ jobs:
         ember-try-scenario:
           - ember-lts-3.8
           - ember-lts-3.12
+          - ember-lts-3.16
+          - ember-lts-3.20
           - ember-release
           - ember-beta
           - ember-canary
