@@ -1,3 +1,12 @@
+## v6.0.1 (2020-09-17)
+
+#### :bug: Bug Fix
+* [#931](https://github.com/ember-lifeline/ember-lifeline/pull/931) Upgrades ember-destroyable-polyfill to fix issue with double _super invocation ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v6.0.0 (2020-08-03)
 
 #### :boom: Breaking Change
