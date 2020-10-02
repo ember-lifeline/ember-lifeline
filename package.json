@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
-    "@types/ember": "^3.16.0",
+    "@types/ember": "^3.16.1",
     "@types/ember-qunit": "^3.4.12",
     "@types/ember-test-helpers": "^1.0.9",
     "@types/ember-testing-helpers": "^0.0.4",
