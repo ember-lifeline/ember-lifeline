@@ -51,7 +51,7 @@
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
     "@types/ember": "^3.16.0",
-    "@types/ember-qunit": "^3.4.11",
+    "@types/ember-qunit": "^3.4.12",
     "@types/ember-test-helpers": "^1.0.8",
     "@types/ember-testing-helpers": "^0.0.4",
     "@types/ember__test-helpers": "^1.7.2",
