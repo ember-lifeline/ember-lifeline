@@ -49,7 +49,7 @@ Using ember-lifeline's equivalent, in this case `runTask`, can help ensure that 
 
 ```js
 import Component from '@ember/component';
-import { runTask, runDisposables } from 'ember-lifeline';
+import { runTask } from 'ember-lifeline';
 
 export default Component.extend({
   init() {
@@ -62,13 +62,7 @@ export default Component.extend({
       },
       500
     );
-  },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
+  }
 });
 ```
 
