@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 12.x
       - name: install dependencies
         run: yarn install
       - name: lint
@@ -39,21 +39,20 @@ jobs:
       fail-fast: true
       matrix:
         ember-try-scenario:
-          - ember-lts-3.8
-          - ember-lts-3.12
           - ember-lts-3.16
           - ember-lts-3.20
+          - ember-lts-3.24
           - ember-release
           - ember-beta
           - ember-canary
-          - ember-default
           - ember-default-with-jquery
+          - ember-classic
 
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 12.x
       - name: install dependencies
         run: yarn install
       - name: test

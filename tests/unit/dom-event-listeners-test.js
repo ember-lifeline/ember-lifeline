@@ -1,15 +1,11 @@
 import { run } from '@ember/runloop';
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import Service from '@ember/service';
 import hbs from 'htmlbars-inline-precompile';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, find, triggerEvent } from '@ember/test-helpers';
-import {
-  addEventListener,
-  removeEventListener,
-  runDisposables,
-} from 'ember-lifeline';
+import { addEventListener, removeEventListener } from 'ember-lifeline';
 import { PASSIVE_SUPPORTED } from 'ember-lifeline/dom-event-listeners';
 
 module('ember-lifeline/dom-event-listeners', function (hooks) {
@@ -21,12 +17,12 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
     this.owner.register(
       name,
-      Component.extend({
-        init() {
-          this._super(...arguments);
+      class UnderTest extends Component {
+        constructor() {
+          super(...arguments);
           testContext.componentInstance = this;
-        },
-      })
+        }
+      }
     );
 
     this.Component = this.owner.factoryFor
@@ -51,7 +47,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      await render(hbs`{{under-test}}`);
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
       let childElement = find('.foo');
 
@@ -73,7 +69,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      await render(hbs`{{under-test}}`);
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
       let childElement = find('.foo');
 
@@ -93,7 +89,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         testedOptions
       );
 
-      await triggerEvent(component.element.firstChild, 'click');
+      await triggerEvent(childElement, 'click');
 
       assert.equal(calls, 1, 'callback was called');
       assert.ok(hadRunloop, 'callback was called in runloop');
@@ -112,9 +108,9 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      await render(hbs`{{under-test}}`);
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
-      let childElement = component.element.querySelector('.foo');
+      let childElement = find('.foo');
 
       let calls = 0;
       let hadRunloop = null;
@@ -133,7 +129,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
       );
 
       let delta = {};
-      await triggerEvent(component.element.firstChild, 'drag', {
+      await triggerEvent(childElement, 'drag', {
         details: { delta },
       });
 
@@ -152,17 +148,17 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
       this.set('show', true);
       await render(
-        hbs`{{#if show}}{{under-test}}{{/if}}<span class="foo"></span>`
+        hbs`{{#if this.show}}<UnderTest />{{/if}}<span class="foo"></span>`
       );
       let component = this.componentInstance;
       let ranCallback = 0;
       let hadRunloop = null;
       let handledEvent = null;
-      let element = find('.foo');
+      let childElement = find('.foo');
 
       addEventListener(
         component,
-        element,
+        childElement,
         'click',
         (event) => {
           ranCallback++;
@@ -172,7 +168,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         testedOptions
       );
 
-      await triggerEvent(element, 'click');
+      await triggerEvent(childElement, 'click');
 
       assert.equal(ranCallback, 1, 'callback was called once');
       assert.ok(hadRunloop, 'callback was called in runloop');
@@ -185,9 +181,9 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
       this.set('show', false);
 
-      // Trigger the event on the non-child element again, after the component
+      // Trigger the event on the child element again, after the component
       // is removed from DOM. The listener should not fire this time.
-      await triggerEvent(element, 'click');
+      await triggerEvent(childElement, 'click');
 
       assert.equal(ranCallback, 1, 'callback was not called a second time');
     });
@@ -195,8 +191,13 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
     test(`${testName} throws when called with incorrect arguments`, async function (assert) {
       assert.expect(5);
 
-      await render(hbs`{{under-test}}`);
+      this.owner.register(
+        'template:components/under-test',
+        hbs`<span class="foo"></span>`
+      );
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
+      let element = find('.foo');
 
       assert.throws(() => {
         addEventListener(component, null, 'click', () => {}, testedOptions);
@@ -217,23 +218,11 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
       }, /Must provide an element \(not a DOM selector\)/);
 
       assert.throws(() => {
-        addEventListener(
-          component,
-          component.element,
-          null,
-          () => {},
-          testedOptions
-        );
+        addEventListener(component, element, null, () => {}, testedOptions);
       }, /Must provide an eventName that specifies the event type/);
 
       assert.throws(() => {
-        addEventListener(
-          component,
-          component.element,
-          'click',
-          null,
-          testedOptions
-        );
+        addEventListener(component, element, 'click', null, testedOptions);
       }, /Must provide a callback to run for the given event name/);
     });
 
@@ -243,26 +232,26 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
       let testContext = this;
       this.owner.register(
         'component:under-test-a',
-        Component.extend({
-          init() {
-            this._super(...arguments);
+        class UnderTestA extends Component {
+          constructor() {
+            super(...arguments);
             testContext.subjectA = this;
-          },
-        })
+          }
+        }
       );
       this.owner.register(
         'component:under-test-b',
-        Component.extend({
-          init() {
-            this._super(...arguments);
+        class UnderTestB extends Component {
+          constructor() {
+            super(...arguments);
             testContext.subjectB = this;
-          },
-        })
+          }
+        }
       );
 
       this.set('showA', true);
       await render(
-        hbs`{{#if showA}}{{under-test-a}}{{/if}}{{under-test-b}}<span class="foo"></span>`
+        hbs`{{#if this.showA}}<UnderTestA />{{/if}}<UnderTestB /><span class="foo"></span>`
       );
 
       let { subjectA, subjectB } = this;
@@ -292,26 +281,24 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
       this.owner.register(
         'component:under-test-a',
-        Component.extend({
-          init() {
-            this._super(...arguments);
+        class UnderTestA extends Component {
+          constructor() {
+            super(...arguments);
             testContext.subjectA = this;
-          },
-        })
+          }
+        }
       );
       this.owner.register(
         'component:under-test-b',
-        Component.extend({
-          init() {
-            this._super(...arguments);
+        class UnderTestB extends Component {
+          constructor() {
+            super(...arguments);
             testContext.subjectB = this;
-          },
-        })
+          }
+        }
       );
 
-      await render(
-        hbs`{{under-test-a}}{{under-test-b}}<span class="foo"></span>`
-      );
+      await render(hbs`<UnderTestA /><UnderTestB /><span class="foo"></span>`);
 
       let { subjectA, subjectB } = this;
       let target = find('.foo');
@@ -349,7 +336,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      await render(hbs`{{under-test}}`);
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
       let calls = 0;
       let listener = () => {
@@ -361,7 +348,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
       removeEventListener(component, element, 'click', listener, testedOptions);
 
-      await triggerEvent(component.element.firstChild, 'click');
+      await triggerEvent(element, 'click');
 
       assert.equal(calls, 0, 'callback was not called');
     });
@@ -376,7 +363,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      await render(hbs`{{under-test}}`);
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
       let element = find('.foo');
 
@@ -396,16 +383,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
 
       let serviceName = 'service:under-test';
 
-      this.owner.register(
-        'service:under-test',
-        Service.extend({
-          destroy() {
-            runDisposables(this);
-
-            this._super(...arguments);
-          },
-        })
-      );
+      this.owner.register('service:under-test', class extends Service {});
 
       let factory = this.owner.factoryFor
         ? this.owner.factoryFor(serviceName)
@@ -459,7 +437,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
       'template:components/under-test',
       hbs`<span class="outer"><span class="inner"></span></span>`
     );
-    await render(hbs`{{under-test}}`);
+    await render(hbs`<UnderTest />`);
     let component = this.componentInstance;
     let outer = find('.outer');
     let inner = find('.inner');
@@ -479,7 +457,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
       { passive: false }
     );
 
-    await triggerEvent(component.element.firstChild.firstChild, 'click', {
+    await triggerEvent(outer.firstChild, 'click', {
       bubbles: true,
     });
 
@@ -495,7 +473,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
         'template:components/under-test',
         hbs`<span class="foo"></span>`
       );
-      await render(hbs`{{under-test}}`);
+      await render(hbs`<UnderTest />`);
       let component = this.componentInstance;
 
       let calls = 0;
@@ -518,7 +496,7 @@ module('ember-lifeline/dom-event-listeners', function (hooks) {
     assert.expect(1);
 
     this.owner.register('template:components/under-test', hbs`<span></span>`);
-    await render(hbs`{{under-test}}`);
+    await render(hbs`<UnderTest />`);
     let component = this.componentInstance;
 
     let calls = 0;
