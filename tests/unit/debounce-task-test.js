@@ -1,21 +1,8 @@
-import EmberObject from '@ember/object';
 import { cancelDebounce, debounceTask } from 'ember-lifeline';
 import { module, test } from 'qunit';
 import { destroy } from '@ember/destroyable';
 
 module('ember-lifeline/debounce-task', function (hooks) {
-  hooks.beforeEach(function () {
-    this.BaseObject = EmberObject.extend();
-
-    this.getComponent = function () {
-      if (this._component) {
-        return this._component;
-      }
-
-      return (this._component = this.BaseObject.create(...arguments));
-    };
-  });
-
   hooks.afterEach(function () {
     destroy(this.obj);
   });
@@ -26,13 +13,13 @@ module('ember-lifeline/debounce-task', function (hooks) {
     let done = assert.async();
     let runCount = 0;
     let runArg;
-    let obj = (this.obj = this.getComponent({
+    let obj = (this.obj = {
       doStuff(arg) {
         runCount++;
         assert.equal(this, obj, 'context is correct');
         runArg = arg;
       },
-    }));
+    });
 
     debounceTask(this.obj, 'doStuff', 'arg1', 5);
     debounceTask(this.obj, 'doStuff', 'arg2', 5);
@@ -48,7 +35,7 @@ module('ember-lifeline/debounce-task', function (hooks) {
   });
 
   test('debounceTask triggers an assertion when delay argument is not a number or not passed', function (assert) {
-    this.obj = this.getComponent({ doStuff() {} });
+    this.obj = { doStuff() {} };
 
     assert.throws(() => {
       debounceTask(this.obj, 'doStuff', 'bad');
@@ -60,16 +47,18 @@ module('ember-lifeline/debounce-task', function (hooks) {
   });
 
   test('debounceTask passes arguments to method', function (assert) {
+    assert.expect(2);
+
     let callCount = 0;
     let calledWithArgs;
     const done = assert.async();
 
-    this.obj = this.getComponent({
+    this.obj = {
       doStuff(...args) {
         callCount++;
         calledWithArgs = args;
       },
-    });
+    };
 
     debounceTask(this.obj, 'doStuff', 'hello', 'world', 5);
 
@@ -85,11 +74,11 @@ module('ember-lifeline/debounce-task', function (hooks) {
     assert.expect(2);
 
     let runCount = 0;
-    this.obj = this.getComponent({
+    this.obj = {
       doStuff() {
         runCount++;
       },
-    });
+    };
 
     debounceTask(this.obj, 'doStuff', 5);
     debounceTask(this.obj, 'doStuff', 5);
@@ -106,9 +95,9 @@ module('ember-lifeline/debounce-task', function (hooks) {
   test('cancelDebounce does not throw an error if the debounced task was never run', function (assert) {
     assert.expect(1);
 
-    this.obj = this.getComponent({
+    this.obj = {
       doStuff() {},
-    });
+    };
 
     cancelDebounce(this.obj, 'doStuff');
 
@@ -119,9 +108,9 @@ module('ember-lifeline/debounce-task', function (hooks) {
     let done = assert.async();
     assert.expect(1);
 
-    this.obj = this.getComponent({
+    this.obj = {
       doStuff() {},
-    });
+    };
 
     debounceTask(this.obj, 'doStuff', 5);
 

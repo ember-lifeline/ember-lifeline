@@ -1,8 +1,12 @@
 module.exports = {
   root: true,
+  parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 2017,
+    ecmaVersion: 2018,
     sourceType: 'module',
+    ecmaFeatures: {
+      legacyDecorators: true,
+    },
   },
   plugins: ['ember', 'prettier'],
   extends: [
@@ -61,6 +65,11 @@ module.exports = {
       rules: {
         'ember/no-new-mixins': 'off',
       },
+    },
+    {
+      // Test files:
+      files: ['tests/**/*-test.{js,ts}'],
+      extends: ['plugin:qunit/recommended'],
     },
   ],
 };

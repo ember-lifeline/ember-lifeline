@@ -8,7 +8,7 @@ import {
   EmberRunTimer,
   EmberRunQueues,
 } from './types';
-import { registerDestructor } from '@ember/destroyable';
+import { registerDestructor, isDestroying } from '@ember/destroyable';
 import getTask from './utils/get-task';
 
 const NULL_TIMER_ID = -1;
@@ -77,7 +77,7 @@ export function runTask(
   taskOrName: TaskOrName,
   timeout: number = 0
 ): Timer {
-  if (destroyable.isDestroying) {
+  if (isDestroying(destroyable)) {
     return NULL_TIMER_ID;
   }
 
@@ -144,7 +144,7 @@ export function scheduleTask(
     queueName !== 'afterRender'
   );
 
-  if (destroyable.isDestroying) {
+  if (isDestroying(destroyable)) {
     return NULL_TIMER_ID;
   }
 
@@ -211,7 +211,7 @@ export function throttleTask(
     typeof destroyable[taskName] === 'function'
   );
 
-  if (destroyable.isDestroying) {
+  if (isDestroying(destroyable)) {
     return NULL_TIMER_ID;
   }
 
@@ -229,6 +229,7 @@ export function throttleTask(
   let timers: Set<EmberRunTimer> = getTimers(destroyable);
   let cancelId: EmberRunTimer = throttle(
     destroyable as any,
+    // @ts-ignore
     taskName,
     ...throttleArgs
   );
