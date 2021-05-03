@@ -1,4 +1,4 @@
-import { assert } from '@ember/debug';
+import { assert, deprecate } from '@ember/debug';
 import { bind } from '@ember/runloop';
 import { registerDestructor } from '@ember/destroyable';
 import { IMap, IDestroyable, RunMethod } from './types';
@@ -98,6 +98,15 @@ export function addEventListener<T extends IDestroyable>(
 ): void {
   assertArguments(target, eventName, callback);
 
+  deprecate(
+    'ember-lifeline addEventListener is deprecated. Please use modifiers instead.',
+    false,
+    {
+      id: 'ember-lifeline-deprecated-addeventlistener',
+      until: '7.0.0',
+    }
+  );
+
   let _callback: EventListenerOrEventListenerObject = bind(
     destroyable,
     callback
@@ -145,6 +154,15 @@ export function removeEventListener<T extends IDestroyable>(
   options?: any
 ): void {
   assertArguments(target, eventName, callback);
+
+  deprecate(
+    'ember-lifeline removeEventListener is deprecated. Please use modifiers instead.',
+    false,
+    {
+      id: 'ember-lifeline-deprecated-removeeventlistener',
+      until: '7.0.0',
+    }
+  );
 
   let listeners: Array<Object> = eventListeners.get(destroyable);
 
