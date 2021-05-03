@@ -104,6 +104,11 @@ export function addEventListener<T extends IDestroyable>(
     {
       id: 'ember-lifeline-deprecated-addeventlistener',
       until: '7.0.0',
+      // @ts-ignore
+      for: 'ember-lifeline',
+      since: {
+        enabled: '6.0.0',
+      },
     }
   );
 
@@ -161,6 +166,11 @@ export function removeEventListener<T extends IDestroyable>(
     {
       id: 'ember-lifeline-deprecated-removeeventlistener',
       until: '7.0.0',
+      // @ts-ignore
+      for: 'ember-lifeline',
+      since: {
+        enabled: '6.0.0',
+      },
     }
   );
 
