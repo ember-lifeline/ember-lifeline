@@ -1,3 +1,16 @@
+## v6.0.2 (2021-05-04)
+
+#### :memo: Documentation
+* [#988](https://github.com/ember-lifeline/ember-lifeline/pull/988) Adds deprecation warning for DOM APIs ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* [#980](https://github.com/ember-lifeline/ember-lifeline/pull/980) Upgrade caniuse-db and dedupe yarn.lock ([@nlfurniss](https://github.com/nlfurniss))
+
+#### Committers: 2
+- Nathaniel Furniss ([@nlfurniss](https://github.com/nlfurniss))
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v6.0.1 (2020-09-17)
 
 #### :bug: Bug Fix
