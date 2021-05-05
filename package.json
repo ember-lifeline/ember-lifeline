@@ -61,7 +61,7 @@
     "@typescript-eslint/parser": "^3.10.1",
     "broccoli-asset-rev": "^3.0.0",
     "documentation": "^13.0.2",
-    "ember-cli": "~3.21.2",
+    "ember-cli": "~3.26.1",
     "ember-cli-addon-docs": "^0.8.0",
     "ember-cli-addon-docs-yuidoc": "0.2.1",
     "ember-cli-dependency-checker": "^3.2.0",
