@@ -229,7 +229,7 @@ export function throttleTask(
   let timers: Set<EmberRunTimer> = getTimers(destroyable);
   let cancelId: EmberRunTimer = throttle(
     destroyable as any,
-    // @ts-ignore
+    // @ts-ignore Ignores type mismatch issues with passing rest arguments to throttle.
     taskName,
     ...throttleArgs
   );
