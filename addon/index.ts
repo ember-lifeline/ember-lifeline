@@ -14,4 +14,3 @@ export {
   queuedPollTasks,
 } from './poll-task';
 export { debounceTask, cancelDebounce } from './debounce-task';
-export { addEventListener, removeEventListener } from './dom-event-listeners';
