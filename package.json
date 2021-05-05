@@ -95,7 +95,7 @@
     "lint-staged": "^10.5.1",
     "loader.js": "^4.7.0",
     "prettier": "^2.2.1",
-    "release-it": "^14.0.3",
+    "release-it": "^14.6.1",
     "release-it-lerna-changelog": "^3.1.0",
     "typescript": "~4.0.3"
   },
