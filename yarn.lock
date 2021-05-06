@@ -5382,9 +5382,9 @@ cheerio@^0.22.0:
     lodash.some "^4.4.0"
 
 cheerio@^1.0.0-rc.2:
-  version "1.0.0-rc.8"
-  resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.8.tgz#1a2e4875d10aa49b9e70e722c1ac8b61e3914bd3"
-  integrity sha512-w188MtEs/byz3Xh1DHifokHdAEkd/FVIawxovzHKIb8O7eim2M294X+rUd7RhiomPdISDSiq2oU1R4ImcR/aug==
+  version "1.0.0-rc.9"
+  resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.9.tgz#a3ae6b7ce7af80675302ff836f628e7cb786a67f"
+  integrity sha512-QF6XVdrLONO6DXRF5iaolY+odmhj2CLj+xzNod7INPWMi/x9X4SOylH0S/vaPpX+AUU6t04s34SQNh7DbkuCng==
   dependencies:
     cheerio-select "^1.4.0"
     dom-serializer "^1.3.1"
