@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2017",
+    "rootDir": "./src",
+    "outDir": "./lib",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
@@ -18,17 +20,14 @@
     "baseUrl": ".",
     "module": "es6",
     "paths": {
-      "ember-lifeline": ["addon"],
-      "ember-lifeline/*": ["addon/*"],
-      "ember-lifeline/test-support": ["addon-test-support"],
-      "ember-lifeline/test-support/*": ["addon-test-support/*"],
+      "ember-lifeline": ["src"],
+      "ember-lifeline/*": ["src/*"],
       "@ember/destroyable": ["node_modules/ember-destroyable-polyfill"],
       "*": ["types/*"]
     }
   },
   "include": [
-    "addon/**/*",
-    "types/**/*",
-    "addon-test-support/**/*"
+    "src/**/*",
+    "types/**/*"
   ]
 }
