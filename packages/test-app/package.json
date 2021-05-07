@@ -50,6 +50,7 @@
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "documentation": "^13.0.2",
+    "ember-auto-import": "^2.0.0-beta.2",
     "ember-cli": "~3.27.0-beta.1",
     "ember-cli-addon-docs": "^0.8.0",
     "ember-cli-addon-docs-yuidoc": "0.2.1",
@@ -91,7 +92,8 @@
     "qunit": "^2.14.1",
     "release-it": "^14.0.3",
     "release-it-lerna-changelog": "^3.1.0",
-    "typescript": "~4.0.3"
+    "typescript": "~4.0.3",
+    "webpack": "^5.0.0"
   },
   "engines": {
     "node": "12.* || >= 14"
