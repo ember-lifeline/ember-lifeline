@@ -1,7 +1,11 @@
 {
   "name": "ember-lifeline-monorepo",
-  "private" true,
+  "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "volta": {
+    "node": "12.22.1",
+    "yarn": "1.22.10"
+  }
 }
