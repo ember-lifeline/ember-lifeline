@@ -20,6 +20,12 @@ about the weird parts of working in a long-lived app.
 
 The [documentation website](https://ember-lifeline.github.io/ember-lifeline/) contains more examples and API information.
 
+## Compatibility
+
+* Ember.js v3.16 or above
+* Ember CLI v3.16 or above
+* Node.js v12 or above
+
 ## Installation
 
     ember install ember-lifeline

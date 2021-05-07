@@ -12,7 +12,7 @@ module('Acceptance | cleaning up disposables', function (hooks) {
     assert.equal(currentURL(), '/foo');
   });
 
-  test('visiting /foo', async function (assert) {
+  test('visiting /foo again', async function (assert) {
     await visit('/foo');
     assert.equal(currentURL(), '/foo');
   });
