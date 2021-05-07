@@ -21,5 +21,6 @@ module.exports = function (defaults) {
 
   app.import({ test: 'vendor/fix-promise.js' });
 
-  return app.toTree();
+  const { maybeEmbroider } = require('@embroider/test-setup');
+  return maybeEmbroider(app);
 };
