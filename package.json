@@ -49,6 +49,7 @@
     ]
   },
   "dependencies": {
+    "@embroider/addon-shim": "^0.40.0",
     "ember-cli-babel": "^7.26.5",
     "ember-cli-typescript": "^3.1.4",
     "ember-destroyable-polyfill": "^2.0.2"
@@ -124,7 +125,9 @@
     "edition": "octane"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config"
+    "main": "addon-main.js",
+    "type": "addon",
+    "version": 2
   },
   "release-it": {
     "plugins": {
