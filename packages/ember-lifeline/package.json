@@ -63,6 +63,10 @@
     "@typescript-eslint/parser": "^3.10.1",
     "typescript": "~4.0.3"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./test-support": "./lib/test-support/index.js"
+  },
   "engines": {
     "node": "12.* || >= 14"
   },
