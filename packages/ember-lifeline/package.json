@@ -23,7 +23,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "ember build --environment=production",
+    "build": "tsc -p tsconfig.json",
     "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --document-exported \"addon-test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
