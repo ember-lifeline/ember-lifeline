@@ -5,8 +5,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspaces ember-lifeline build",
-    "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --document-exported \"addon-test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
+    "build": "npm-run-all build:ts build:docs",
+    "build:ts": "yarn workspace ember-lifeline prepare",
+    "build:docs": "documentation build --document-exported \"packages/ember-lifeline/lib/index.js\" --document-exported \"packages/ember-lifeline/lib/test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "lint:hbs": "ember-template-lint .",
@@ -17,8 +18,8 @@
     "postpublish": "ember ts:clean",
     "start": "ember serve",
     "test": "npm-run-all lint test:*",
-    "test:ember": "ember test",
-    "test:ember-compatibility": "ember try:each"
+    "test:ember": "yarn workspace test-app test:ember",
+    "test:ember-compatibility": "yarn workspace test-app test:ember-compatibility"
   },
   "husky": {
     "hooks": {
@@ -33,6 +34,7 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "documentation": "^13.0.2",
+    "ember-template-lint": "^3.2.0",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-ember": "^10.3.0",
