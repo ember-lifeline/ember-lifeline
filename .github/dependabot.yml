@@ -3,34 +3,6 @@ updates:
 - package-ecosystem: npm
   directory: "/"
   schedule:
-    interval: monthly
+    interval: weekly
     time: "07:00"
   open-pull-requests-limit: 10
-  versioning-strategy: increase
-  ignore:
-  - dependency-name: ember-router-scroll
-    versions:
-    - 3.3.7
-    - 4.0.1
-  - dependency-name: "@types/ember"
-    versions:
-    - 3.16.2
-    - 3.16.3
-  - dependency-name: lint-staged
-    versions:
-    - 10.5.3
-  - dependency-name: ember-source
-    versions:
-    - 3.24.1
-  - dependency-name: eslint
-    versions:
-    - 7.19.0
-  - dependency-name: eslint-plugin-ember
-    versions:
-    - 10.1.1
-  - dependency-name: ember-cli-typescript
-    versions:
-    - 4.0.0
-  - dependency-name: elliptic
-    versions:
-    - 6.5.3
