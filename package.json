@@ -100,7 +100,7 @@
     "eslint-plugin-ember": "^10.3.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-qunit": "^6.0.0",
+    "eslint-plugin-qunit": "^6.2.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.5.1",
     "loader.js": "^4.7.0",
