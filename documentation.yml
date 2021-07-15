@@ -14,10 +14,6 @@ toc:
     children:
       - addEventListener
       - removeEventListener
-  - name: Disposables
-    children:
-      - registerDisposable
-      - runDisposables
   - name: Mixins
     children:
       - DisposableMixin
