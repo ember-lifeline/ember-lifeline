@@ -274,7 +274,7 @@ export function throttleTask(
  */
 export function cancelTask(
   destroyable: IDestroyable,
-  cancelId: EmberRunTimer
+  cancelId: Timer
 ): void | undefined {
   let timers: Set<EmberRunTimer> = getTimers(<IDestroyable>destroyable);
 
