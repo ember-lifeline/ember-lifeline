@@ -1254,13 +1254,13 @@
     resolve "^1.8.1"
     semver "^7.3.2"
 
-"@embroider/test-setup@^0.40.0":
-  version "0.40.0"
-  resolved "https://registry.yarnpkg.com/@embroider/test-setup/-/test-setup-0.40.0.tgz#bff8e7d780c1ba1a349f9e51605c9668a8f2c65d"
-  integrity sha512-Ukk7KDviBd7Ro181WPGp+Sk/fZpD7Os0tJ5msf/2TsCUL631cAQKkUqGjQsva+jJYQnqbB3pxF1fR5fnY3x3ug==
+"@embroider/test-setup@^0.44.2":
+  version "0.44.2"
+  resolved "https://registry.yarnpkg.com/@embroider/test-setup/-/test-setup-0.44.2.tgz#c2db64c28cd1e615ce27e5495787f1855e62f076"
+  integrity sha512-w9Qo3PnM1v3pH6UB875DkbbmCoOp7CllUD/I/TGve27uAVtXqzFMO9dC6ibY5WMJusVhbFtyZzIhgN2/rkcCLw==
   dependencies:
-    lodash "^4.17.20"
-    resolve "^1.17.0"
+    lodash "^4.17.21"
+    resolve "^1.20.0"
 
 "@eslint/eslintrc@^0.4.0":
   version "0.4.0"
