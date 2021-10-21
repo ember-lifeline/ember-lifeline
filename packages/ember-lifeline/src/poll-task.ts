@@ -51,9 +51,15 @@ export function setShouldPoll(callback: Function): void {
   _shouldPollOverride = callback;
 }
 
-export let queuedPollTasks: {
-  [k: string]: () => void;
-} = Object.create(null);
+const QUEUED_POLLED_TASKS = Symbol.for('QUEUED_POLLED_TASKS');
+
+export function getQueuedPollTasks(): Map<string, () => void> {
+  let queuedPollTasks = globalThis[QUEUED_POLLED_TASKS];
+  
+  if (queuedPollTasks === undefined) {
+    queuedPollTasks = globalThis[QUEUED_POLLED_TASKS] = new Map<string, () => void>();
+  }
+}
 
 /**
  * Sets up a function that can perform polling logic in a testing safe way.
@@ -148,7 +154,7 @@ export function pollTask(
     next = tick;
   } else {
     next = () => {
-      queuedPollTasks[token] = tick;
+      getQueuedPollTasks().set(token, tick);
     };
   }
 
@@ -209,7 +215,7 @@ export function cancelPoll(
     pollers.delete(pollToken);
   }
 
-  delete queuedPollTasks[pollToken];
+  getQueuedPollTasks.delete(pollToken);
 }
 
 function getPollersDisposable(destroyable: IDestroyable, pollers: Set<Token>) {
