@@ -18,6 +18,9 @@ module.exports = {
     browser: true,
     node: false,
   },
+  globals: {
+    globalThis: false,
+  },
   rules: {},
   overrides: [
     // node files
@@ -25,12 +28,13 @@ module.exports = {
       files: [
         '.eslintrc.js',
         '.template-lintrc.js',
-        'ember-cli-build.js',
         'index.js',
         'testem.js',
         'blueprints/*/index.js',
-        'config/**/*.js',
-        'tests/dummy/config/**/*.js',
+        'packages/**/ember-cli-build.js',
+        'packages/**/addon-main.js',
+        'packages/**/addon-docs.js',
+        'packages/**/config/**/*.js',
       ],
       excludedFiles: [
         'addon/**',
@@ -57,13 +61,6 @@ module.exports = {
       rules: {
         'no-unused-vars': 'off',
         '@typescript-eslint/no-unused-vars': 'error',
-      },
-    },
-    {
-      // mixins
-      files: ['addon/mixins/*.[jt]s', 'tests/unit/mixins/*.js'],
-      rules: {
-        'ember/no-new-mixins': 'off',
       },
     },
     {

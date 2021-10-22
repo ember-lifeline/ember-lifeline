@@ -55,9 +55,12 @@ const QUEUED_POLLED_TASKS = Symbol.for('QUEUED_POLLED_TASKS');
 
 export function getQueuedPollTasks(): Map<string, () => void> {
   let queuedPollTasks = globalThis[QUEUED_POLLED_TASKS];
-  
+
   if (queuedPollTasks === undefined) {
-    queuedPollTasks = globalThis[QUEUED_POLLED_TASKS] = new Map<string, () => void>();
+    queuedPollTasks = globalThis[QUEUED_POLLED_TASKS] = new Map<
+      string,
+      () => void
+    >();
   }
 }
 

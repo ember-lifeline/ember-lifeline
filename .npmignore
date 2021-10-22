@@ -17,9 +17,10 @@
 /.travis.yml
 /.watchmanconfig
 /bower.json
-/config/ember-try.js
+/packages/**/ember-try.js
+/packages/**/ember-cli-build.js
+/packages/**/config/addon-docs.js
 /CONTRIBUTING.md
-/ember-cli-build.js
 /testem.js
 /tests/
 /yarn.lock
@@ -29,4 +30,3 @@
 /.node_modules.ember-try/
 /bower.json.ember-try
 /package.json.ember-try
-/config/addon-docs.js
