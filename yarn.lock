@@ -2216,13 +2216,13 @@
     semver "^7.3.5"
     typescript-memoize "^1.0.1"
 
-"@embroider/test-setup@^0.40.0":
-  version "0.40.0"
-  resolved "https://registry.yarnpkg.com/@embroider/test-setup/-/test-setup-0.40.0.tgz#bff8e7d780c1ba1a349f9e51605c9668a8f2c65d"
-  integrity sha512-Ukk7KDviBd7Ro181WPGp+Sk/fZpD7Os0tJ5msf/2TsCUL631cAQKkUqGjQsva+jJYQnqbB3pxF1fR5fnY3x3ug==
+"@embroider/test-setup@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@embroider/test-setup/-/test-setup-1.0.0.tgz#f0841345326bcb55eee8437be37f3a8207146b37"
+  integrity sha512-jnrzNyL0mUZ+DTY59s4Yr/V+NgECpwKxuxdKJOr0hNCxC6Kpo5Dagjz22tEyiMOkZhuDdZ4qAqmTUpeu8taLnQ==
   dependencies:
-    lodash "^4.17.20"
-    resolve "^1.17.0"
+    lodash "^4.17.21"
+    resolve "^1.20.0"
 
 "@embroider/util@^0.43.5":
   version "0.43.5"
