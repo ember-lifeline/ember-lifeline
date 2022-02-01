@@ -9,12 +9,6 @@
     <nav.section @label="Usage" />
     <nav.item @label="How it works" @route="docs.how-it-works" />
 
-    <nav.section @label="Disposables" />
-    <nav.subnav as |nav|>
-      <nav.item @label="registerDisposable" @route="docs.register-disposable" />
-      <nav.item @label="runDisposables" @route="docs.run-disposables" />
-    </nav.subnav>
-
     <nav.section @label="Task functions" />
     <nav.subnav as |nav|>
       <nav.item @label="runTask" @route="docs.run-task" />
@@ -24,15 +18,8 @@
       <nav.item @label="pollTask" @route="docs.poll-task" />
     </nav.subnav>
 
-    <nav.section @label="DOM functions" />
-    <nav.subnav as |nav|>
-      <nav.item @label="addEventListener" @route="docs.add-event-listener" />
-      <nav.item @label="removeEventListener" @route="docs.remove-event-listener" />
-    </nav.subnav>
-
     <nav.section @label="Additional information" />
     <nav.subnav>
-      <nav.item @label="mixins" @route="docs.mixins" />
       <nav.item @label="testing" @route="docs.testing" />
     </nav.subnav>
   </viewer.nav>
