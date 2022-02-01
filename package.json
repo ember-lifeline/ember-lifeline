@@ -24,7 +24,6 @@
   },
   "scripts": {
     "build": "ember build --environment=production",
-    "docs": "ember ts:precompile && documentation build --document-exported \"addon/index.js\" --document-exported \"addon-test-support/index.js\" --config documentation.yml -f md -o API.md && prettier --single-quote --trailing-comma es5 --write API.md && ember ts:clean",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "lint:hbs": "ember-template-lint .",
@@ -70,7 +69,6 @@
     "@typescript-eslint/parser": "^3.10.1",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "documentation": "^13.0.2",
     "ember-auto-import": "^2.4.0",
     "ember-cli": "~3.27.0-beta.1",
     "ember-cli-addon-docs": "^4.2.1",
