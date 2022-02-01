@@ -23,7 +23,7 @@ for 500ms:
 
 ```js
 import Component from '@ember/component';
-import { debounceTask, runDisposables } from 'ember-lifeline';
+import { debounceTask } from 'ember-lifeline';
 
 export default Component.extend({
   click() {
@@ -33,16 +33,8 @@ export default Component.extend({
   reportTime() {
     this.set('time', new Date());
   },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
 });
 ```
 
 However if the component is destroyed, any pending debounce task will be
 cancelled.
-
-When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

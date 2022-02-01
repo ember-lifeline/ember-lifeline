@@ -88,7 +88,7 @@ Using `runTask`, the above can be written as:
 
 ```js
 import Component from '@ember/component';
-import { runTask, runDisposables } from 'ember-lifeline';
+import { runTask } from 'ember-lifeline';
 
 export default Component.extend({
   init() {
@@ -102,15 +102,5 @@ export default Component.extend({
       500
     );
   },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
 });
 ```
-
-Once you've ensured your object calls `runDisposables` in its `destroy` method, there's no need to worry about cancellation or the `isDestroyed` status of the object itself.
-
-When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

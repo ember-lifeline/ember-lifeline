@@ -46,7 +46,7 @@ export function _setRegisteredTimers(
  *
  * ```js
  * import Component from 'ember-component';
- * import { runTask, runDisposables } from 'ember-lifeline';
+ * import { runTask } from 'ember-lifeline';
  *
  * export default Component.extend({
  *   didInsertElement() {
@@ -54,12 +54,6 @@ export function _setRegisteredTimers(
  *       console.log('This runs after 5 seconds if this component is still displayed');
  *     }, 5000)
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
@@ -100,7 +94,7 @@ export function runTask(
  *
  * ```js
  * import Component from 'ember-component';
- * import { scheduleTask, runDisposables } from 'ember-lifeline';
+ * import { scheduleTask } from 'ember-lifeline';
  *
  * export default Component.extend({
  *   init() {
@@ -110,12 +104,6 @@ export function runTask(
  *       console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
  *     })
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
@@ -170,7 +158,7 @@ export function scheduleTask(
  *
  * ```js
  * import Component from 'ember-component';
- * import { throttleTask, runDisposables } from 'ember-lifeline';
+ * import { throttleTask } from 'ember-lifeline';
  *
  * export default Component.extend({
  *   logMe() {
@@ -180,12 +168,6 @@ export function scheduleTask(
  *   click() {
  *     throttleTask(this, 'logMe', 300);
  *   },
- *
- *   destroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
@@ -258,12 +240,6 @@ export function throttleTask(
  *   disable() {
  *     cancelTask(this, this._cancelId);
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
