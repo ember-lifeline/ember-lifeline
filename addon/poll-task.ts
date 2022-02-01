@@ -65,7 +65,7 @@ export let queuedPollTasks: {
  * Example:
  *
  * ```js
- * import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+ * import { pollTask, runTask } from 'ember-lifeline';
  *
  * export default Component.extend({
  *   api: injectService(),
@@ -82,12 +82,6 @@ export let queuedPollTasks: {
  *
  *     this._pollToken = token;
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
@@ -166,7 +160,7 @@ export function pollTask(
  * Example:
  *
  * ```js
- * import { pollTask, runTask, runDisposables } from 'ember-lifeline';
+ * import { pollTask, runTask } from 'ember-lifeline';
  *
  * export default Component.extend({
  *   api: injectService(),
@@ -183,12 +177,6 @@ export function pollTask(
  *   disableAutoRefresh() {
  *     cancelPoll(this, this._pollToken);
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *

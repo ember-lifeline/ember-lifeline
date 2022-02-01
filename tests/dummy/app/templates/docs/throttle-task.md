@@ -10,7 +10,7 @@ consistency the API of `throttleTask` is presented:
 
 ```js
 import Component from '@ember/component';
-import { throttleTask, runDisposables } from 'ember-lifeline';
+import { throttleTask } from 'ember-lifeline';
 
 export default Component.extend({
   click() {
@@ -19,12 +19,6 @@ export default Component.extend({
 
   reportTime() {
     this.set('time', new Date());
-  },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
   },
 });
 ```
@@ -41,7 +35,7 @@ at the time the task is executed:
 
 ```js
 import Component from '@ember/component';
-import { throttleTask, runDisposables } from 'ember-lifeline';
+import { throttleTask } from 'ember-lifeline';
 
 export default Component.extend({
   click(evt) {
@@ -53,13 +47,5 @@ export default Component.extend({
     this.set('lastClickedEl', this._evt.target);
     this._evt = null;
   },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
 });
 ```
-
-When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

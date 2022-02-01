@@ -56,7 +56,7 @@ Using `scheduleTask`, the above can be written as:
 
 ```js
 import Component from '@ember/component';
-import { scheduleTask, runDisposables } from 'ember-lifeline';
+import { scheduleTask } from 'ember-lifeline';
 
 export default Component.extend({
   init() {
@@ -66,12 +66,6 @@ export default Component.extend({
       this.set('date', new Date());
     });
   },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
 });
 ```
 
@@ -79,5 +73,3 @@ export default Component.extend({
 
 Scheduling work on the `afterRender` queue has well known, negative performance implications.
 Therefore, _`scheduleTask` is prohibited from scheduling work on the `afterRender` queue._
-
-When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

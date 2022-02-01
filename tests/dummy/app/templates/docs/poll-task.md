@@ -18,7 +18,7 @@ _after_ the previous work was done. For example:
 
 ```js
 import Component from '@ember/component';
-import { runTask, runDisposables } from 'ember-lifeline';
+import { runTask } from 'ember-lifeline';
 
 export default Component.extend({
   init() {
@@ -31,12 +31,6 @@ export default Component.extend({
     this.set('date', new Date());
 
     runTask(this, () => this.updateTime(), 20);
-  },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
   },
 });
 ```
@@ -53,7 +47,7 @@ production. Typically, this is done something like:
 ```js
 import Ember from 'ember';
 import Component from '@ember/component';
-import { runTask, runDisposables } from 'ember-lifeline';
+import { runTask } from 'ember-lifeline';
 
 export default Component.extend({
   init() {
@@ -69,12 +63,6 @@ export default Component.extend({
       runTask(this, () => this.updateTime(), 20);
     }
   },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
-  },
 });
 ```
 
@@ -89,7 +77,7 @@ like this:
 ```js
 import Component from '@ember/component';
 import { inject } from '@ember/service';
-import { runTask, pollTask, runDisposables } from 'ember-lifeline';
+import { runTask, pollTask } from 'ember-lifeline';
 
 export const POLL_TOKEN = 'zee token';
 
@@ -108,12 +96,6 @@ export default Component.extend({
     this.set('date', time.now());
 
     runTask(this, next, 20);
-  },
-
-  willDestroy() {
-    this._super(...arguments);
-
-    runDisposables(this);
   },
 });
 ```
@@ -180,5 +162,3 @@ module('updating-time', function(hooks) {
 ```
 
 Note: If nothing has been queued for the given token, calling `pollTaskFor(token)` will trigger an error.
-
-When importing and using lifeline's functions, **it's imperative that you additionally import and call `runDisposables` during your object's destroy method**. This ensures lifeline will correctly dispose of any remaining async work. Please see {{docs-link "the runDisposables section" "docs.run-disposables"}} for more information.

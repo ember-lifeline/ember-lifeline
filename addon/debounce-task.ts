@@ -28,7 +28,7 @@ const registeredDebounces: IMap<
  *
  * ```js
  * import Component from 'ember-component';
- * import { debounceTask, runDisposables } from 'ember-lifeline';
+ * import { debounceTask } from 'ember-lifeline';
  *
  * export default Component.extend({
  *   logMe() {
@@ -38,12 +38,6 @@ const registeredDebounces: IMap<
  *   click() {
  *     debounceTask(this, 'logMe', 300);
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
@@ -133,12 +127,6 @@ export function debounceTask(
  *   disable() {
  *      cancelDebounce(this, 'logMe');
  *   },
- *
- *   willDestroy() {
- *     this._super(...arguments);
- *
- *     runDisposables(this);
- *   }
  * });
  * ```
  *
