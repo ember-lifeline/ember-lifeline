@@ -13,6 +13,8 @@ export interface IDestroyable {
 
 export type TaskOrName = Function | string;
 
+export type Token = string | number;
+
 export type Timer = EmberRunTimer | number;
 
 export interface EmberRunTimer {

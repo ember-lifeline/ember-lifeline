@@ -1,9 +1,7 @@
 import Ember from 'ember';
 import getTask from './utils/get-task';
-import { IMap, TaskOrName, IDestroyable } from './types';
+import { IMap, TaskOrName, IDestroyable, Token } from './types';
 import { registerDestructor } from '@ember/destroyable';
-
-export type Token = string | number;
 
 /**
  * A map of instances/poller functions that allows us to

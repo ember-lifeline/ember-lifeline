@@ -1,0 +1,28 @@
+<DocsHeader />
+<DocsHero
+  @slimHeading="Ember"
+  @strongHeading="Lifeline"
+  @byline="An Ember addon for managing the lifecyle of asynchronous behavior in your objects." />
+
+<div class="docs-mt-8 docs-text-center">
+  Looking for the <strong>Quickstart</strong>? {{docs-link "It's here" "docs.index"}}.
+</div>
+<DocsDemo class="docs-m-20 home" as |demo|>
+  <demo.example name="run-task-demo">
+    <p class="docs-mb-8">
+      Ember Lifeline supports a functional API that enables entanglement -
+      <strong>
+        <i>the association of async behavior to object instances</i>
+      </strong>. This allows you to write async code in your classes that can be
+      automatically cleaned up for you when the object is destroyed.
+    </p>
+    <p>
+      Ember Lifeline's functions are, in most cases, drop-in replacements for runloop and DOM methods. In the example
+      below, the `runTask` function schedules async work, but this work will be correctly canceled when the object is
+      destroyed.
+    </p>
+    <RunTaskDemo />
+    <demo.snippet @name="run-task-demo.js" />
+  </demo.example>
+</DocsDemo>
+<div class="docs-mb-8 docs-text-center">To learn more, please <DocsLink @route="docs.index">read the docs</DocsLink></div>
