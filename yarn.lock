@@ -2189,6 +2189,14 @@
     semver "^7.3.5"
     typescript-memoize "^1.0.1"
 
+"@embroider/test-setup@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@embroider/test-setup/-/test-setup-1.0.0.tgz#f0841345326bcb55eee8437be37f3a8207146b37"
+  integrity sha512-jnrzNyL0mUZ+DTY59s4Yr/V+NgECpwKxuxdKJOr0hNCxC6Kpo5Dagjz22tEyiMOkZhuDdZ4qAqmTUpeu8taLnQ==
+  dependencies:
+    lodash "^4.17.21"
+    resolve "^1.20.0"
+
 "@embroider/util@^0.43.5":
   version "0.43.5"
   resolved "https://registry.yarnpkg.com/@embroider/util/-/util-0.43.5.tgz#d3acc98b3f92fbb26fa9265cff4f245ca8e6b61e"
@@ -9811,7 +9819,7 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-favicons@5.3.0, favicons@~5.3.0:
+favicons@~5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/favicons/-/favicons-5.3.0.tgz#ba4f826f147718ccf7e312f6f7ae23881ad1dfa6"
   integrity sha512-0uU+QToJ790J4X9ACR7AyNCxjoLsChC5mIm3P1TbVYrLlW3MQ6sv6DIxFpEyhnx7CzUP8ww7hpizWAel3Hr4Yw==

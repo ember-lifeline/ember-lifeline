@@ -24,6 +24,7 @@
   },
   "exports": {
     ".": "./dist/index.js",
+    "./addon-main": "./addon-main.js",
     "./test-support": "./dist/test-support/index.js"
   },
   "scripts": {
