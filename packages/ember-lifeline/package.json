@@ -18,19 +18,18 @@
     "Robert Jackson <me@rwjblue.com>",
     "Steve Calvert <steve.calvert@gmail.com>"
   ],
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "directories": {
     "test": "tests"
   },
   "exports": {
-    ".": "./lib/index.js",
-    "./test-support": "./lib/test-support/index.js"
+    ".": "./dist/index.js",
+    "./test-support": "./dist/test-support/index.js"
   },
   "scripts": {
     "prepare": "yarn build",
     "build": "FORCE_COLOR=1 npm-run-all --aggregate-output --parallel \"build:*\"",
     "build:addon": "rollup --config",
-    "build:types": "tsc --build",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
     "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
     "lint:hbs": "ember-template-lint .",
@@ -50,10 +49,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.16.12",
-    "@babel/plugin-proposal-class-properties": "7.16.7",
-    "@babel/plugin-proposal-decorators": "7.16.7",
-    "@babel/plugin-syntax-decorators": "7.16.7",
-    "@babel/plugin-transform-typescript": "^7.16.8",
+    "@babel/preset-typescript": "^7.16.7",
     "@embroider/addon-dev": "0.48.1",
     "@rollup/plugin-babel": "5.3.0",
     "@rollup/plugin-node-resolve": "^13.1.3",
@@ -73,6 +69,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-qunit": "^6.0.0",
+    "rollup": "^2.67.0",
+    "rollup-plugin-ts": "^2.0.5",
     "typescript": "~4.2.4"
   },
   "resolutions": {
