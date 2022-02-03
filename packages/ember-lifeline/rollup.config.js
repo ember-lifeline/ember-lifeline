@@ -28,6 +28,7 @@ function publicEntrypoints(args) {
   };
 }
 
+// The custom TS configuration here can be removed once https://github.com/embroider-build/embroider/issues/1094 is resolved.
 export default {
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.
