@@ -10,6 +10,5 @@ export {
   setShouldPoll,
   cancelPoll,
   _setRegisteredPollers,
-  queuedPollTasks,
 } from './poll-task';
 export { debounceTask, cancelDebounce } from './debounce-task';

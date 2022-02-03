@@ -3,6 +3,12 @@ import getTask from './utils/get-task';
 import { IMap, TaskOrName, IDestroyable, Token } from './types';
 import { registerDestructor } from '@ember/destroyable';
 
+type Indexable = Record<any, unknown>;
+
+function indexable<T extends object>(input: T): T & Indexable {
+  return input as T & Indexable;
+}
+
 /**
  * A map of instances/poller functions that allows us to
  * store poller tokens per instance.
@@ -49,9 +55,17 @@ export function setShouldPoll(callback: Function): void {
   _shouldPollOverride = callback;
 }
 
-export let queuedPollTasks: {
-  [k: string]: () => void;
-} = Object.create(null);
+export function getQueuedPollTasks(): Map<Token, () => void> {
+  let symbol = Symbol.for('LIFELINE_QUEUED_POLL_TASKS') as any;
+  let globalObj = getGlobal();
+  let queuedPollTasks = globalObj[symbol];
+
+  if (!queuedPollTasks) {
+    queuedPollTasks = globalObj[symbol] = new Map();
+  }
+
+  return queuedPollTasks as Map<Token, () => void>;
+}
 
 /**
  * Sets up a function that can perform polling logic in a testing safe way.
@@ -140,7 +154,7 @@ export function pollTask(
     next = tick;
   } else {
     next = () => {
-      queuedPollTasks[token] = tick;
+      getQueuedPollTasks().set(token, tick);
     };
   }
 
@@ -195,7 +209,17 @@ export function cancelPoll(
     pollers.delete(pollToken);
   }
 
-  delete queuedPollTasks[pollToken];
+  getQueuedPollTasks().delete(pollToken);
+}
+
+function getGlobal(): Indexable {
+  // eslint-disable-next-line node/no-unsupported-features/es-builtins
+  if (typeof globalThis !== 'undefined') return indexable(globalThis);
+  if (typeof self !== 'undefined') return indexable(self);
+  if (typeof window !== 'undefined') return indexable(window);
+  if (typeof global !== 'undefined') return indexable(global);
+
+  throw new Error('unable to locate global object');
 }
 
 function getPollersDisposable(destroyable: IDestroyable, pollers: Set<Token>) {

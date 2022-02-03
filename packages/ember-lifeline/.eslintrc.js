@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2021,
     sourceType: 'module',
     ecmaFeatures: {
       legacyDecorators: true,
@@ -17,6 +17,10 @@ module.exports = {
   env: {
     browser: true,
     node: false,
+  },
+  globals: {
+    global: false,
+    globalThis: false,
   },
   rules: {},
   overrides: [

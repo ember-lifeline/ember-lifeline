@@ -1,16 +1,17 @@
 import { join } from '@ember/runloop';
 import { assert } from '@ember/debug';
 import { settled } from '@ember/test-helpers';
-import { queuedPollTasks } from '../poll-task';
+import { getQueuedPollTasks } from '../poll-task';
 import { Token } from '../types';
 
 export default function pollTaskFor(token: Token) {
+  let tick = getQueuedPollTasks().get(token);
   assert(
     `You cannot advance pollTask '${token}' when \`next\` has not been called.`,
-    !!queuedPollTasks[token]
+    !!tick
   );
 
-  join(null, queuedPollTasks[token]);
+  join(null, tick);
 
   return settled();
 }
