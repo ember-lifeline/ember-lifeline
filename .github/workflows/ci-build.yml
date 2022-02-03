@@ -22,9 +22,7 @@ jobs:
       - name: install dependencies
         run: yarn install
       - name: lint
-        run: |
-          yarn lint:hbs
-          yarn lint:js
+        run: yarn lint
       - name: test
         run: yarn test:ember
 
