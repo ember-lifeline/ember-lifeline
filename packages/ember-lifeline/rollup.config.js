@@ -1,6 +1,6 @@
-// import path from 'path';
+import { join } from 'path';
+import walkSync from 'walk-sync';
 import babel from '@rollup/plugin-babel';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
 import ts from 'rollup-plugin-ts';
 import { Addon } from '@embroider/addon-dev/rollup';
 
@@ -11,18 +11,34 @@ const addon = new Addon({
 
 const extensions = ['.js', '.ts'];
 
+function publicEntrypoints(args) {
+  return {
+    name: 'addon-modules',
+    buildStart() {
+      for (let name of walkSync(args.srcDir, {
+        globs: args.include,
+      })) {
+        this.emitFile({
+          type: 'chunk',
+          id: join(args.srcDir, name),
+          fileName: name.replace('.ts', '.js'),
+        });
+      }
+    },
+  };
+}
+
 export default {
-  // input: path.join('src', 'index.ts'),
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.
   // output: { ...addon.output(), entryFileNames: '[name].js' },
   output: addon.output(),
 
   plugins: [
-    nodeResolve({ resolveOnly: ['./'], extensions }),
-    // These are the modules that users should be able to import from your
-    // addon. Anything not listed here may get optimized away.
-    addon.publicEntrypoints(['index.js', 'test-support/**/*.js']),
+    publicEntrypoints({
+      srcDir: 'src',
+      include: ['**/*.ts'],
+    }),
 
     ts({
       transpiler: 'babel',
