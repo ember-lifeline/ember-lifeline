@@ -31,18 +31,12 @@
     "prepare": "yarn build",
     "build": "FORCE_COLOR=1 npm-run-all --aggregate-output --parallel \"build:*\"",
     "build:addon": "rollup --config",
-    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
-    "lint:fix": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*:fix",
-    "lint:hbs": "ember-template-lint .",
-    "lint:hbs:fix": "ember-template-lint . --fix",
-    "lint:js": "eslint . --ext js,ts --cache",
-    "lint:js:fix": "eslint . --ext js,ts --fix",
-    "prepublishOnly": "ember ts:precompile",
+    "build:docs": "cp ./README.md ../../README.md",
+    "lint": "eslint . --ext js,ts --cache",
+    "lint:fix": "eslint . --ext js,ts --fix",
+    "prepublishOnly": "yarn build",
     "postpublish": "ember ts:clean",
-    "start": "ember serve",
-    "test": "npm-run-all lint test:*",
-    "test:ember": "ember test",
-    "test:ember-compatibility": "ember try:each"
+    "test": "echo 'Please refer to test-app for addon tests'"
   },
   "dependencies": {
     "@embroider/addon-shim": "^0.48.0",
