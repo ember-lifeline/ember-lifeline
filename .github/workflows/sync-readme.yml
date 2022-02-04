@@ -9,11 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Setting package path"
-        run: |
-          echo "PACKAGE_PATH=find packages -iname 'package.json' -not -path '*/node_modules/*' -not -path '*/test-app/*'" >> $GITHUB_ENV
       - name: "Setting package name"
         run: |
+          echo "PACKAGE_PATH=find packages -iname 'package.json' -not -path '*/node_modules/*' -not -path '*/test-app/*'" >> $GITHUB_ENV
           echo "PACKAGE_NAME=cat $PACKAGE_PATH | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]'" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
