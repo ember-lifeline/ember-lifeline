@@ -1,6 +1,7 @@
 # compiled output
 /dist/
 /tmp/
+/packages/ember-lifeline/dist/
 
 # dependencies
 /bower_components/

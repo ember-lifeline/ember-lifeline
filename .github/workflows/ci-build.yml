@@ -15,18 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: volta-cli/action@v1
         with:
           node-version: 12.x
       - name: install dependencies
         run: yarn install
       - name: lint
-        run: |
-          yarn lint:hbs
-          yarn lint:js
+        run: yarn lint
       - name: test
-        run: yarn test:ember
+        run: yarn test
 
   try-scenarios:
     name: ${{ matrix.ember-try-scenario }}
@@ -39,18 +38,18 @@ jobs:
       fail-fast: true
       matrix:
         ember-try-scenario:
-          - ember-lts-3.16
-          - ember-lts-3.20
           - ember-lts-3.24
+          - ember-lts-3.28
           - ember-release
           - ember-beta
           - ember-canary
-          - ember-default-with-jquery
-          - ember-classic
+          - embroider-safe
+          - embroider-optimized
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: volta-cli/action@v1
         with:
           node-version: 12.x
       - name: install dependencies
@@ -58,4 +57,5 @@ jobs:
       - name: test
         env:
           EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
-        run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
+        run: yarn ember try:one $EMBER_TRY_SCENARIO
+        working-directory: packages/test-app

@@ -3,17 +3,16 @@
 # compiled output
 /dist/
 /tmp/
-/packages/ember-lifeline/dist
 
 # dependencies
 /bower_components/
 /node_modules/
-packages/*/node_modules
 
 # misc
 /.env*
 /.pnp*
 /.sass-cache
+/.eslintcache
 /connect.lock
 /coverage/
 /libpeerconnection.log
@@ -25,5 +24,3 @@ packages/*/node_modules
 /.node_modules.ember-try/
 /bower.json.ember-try
 /package.json.ember-try
-.eslintcache
-/README.md
