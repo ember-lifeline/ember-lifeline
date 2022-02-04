@@ -26,3 +26,4 @@ packages/*/node_modules
 /bower.json.ember-try
 /package.json.ember-try
 .eslintcache
+README.md
