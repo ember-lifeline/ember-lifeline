@@ -14,6 +14,7 @@
     "Steve Calvert <steve.calvert@gmail.com>"
   ],
   "scripts": {
+    "prepare": "yarn workspace ember-lifeline run prepare",
     "build": "yarn workspaces run build",
     "lint": "yarn workspaces run lint",
     "test": "yarn workspaces run test"
