@@ -26,4 +26,3 @@ packages/*/node_modules
 /bower.json.ember-try
 /package.json.ember-try
 .eslintcache
-/packages/ember-lifeline/README.md
