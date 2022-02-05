@@ -20,7 +20,6 @@ Router.map(function () {
     this.route('register-disposable');
     this.route('add-event-listener');
     this.route('remove-event-listener');
-    this.route('mixins');
     this.route('testing');
   });
   this.route('not-found', { path: '/*path' });

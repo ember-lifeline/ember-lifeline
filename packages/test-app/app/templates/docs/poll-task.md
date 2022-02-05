@@ -17,22 +17,23 @@ and performance problems. Instead, you should be scheduling new work
 _after_ the previous work was done. For example:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 
-export default Component.extend({
-  init() {
-    this._super(...arguments);
+export default class Example extends Component {
+  constructor() {
+    super(...arguments);
 
     this.updateTime();
-  },
+  }
 
   updateTime() {
-    this.set('date', new Date());
+    this.date = new Date();
 
     runTask(this, () => this.updateTime(), 20);
-  },
-});
+  }
+}
 ```
 
 In this way the true delay between setting `date` is `20ms + time the rendering took`.
@@ -46,24 +47,25 @@ production. Typically, this is done something like:
 
 ```js
 import Ember from 'ember';
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 
-export default Component.extend({
-  init() {
-    this._super(...arguments);
+export default class Example extends Componentd ({
+  constructor() {
+    super(...arguments);
 
     this.updateTime();
-  },
+  }
 
   updateTime() {
-    this.set('date', new Date());
+    this.date = new Date();
 
     if (!Ember.testing) {
       runTask(this, () => this.updateTime(), 20);
     }
-  },
-});
+  }
+}
 ```
 
 Unfortunately, this makes it very difficult to actually test that the
@@ -75,29 +77,30 @@ This is where `pollTask` really shines. You could rewrite the above example to u
 like this:
 
 ```js
-import Component from '@ember/component';
-import { inject } from '@ember/service';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { service } from '@ember/service';
 import { runTask, pollTask } from 'ember-lifeline';
 
 export const POLL_TOKEN = 'zee token';
 
-export default Component.extend({
-  time: inject(),
+export default class Example extends Component {
+  @service time;
 
-  init() {
-    this._super(...arguments);
+  @tracked date;
+
+  constructor() {
+    super(...arguments);
 
     pollTask(this, 'updateTime', POLL_TOKEN);
-  },
+  }
 
   updateTime(next) {
-    let time = this.get('time');
-
-    this.set('date', time.now());
+    this.date = this.time.now();
 
     runTask(this, next, 20);
-  },
-});
+  }
+}
 ```
 
 In development and production, the `updateTime` method is executed initially during the components
@@ -134,11 +137,11 @@ module('updating-time', function(hooks) {
   hooks.beforeEach(function() {
     this.owner.register(
       'service:time',
-      Service.extend({
+      class extends Service {
         now() {
           return fakeNow;
-        },
-      })
+        }
+      }
     );
   }),
     test('updating-time updates', async function(assert) {

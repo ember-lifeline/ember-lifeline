@@ -14,16 +14,19 @@ be lazy in development but is disabled in tests and harms performance), a
 runloop must be added around a callstack. For example:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { run } from '@ember/runloop';
 
-export default Component.extend({
-  init() {
-    this._super(...arguments);
+export default class Example extends Component {
+  @tracked date;
+
+  constructor() {
+    super(...arguments);
 
     window.setTimeout(() => {
       run(() => {
-        this.set('date', new Date());
+        this.date = new Date();
       });
     }, 500);
   },
@@ -40,18 +43,21 @@ timeout to the lifecycle of the context object_. If the example above is
 re-written to use `Ember.run.later`...
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { run } from '@ember/runloop';
 
-export default Component.extend({
-  init() {
-    this._super(...arguments);
+export default class Example extends Component {
+  @tracked date;
+
+  constructor() {
+    super(...arguments);
 
     run.later(() => {
-      this.set('date', new Date());
+      this.date = new Date();
     }, 500);
-  },
-});
+  }
+}
 ```
 
 **We're still making a dangerous assumption that this component instance
@@ -61,22 +67,25 @@ a number of unexpected errors. To fix this, the codebase is littered
 with checks for `isDestroyed` state on objects retained after destruction:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { run } from '@ember/runloop';
 
-export default Component.extend({
-  init() {
-    this._super(...arguments);
+export default class Example extends Component {
+  @tracked date;
+
+  constructor() {
+    super(...arguments);
 
     run.later(() => {
       // First, check if this object is even valid
       if (this.isDestroyed) {
         return;
       }
-      this.set('date', new Date());
+      this.date = new Date();
     }, 500);
-  },
-});
+  }
+}
 ```
 
 The code above is correct, but again, less than simple to write.
@@ -87,12 +96,15 @@ the task is also cancelled.
 Using `runTask`, the above can be written as:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { runTask } from 'ember-lifeline';
 
-export default Component.extend({
-  init() {
-    this._super(...arguments);
+export default class Example extends Component {
+  @tracked date;
+
+  constructor() {
+    super(...arguments);
 
     runTask(
       this,
@@ -101,6 +113,6 @@ export default Component.extend({
       },
       500
     );
-  },
-});
+  }
+}
 ```
