@@ -31,7 +31,6 @@
     "prepare": "yarn build",
     "build": "FORCE_COLOR=1 npm-run-all --aggregate-output --parallel \"build:*\"",
     "build:addon": "rollup --config",
-    "build:docs": "cp ./README.md ../../README.md",
     "lint": "eslint . --ext js,ts --cache",
     "lint:fix": "eslint . --ext js,ts --fix",
     "prepublishOnly": "yarn build",
@@ -95,21 +94,6 @@
     "version": 2,
     "type": "addon",
     "main": "addon-main.js"
-  },
-  "release-it": {
-    "plugins": {
-      "release-it-lerna-changelog": {
-        "infile": "CHANGELOG.md",
-        "launchEditor": true
-      }
-    },
-    "git": {
-      "tagName": "v${version}"
-    },
-    "github": {
-      "release": true,
-      "tokenRef": "GITHUB_AUTH"
-    }
   },
   "volta": {
     "extends": "../../package.json"

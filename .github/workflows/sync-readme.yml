@@ -1,0 +1,28 @@
+name: Sync README
+
+on:
+  push:
+    paths:
+      - 'README.md'
+
+jobs:
+  sync-readme:
+    name: Sync README
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Setting package name"
+        run: |
+          echo "PACKAGE_PATH=$(find packages -iname 'package.json' -not -path '*/node_modules/*' -not -path '*/test-app/*')" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=$(cat $PACKAGE_PATH | grep name | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        run: |
+          # Sync the top-level README.md with the one in the addon package
+          yarn docs:readme
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git add ./packages/$PACKAGE_NAME/README.md
+          git commit -m "Syncing README.md with addon readme"
+          git push origin $GITHUB_BASE_REF

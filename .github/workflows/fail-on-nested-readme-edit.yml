@@ -1,0 +1,15 @@
+name: Fail on nested README edit
+
+on:
+  pull_request:
+    paths:
+      - 'packages/**/README.md'
+
+jobs:
+  fail-on-nested-readme-edit:
+    name: Fail on nested README edit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Failure"
+        run: echo 'You tried to change packages/<addon>/README.md. Please make changes instead to README.md in the root of the project.' && exit 1

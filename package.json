@@ -14,9 +14,10 @@
     "Steve Calvert <steve.calvert@gmail.com>"
   ],
   "scripts": {
-    "prepare": "yarn workspace ember-lifeline run prepare",
     "build": "yarn workspaces run build",
+    "docs:readme": "cp ./README.md ./packages/ember-lifeline/README.md",
     "lint": "yarn workspaces run lint",
+    "prepare": "yarn workspace ember-lifeline run prepare",
     "test": "yarn workspaces run test"
   },
   "devDependencies": {
@@ -32,11 +33,17 @@
     "registry": "https://registry.npmjs.org"
   },
   "release-it": {
+    "scripts": {
+      "after:bump": "yarn docs:readme"
+    },
     "plugins": {
       "release-it-lerna-changelog": {
         "infile": "CHANGELOG.md",
         "launchEditor": true
       }
+    },
+    "npm": {
+      "publishPath": "./packages/ember-lifeline"
     },
     "git": {
       "tagName": "v${version}"
