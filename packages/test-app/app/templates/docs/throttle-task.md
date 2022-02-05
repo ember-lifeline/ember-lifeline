@@ -9,18 +9,21 @@ work itself is always run immediately. Regardless even just for
 consistency the API of `throttleTask` is presented:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { throttleTask } from 'ember-lifeline';
 
-export default Component.extend({
+export default class Example extends Component {
+  @tracked time;
+
   click() {
     throttleTask(this, 'reportTime', 500);
-  },
+  }
 
   reportTime() {
-    this.set('time', new Date());
-  },
-});
+    this.time = new Date();
+  }
+}
 ```
 
 In this example, the first click will update `time`, but clicks after that
@@ -34,18 +37,22 @@ enables the throttle function to use the arguments in the state they are in
 at the time the task is executed:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { throttleTask } from 'ember-lifeline';
 
-export default Component.extend({
+export default class Example extends Component {
+  @tracked lastClickedEl;
+  _evt;
+
   click(evt) {
     this._evt = evt;
     throttleTask(this, 'updateClickedEl', 500);
-  },
+  }
 
   updateClickedEl() {
-    this.set('lastClickedEl', this._evt.target);
+    this.lastClickedEl = this._evt.target;
     this._evt = null;
-  },
-});
+  }
+}
 ```

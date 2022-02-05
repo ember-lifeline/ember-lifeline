@@ -22,18 +22,21 @@ component, it will only report the time if you have stopped clicking
 for 500ms:
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { debounceTask } from 'ember-lifeline';
 
-export default Component.extend({
+export default class Example extends Component {
+  @tracked time;
+
   click() {
     debounceTask(this, 'reportTime', 500);
-  },
+  }
 
   reportTime() {
-    this.set('time', new Date());
-  },
-});
+    this.time = new Date();
+  }
+}
 ```
 
 However if the component is destroyed, any pending debounce task will be
