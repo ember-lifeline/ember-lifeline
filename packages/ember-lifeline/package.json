@@ -95,6 +95,21 @@
     "type": "addon",
     "main": "addon-main.js"
   },
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "../../CHANGELOG.md",
+        "launchEditor": true
+      }
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
+    }
+  },
   "volta": {
     "extends": "../../package.json"
   }

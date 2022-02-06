@@ -18,6 +18,7 @@
     "docs:readme": "cp ./README.md ./packages/ember-lifeline/README.md",
     "lint": "yarn workspaces run lint",
     "prepare": "yarn workspace ember-lifeline run prepare",
+    "release": "yarn workspace ember-lifeline release-it",
     "test": "yarn workspaces run test"
   },
   "devDependencies": {
@@ -31,27 +32,6 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
-  },
-  "release-it": {
-    "scripts": {
-      "after:bump": "yarn docs:readme"
-    },
-    "plugins": {
-      "release-it-lerna-changelog": {
-        "infile": "CHANGELOG.md",
-        "launchEditor": true
-      }
-    },
-    "npm": {
-      "publishPath": "./packages/ember-lifeline"
-    },
-    "git": {
-      "tagName": "v${version}"
-    },
-    "github": {
-      "release": true,
-      "tokenRef": "GITHUB_AUTH"
-    }
   },
   "volta": {
     "node": "12.22.1",
