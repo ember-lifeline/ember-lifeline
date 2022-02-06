@@ -34,7 +34,6 @@
     "lint": "eslint . --ext js,ts --cache",
     "lint:fix": "eslint . --ext js,ts --fix",
     "prepublishOnly": "yarn build",
-    "postpublish": "ember ts:clean",
     "test": "echo 'Please refer to test-app for addon tests'"
   },
   "dependencies": {
