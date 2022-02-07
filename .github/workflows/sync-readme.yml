@@ -13,17 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - name: Get package info
-        id: package
-        uses: codex-team/action-nodejs-package-info@v1
-        with:
-          path: './packages/ember-lifeline'
       - name: "Syncing README"
         run: |
           # Sync the top-level README.md with the one in the addon package
           yarn docs:readme
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-          git add ./packages/${{ steps.package.outputs.name }}/README.md
+          git add ./packages/ember-lifeline/README.md
           git commit -m "Syncing README.md with addon readme"
           git push origin $GITHUB_BASE_REF
