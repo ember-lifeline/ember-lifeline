@@ -1,5 +1,5 @@
 {
-  "version": "6.0.2",
+  "version": "7.0.0-beta.3",
   "workspaces": [
     "packages/*"
   ],
@@ -18,20 +18,37 @@
     "docs:readme": "cp ./README.md ./packages/ember-lifeline/README.md",
     "lint": "yarn workspaces run lint",
     "prepare": "yarn workspace ember-lifeline run prepare",
-    "release": "yarn workspace ember-lifeline release-it",
     "test": "yarn workspaces run test"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "release-it": "^14.0.3",
-    "release-it-lerna-changelog": "^3.1.0"
+    "release-it-lerna-changelog": "^3.1.0",
+    "release-it-yarn-workspaces": "^2.0.1"
   },
   "resolutions": {
     "favicons": "5.3.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
+  },
+  "release-it": {
+    "plugins": {
+      "release-it-lerna-changelog": {
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
+      },
+      "release-it-yarn-workspaces": true
+    },
+    "git": {
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
+    },
+    "npm": false
   },
   "volta": {
     "node": "12.22.1",

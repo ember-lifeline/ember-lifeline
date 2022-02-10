@@ -1,6 +1,6 @@
 {
   "name": "test-app",
-  "version": "0.0.0",
+  "version": "7.0.0-beta.3",
   "private": true,
   "description": "Small description for test-app goes here",
   "repository": "",
@@ -48,7 +48,7 @@
     "ember-cli-terser": "^4.0.2",
     "ember-export-application-global": "^2.0.1",
     "ember-fetch": "^8.1.1",
-    "ember-lifeline": "^6.0.2",
+    "ember-lifeline": "^7.0.0-beta.3",
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^1.0.0",
     "ember-page-title": "^6.2.2",
