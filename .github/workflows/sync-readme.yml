@@ -2,6 +2,8 @@ name: Sync README
 
 on:
   push:
+    branches:
+        - master
     paths:
       - 'README.md'
 
