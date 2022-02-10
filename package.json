@@ -39,11 +39,7 @@
         "infile": "CHANGELOG.md",
         "launchEditor": true
       },
-      "release-it-yarn-workspaces": {
-        "workspaces": [
-          "packages/ember-lifeline"
-        ]
-      }
+      "release-it-yarn-workspaces": true    
     },
     "git": {
       "tagName": "v${version}"
