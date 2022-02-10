@@ -1,5 +1,5 @@
 {
-  "version": "7.0.0-beta.2",
+  "version": "7.0.0-beta.3",
   "workspaces": [
     "packages/*"
   ],
@@ -39,7 +39,7 @@
         "infile": "CHANGELOG.md",
         "launchEditor": true
       },
-      "release-it-yarn-workspaces": true    
+      "release-it-yarn-workspaces": true
     },
     "git": {
       "tagName": "v${version}"
