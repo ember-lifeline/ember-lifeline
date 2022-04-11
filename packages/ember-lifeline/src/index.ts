@@ -1,10 +1,7 @@
-export {
-  runTask,
-  scheduleTask,
-  throttleTask,
-  cancelTask,
-  _setRegisteredTimers,
-} from './run-task';
+export { runTask } from './run-task';
+export { scheduleTask } from './schedule-task';
+export { throttleTask } from './throttle-task';
+export { cancelTask, _setRegisteredTimers } from './cancel-task';
 export {
   pollTask,
   setShouldPoll,
