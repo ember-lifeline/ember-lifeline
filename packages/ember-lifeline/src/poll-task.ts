@@ -77,9 +77,10 @@ export function getQueuedPollTasks(): Map<Token, () => void> {
  * Example:
  *
  * ```js
+ * import Component from '@glimmer/component';
  * import { pollTask, runTask } from 'ember-lifeline';
  *
- * export default Component.extend({
+ * export default PollingComponent extends Component {
  *   api: injectService(),
  *
  *   init() {
@@ -100,24 +101,22 @@ export function getQueuedPollTasks(): Map<Token, () => void> {
  * Test Example:
  *
  * ```js
- * import wait from 'ember-test-helpers/wait';
+ * import { settled } from '@ember/test-helpers';
  * import { pollTaskFor } from 'ember-lifeline';
  *
- * //...snip...
  *
  * test('foo-bar watches things', async function(assert) {
  *   await render(hbs`{{foo-bar}}`);
  *
- *   return wait()
- *     .then(() => {
- *       assert.equal(serverRequests, 1, 'called initially');
+ *   assert.equal(serverRequests, 1, 'called initially');
  *
- *       pollTaskFor(this._pollToken);
- *       return wait();
- *     })
- *     .then(() => {
- *       assert.equal(serverRequests, 2, 'called again');
- *     });
+ *   pollTaskFor(this._pollToken);
+ *
+ *   await settled();
+ *
+ *   assert.equal(serverRequests, 2, 'called again');
+ *
+ *   await settled();
  * });
  * ```
  *
@@ -172,10 +171,12 @@ export function pollTask(
  * Example:
  *
  * ```js
+ * import Component from '@glimmer/component';
+ * import { inject as service } from '@ember/service';
  * import { pollTask, runTask } from 'ember-lifeline';
  *
- * export default Component.extend({
- *   api: injectService(),
+ * export default AutoRefreshComponent extends Component {
+ *   @service api;
  *
  *   enableAutoRefresh() {
  *     this._pollToken = pollTask(this, (next) => {
@@ -189,7 +190,7 @@ export function pollTask(
  *   disableAutoRefresh() {
  *     cancelPoll(this, this._pollToken);
  *   },
- * });
+ * }
  * ```
  *
  * @method cancelPoll

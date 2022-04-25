@@ -27,10 +27,10 @@ const registeredDebounces: IMap<
  * Example:
  *
  * ```js
- * import Component from 'ember-component';
+ * import Component from '@glimmer/component';
  * import { debounceTask } from 'ember-lifeline';
  *
- * export default Component.extend({
+ * export default LoggerComponent extends Component {
  *   logMe() {
  *     console.log('This will only run once every 300ms.');
  *   },
@@ -38,7 +38,7 @@ const registeredDebounces: IMap<
  *   click() {
  *     debounceTask(this, 'logMe', 300);
  *   },
- * });
+ * }
  * ```
  *
  * @function debounceTask
@@ -112,10 +112,10 @@ export function debounceTask(
  * Example:
  *
  * ```js
- * import Component from 'ember-component';
+ * import Component from '@glimmer/component';
  * import { debounceTask, cancelDebounce } from 'ember-lifeline';
  *
- * export default Component.extend({
+ * export default LoggerComponent extends Component {
  *   logMe() {
  *     console.log('This will only run once every 300ms.');
  *   },
@@ -127,7 +127,7 @@ export function debounceTask(
  *   disable() {
  *      cancelDebounce(this, 'logMe');
  *   },
- * });
+ * }
  * ```
  *
  * @function cancelDebounce
