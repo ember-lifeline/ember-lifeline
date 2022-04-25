@@ -2,25 +2,31 @@
 
 <DocsViewer as |viewer|>
   <viewer.nav as |nav|>
-    <nav.section @label="Introduction" />
-    <nav.item @label="Quickstart" @route="docs.index" />
-    <nav.item @label="Why use ember-lifeline" @route="docs.why-use-ember-lifeline" />
+    <nav.section @label='Introduction' />
+    <nav.item @label='Quickstart' @route='docs.index' />
+    <nav.item
+      @label='Why use ember-lifeline'
+      @route='docs.why-use-ember-lifeline'
+    />
 
-    <nav.section @label="Usage" />
-    <nav.item @label="How it works" @route="docs.how-it-works" />
+    <nav.section @label='Usage' />
+    <nav.item @label='How it works' @route='docs.how-it-works' />
 
-    <nav.section @label="Task functions" />
+    <nav.section @label='Task functions' />
     <nav.subnav as |nav|>
-      <nav.item @label="runTask" @route="docs.run-task" />
-      <nav.item @label="scheduleTask" @route="docs.schedule-task" />
-      <nav.item @label="debounceTask" @route="docs.debounce-task" />
-      <nav.item @label="throttleTask" @route="docs.throttle-task" />
-      <nav.item @label="pollTask" @route="docs.poll-task" />
+      <nav.item @label='runTask' @route='docs.run-task' />
+      <nav.item @label='scheduleTask' @route='docs.schedule-task' />
+      <nav.item @label='throttleTask' @route='docs.throttle-task' />
+      <nav.item @label='cancelTask' @route='docs.cancel-task' />
+      <nav.item @label='debounceTask' @route='docs.debounce-task' />
+      <nav.item @label='cancelDebounce' @route='docs.cancel-debounce' />
+      <nav.item @label='pollTask' @route='docs.poll-task' />
+      <nav.item @label='cancelPoll' @route='docs.cancel-poll' />
     </nav.subnav>
 
-    <nav.section @label="Additional information" />
+    <nav.section @label='Additional information' />
     <nav.subnav>
-      <nav.item @label="testing" @route="docs.testing" />
+      <nav.item @label='testing' @route='docs.testing' />
     </nav.subnav>
   </viewer.nav>
 
