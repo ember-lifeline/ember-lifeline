@@ -1,5 +1,6 @@
 import { later } from '@ember/runloop';
-import { IDestroyable, TaskOrName, Timer, EmberRunTimer } from './types';
+import { EmberRunTimer } from '@ember/runloop/types';
+import { Destroyable, TaskOrName, Timer } from './types';
 import { isDestroying } from '@ember/destroyable';
 import getTask from './utils/get-task';
 import { getTimers, NULL_TIMER_ID } from './cancel-task';
@@ -25,7 +26,7 @@ import { getTimers, NULL_TIMER_ID } from './cancel-task';
  * ```
  *
  * @function runTask
- * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { Destroyable } destroyable the instance to register the task for
  * @param { Function | String } taskOrName a function representing the task, or string
  *                                         specifying a property representing the task,
  *                                         which is run at the provided time specified
@@ -34,7 +35,7 @@ import { getTimers, NULL_TIMER_ID } from './cancel-task';
  * @public
  */
 export function runTask(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   taskOrName: TaskOrName,
   timeout: number = 0
 ): Timer {
