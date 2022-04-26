@@ -12,11 +12,11 @@ import { getTimers, NULL_TIMER_ID } from './cancel-task';
  * Example:
  *
  * ```js
- * import Component from 'ember-component';
+ * import Component from '@glimmer/component';
  * import { runTask } from 'ember-lifeline';
  *
- * export default Component.extend({
- *   didInsertElement() {
+ * export default RunComponent extends Component {
+ *   start() {
  *     runTask(this, () => {
  *       console.log('This runs after 5 seconds if this component is still displayed');
  *     }, 5000)

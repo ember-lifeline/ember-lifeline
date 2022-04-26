@@ -11,10 +11,10 @@ import { EmberRunTimer, IDestroyable, Timer } from './types';
  * Example:
  *
  * ```js
- * import Component from 'ember-component';
+ * import Component from '@glimmer/component';
  * import { throttleTask } from 'ember-lifeline';
  *
- * export default Component.extend({
+ * export default LoggerComponent extends Component {
  *   logMe() {
  *     console.log('This will run once immediately, then only once every 300ms.');
  *   },

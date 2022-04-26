@@ -58,11 +58,11 @@ export function getTimers(destroyable: IDestroyable): Set<EmberRunTimer> {
  * Example:
  *
  * ```js
- * import Component from 'ember-component';
+ * import Component from '@glimmer/component';
  * import { runTask, cancelTask } from 'ember-lifeline';
  *
- * export default Component.extend({
- *   didInsertElement() {
+ * export default CancelableComponent extends Component {
+ *   start() {
  *     this._cancelId = runTask(this, () => {
  *       console.log('This runs after 5 seconds if this component is still displayed');
  *     }, 5000)
@@ -71,7 +71,7 @@ export function getTimers(destroyable: IDestroyable): Set<EmberRunTimer> {
  *   disable() {
  *     cancelTask(this, this._cancelId);
  *   },
- * });
+ * }
  * ```
  *
  * @function cancelTask

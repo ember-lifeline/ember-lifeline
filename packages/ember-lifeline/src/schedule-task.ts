@@ -18,13 +18,11 @@ import getTask from './utils/get-task';
  * Example:
  *
  * ```js
- * import Component from 'ember-component';
+ * import Component from '@glimmer/component';
  * import { scheduleTask } from 'ember-lifeline';
  *
- * export default Component.extend({
- *   init() {
- *     this._super(...arguments);
- *
+ * export default ScheduledComponent extends Component {
+ *   start() {
  *     scheduleTask(this, 'actions', () => {
  *       console.log('This runs at the end of the run loop (via the actions queue) if this component is still displayed');
  *     })
