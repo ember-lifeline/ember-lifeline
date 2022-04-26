@@ -137,19 +137,19 @@ export function debounceTask(
  */
 export function cancelDebounce(
   destroyable: IDestroyable,
-  name: string
+  methodName: string
 ): void | undefined {
   if (!registeredDebounces.has(destroyable)) {
     return;
   }
   const pendingDebounces = registeredDebounces.get(destroyable);
 
-  if (!pendingDebounces.has(name)) {
+  if (!pendingDebounces.has(methodName)) {
     return;
   }
-  const { cancelId } = pendingDebounces.get(name)!;
+  const { cancelId } = pendingDebounces.get(methodName)!;
 
-  pendingDebounces.delete(name);
+  pendingDebounces.delete(methodName);
   cancel(cancelId);
 }
 
