@@ -1,18 +1,22 @@
 import Ember from 'ember';
+import { TestTimeoutOptions } from '../types';
 
 /**
- * @function getTestAwareTimerVal
- * @param {number} timerVal The timer value that gets scaled down in case of the test environment.
- * @param {number} [customTestTimerVal] The timer value that needs to be set in the test environment if passed
+ * @function getTimeoutOrTestFallback
+ * @param {number} timeoutVal The timeout value that gets scaled down in case of the test environment.
+ * @param {number} [customTestTimeout] The timeout value that needs to be set in the test environment if passed
  */
-export function getTestAwareTimerVal(
-  timerVal: number,
-  customTestTimerVal?: number
+export function getTimeoutOrTestFallback(
+  timeoutVal: number,
+  options?: TestTimeoutOptions
 ): number {
   if (Ember.testing) {
-    return customTestTimerVal !== undefined
-      ? customTestTimerVal
-      : timerVal / 100; // Reducing timer value by 100x in test environment
+    const customTestTimeout = options?.timeout;
+    const scaleDownFactor = options?.scaling ?? 100; // Reducing timer value by 100x in test environment by default
+
+    return customTestTimeout !== undefined
+      ? customTestTimeout
+      : timeoutVal / scaleDownFactor;
   }
-  return timerVal;
+  return timeoutVal;
 }
