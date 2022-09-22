@@ -58,7 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
     "ember-template-lint": "^4.5.0",
-    "eslint": "^7.25.0",
+    "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-ember": "^10.6.0",
     "eslint-plugin-node": "^11.1.0",
