@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import getTask from './utils/get-task';
-import { IMap, TaskOrName, IDestroyable, Token } from './types';
+import { MapLike, TaskOrName, Destroyable, Token } from './types';
 import { registerDestructor } from '@ember/destroyable';
 
 type Indexable = Record<any, unknown>;
@@ -16,8 +16,8 @@ function indexable<T extends object>(input: T): T & Indexable {
  * @private
  *
  */
-let registeredPollers: IMap<IDestroyable, Set<Token>> = new WeakMap<
-  IDestroyable,
+let registeredPollers: MapLike<Destroyable, Set<Token>> = new WeakMap<
+  Destroyable,
   any
 >();
 
@@ -29,7 +29,7 @@ let registeredPollers: IMap<IDestroyable, Set<Token>> = new WeakMap<
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
 export function _setRegisteredPollers(
-  mapForTesting: IMap<IDestroyable, Set<Token>>
+  mapForTesting: MapLike<Destroyable, Set<Token>>
 ): void | undefined {
   registeredPollers = mapForTesting;
 }
@@ -121,7 +121,7 @@ export function getQueuedPollTasks(): Map<Token, () => void> {
  * ```
  *
  * @method pollTask
- * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
+ * @param { Destroyable } destroyable the entangled object that was provided with the original *Task call
  * @param { TaskOrName } taskOrName a function representing the task, or string
  *                                  specifying a property representing the task,
  *                                  which is run at the provided time specified
@@ -130,7 +130,7 @@ export function getQueuedPollTasks(): Map<Token, () => void> {
  * @public
  */
 export function pollTask(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   taskOrName: TaskOrName,
   token: Token = getNextToken()
 ): Token {
@@ -194,12 +194,12 @@ export function pollTask(
  * ```
  *
  * @method cancelPoll
- * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
+ * @param { Destroyable } destroyable the entangled object that was provided with the original *Task call
  * @param { Token } token the Token for the pollTask to be cleared, either a string or number
  * @public
  */
 export function cancelPoll(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   token: Token
 ): void | undefined {
   let pollToken: Token;
@@ -223,7 +223,7 @@ function getGlobal(): Indexable {
   throw new Error('unable to locate global object');
 }
 
-function getPollersDisposable(destroyable: IDestroyable, pollers: Set<Token>) {
+function getPollersDisposable(destroyable: Destroyable, pollers: Set<Token>) {
   return function () {
     pollers.forEach((token) => {
       cancelPoll(destroyable, token);

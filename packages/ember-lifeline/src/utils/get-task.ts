@@ -1,4 +1,4 @@
-import { TaskOrName, IDestroyable } from '../types';
+import { TaskOrName, Destroyable } from '../types';
 
 /**
  * @function getTask
@@ -7,7 +7,7 @@ import { TaskOrName, IDestroyable } from '../types';
  * @param taskName
  */
 export default function getTask(
-  obj: IDestroyable,
+  obj: Destroyable,
   taskOrName: TaskOrName,
   taskName: string
 ): Function {

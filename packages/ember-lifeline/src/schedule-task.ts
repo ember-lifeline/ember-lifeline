@@ -1,14 +1,9 @@
 import { assert } from '@ember/debug';
 import { schedule } from '@ember/runloop';
+import { EmberRunTimer } from '@ember/runloop/types';
 import { isDestroying } from '@ember/destroyable';
 import { getTimers, NULL_TIMER_ID } from './cancel-task';
-import {
-  IDestroyable,
-  EmberRunQueues,
-  EmberRunTimer,
-  TaskOrName,
-  Timer,
-} from './types';
+import { Destroyable, EmberRunQueues, TaskOrName, Timer } from './types';
 import getTask from './utils/get-task';
 
 /**
@@ -31,7 +26,7 @@ import getTask from './utils/get-task';
  * ```
  *
  * @function scheduleTask
- * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { Destroyable } destroyable the instance to register the task for
  * @param { String } queueName the queue to schedule the task into
  * @param { Function | String } taskOrName a function representing the task, or string
  *                                         specifying a property representing the task,
@@ -41,7 +36,7 @@ import getTask from './utils/get-task';
  * @public
  */
 export function scheduleTask(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   queueName: EmberRunQueues,
   taskOrName: TaskOrName,
   ...args: any[]

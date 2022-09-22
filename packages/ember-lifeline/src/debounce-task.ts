@@ -1,6 +1,7 @@
 import { assert } from '@ember/debug';
 import { cancel, debounce } from '@ember/runloop';
-import { IDestroyable, IMap, EmberRunTimer } from './types';
+import { EmberRunTimer } from '@ember/runloop/types';
+import { Destroyable, MapLike } from './types';
 import { registerDestructor } from '@ember/destroyable';
 
 interface PendingDebounce {
@@ -14,10 +15,10 @@ interface PendingDebounce {
  *
  * @private
  */
-const registeredDebounces: IMap<
-  IDestroyable,
+const registeredDebounces: MapLike<
+  Destroyable,
   Map<string, PendingDebounce>
-> = new WeakMap<IDestroyable, any>();
+> = new WeakMap<Destroyable, any>();
 
 /**
  * Runs the function with the provided name after the timeout has expired on the last
@@ -42,7 +43,7 @@ const registeredDebounces: IMap<
  * ```
  *
  * @function debounceTask
- * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { Destroyable } destroyable the instance to register the task for
  * @param { String } name the name of the task to debounce
  * @param { ...* } debounceArgs arguments to pass to the debounced method
  * @param { Number } spacing the amount of time to wait before calling the method (in milliseconds)
@@ -50,7 +51,7 @@ const registeredDebounces: IMap<
  * @public
  */
 export function debounceTask(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   name: string,
   ...debounceArgs: any[]
 ): void | undefined {
@@ -131,12 +132,12 @@ export function debounceTask(
  * ```
  *
  * @function cancelDebounce
- * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { Destroyable } destroyable the instance to register the task for
  * @param { String } methodName the name of the debounced method to cancel
  * @public
  */
 export function cancelDebounce(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   methodName: string
 ): void | undefined {
   if (!registeredDebounces.has(destroyable)) {

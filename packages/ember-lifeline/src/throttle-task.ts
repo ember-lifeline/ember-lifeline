@@ -1,8 +1,9 @@
 import { assert } from '@ember/debug';
 import { throttle } from '@ember/runloop';
+import { EmberRunTimer } from '@ember/runloop/types';
 import { isDestroying } from '@ember/destroyable';
 import { NULL_TIMER_ID, getTimers } from './cancel-task';
-import { EmberRunTimer, IDestroyable, Timer } from './types';
+import { Destroyable, Timer } from './types';
 
 /**
  * Runs the function with the provided name immediately, and only once in the time window
@@ -26,7 +27,7 @@ import { EmberRunTimer, IDestroyable, Timer } from './types';
  * ```
  *
  * @function throttleTask
- * @param { IDestroyable } destroyable the instance to register the task for
+ * @param { Destroyable } destroyable the instance to register the task for
  * @param { String } taskName the name of the task to throttle
  * @param { ...* } [throttleArgs] arguments to pass to the throttled method
  * @param { Number } spacing the time in the future to run the task
@@ -34,7 +35,7 @@ import { EmberRunTimer, IDestroyable, Timer } from './types';
  * @public
  */
 export function throttleTask(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   taskName: any,
   ...throttleArgs: any[]
 ): Timer {

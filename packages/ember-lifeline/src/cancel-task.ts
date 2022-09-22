@@ -1,6 +1,7 @@
 import { cancel } from '@ember/runloop';
 import { registerDestructor } from '@ember/destroyable';
-import { EmberRunTimer, IDestroyable, IMap } from './types';
+import { EmberRunTimer } from '@ember/runloop/types';
+import { Destroyable, MapLike } from './types';
 
 export const NULL_TIMER_ID = -1;
 
@@ -10,7 +11,7 @@ export const NULL_TIMER_ID = -1;
  *
  * @private
  */
-let registeredTimers: IMap<IDestroyable, Set<EmberRunTimer>> = new WeakMap<
+let registeredTimers: MapLike<Destroyable, Set<EmberRunTimer>> = new WeakMap<
   Object,
   any
 >();
@@ -23,13 +24,13 @@ let registeredTimers: IMap<IDestroyable, Set<EmberRunTimer>> = new WeakMap<
  * @param {*} mapForTesting A map used to ensure correctness when testing.
  */
 export function _setRegisteredTimers(
-  mapForTesting: IMap<IDestroyable, Set<EmberRunTimer>>
+  mapForTesting: MapLike<Destroyable, Set<EmberRunTimer>>
 ) {
   registeredTimers = mapForTesting;
 }
 
 export function getTimersDisposable(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   timers: Set<EmberRunTimer>
 ) {
   return function () {
@@ -40,7 +41,7 @@ export function getTimersDisposable(
   };
 }
 
-export function getTimers(destroyable: IDestroyable): Set<EmberRunTimer> {
+export function getTimers(destroyable: Destroyable): Set<EmberRunTimer> {
   let timers = registeredTimers.get(destroyable);
 
   if (!timers) {
@@ -75,15 +76,15 @@ export function getTimers(destroyable: IDestroyable): Set<EmberRunTimer> {
  * ```
  *
  * @function cancelTask
- * @param { IDestroyable } destroyable the entangled object that was provided with the original *Task call
+ * @param { Destroyable } destroyable the entangled object that was provided with the original *Task call
  * @param { Number } cancelId the id returned from the *Task call
  * @public
  */
 export function cancelTask(
-  destroyable: IDestroyable,
+  destroyable: Destroyable,
   cancelId: EmberRunTimer
 ): void | undefined {
-  let timers: Set<EmberRunTimer> = getTimers(<IDestroyable>destroyable);
+  let timers: Set<EmberRunTimer> = getTimers(<Destroyable>destroyable);
 
   timers.delete(cancelId);
   cancel(cancelId);
