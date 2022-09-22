@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
-import { getTimeoutOrTestFallback } from 'ember-lifeline/utils/timer';
+import { getTimeoutOrTestFallback } from 'ember-lifeline';
 
-module('ember-lifeline/utils/timer', function () {
+module('ember-lifeline/utils/get-timeout-or-test-fallback', function () {
   test('getTimeoutOrTestFallback will scale down the timer value by 100x by default in the test environment', function (assert) {
     assert.expect(3);
 
