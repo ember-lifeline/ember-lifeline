@@ -8,10 +8,8 @@ To use the helper using the new ember-qunit module syntax:
 // test-helper.js
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import { setupLifelineValidation } from 'ember-lifeline/test-support';
 
 module('module', function(hooks) {
-  setupLifelineValidation(hooks); // should be called before other setup functions
   setupTest(hooks);
   setupRenderingTest(hooks);
 

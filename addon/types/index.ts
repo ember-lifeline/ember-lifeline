@@ -30,3 +30,15 @@ export type EmberRunQueues =
   | 'render'
   | 'afterRender'
   | 'destroy';
+
+export interface TestTimeoutWithTimeout {
+  timeout: number;
+  scaling?: never;
+}
+export interface TestTimeoutWithScaling {
+  timeout?: never;
+  scaling: number;
+}
+export type TestTimeoutOptions =
+  | TestTimeoutWithTimeout
+  | TestTimeoutWithScaling;

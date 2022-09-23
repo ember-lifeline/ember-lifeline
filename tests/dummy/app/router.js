@@ -25,7 +25,6 @@ Router.map(function () {
     this.route('testing');
   });
   this.route('not-found', { path: '/*path' });
-  this.route('foo');
 });
 
 export default Router;
