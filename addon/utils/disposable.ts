@@ -37,6 +37,10 @@ export function registerDisposable(
     {
       id: 'ember-lifeline-deprecated-register-disposable',
       until: '7.0.0',
+      for: 'ember-lifeline',
+      since: {
+        enabled: '6.0.0',
+      },
     }
   );
 
@@ -57,6 +61,10 @@ export function runDisposables(): void | undefined {
     {
       id: 'ember-lifeline-deprecated-run-disposable',
       until: '7.0.0',
+      for: 'ember-lifeline',
+      since: {
+        enabled: '6.0.0',
+      },
     }
   );
 }

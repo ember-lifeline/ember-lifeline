@@ -20,6 +20,10 @@ export default Mixin.create({
       {
         id: 'ember-lifeline-deprecated-disposable-mixin',
         until: '7.0.0',
+        for: 'ember-lifeline',
+        since: {
+          enabled: '6.0.0',
+        },
       }
     );
   },
