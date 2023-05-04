@@ -44,8 +44,12 @@ jobs:
           - ember-release
           - ember-beta
           - ember-canary
-          - embroider-safe
-          - embroider-optimized
+        experimental: [false]
+        include:
+          - try-scenario: embroider-safe
+            experimental: true
+          - try-scenario: embroider-optimized
+            experimental: true
 
     steps:
       - uses: actions/checkout@v3
