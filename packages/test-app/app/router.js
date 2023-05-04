@@ -17,6 +17,9 @@ Router.map(function () {
     this.route('debounce-task');
     this.route('throttle-task');
     this.route('poll-task');
+    this.route('cancel-task');
+    this.route('cancel-debounce');
+    this.route('cancel-poll');
     this.route('register-disposable');
     this.route('add-event-listener');
     this.route('remove-event-listener');

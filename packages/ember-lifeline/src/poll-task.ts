@@ -108,13 +108,13 @@ export function getQueuedPollTasks(): Map<Token, () => void> {
  * test('foo-bar watches things', async function(assert) {
  *   await render(hbs`{{foo-bar}}`);
  *
- *   assert.equal(serverRequests, 1, 'called initially');
+ *   assert.strictEqual(serverRequests, 1, 'called initially');
  *
  *   pollTaskFor(this._pollToken);
  *
  *   await settled();
  *
- *   assert.equal(serverRequests, 2, 'called again');
+ *   assert.strictEqual(serverRequests, 2, 'called again');
  *
  *   await settled();
  * });
@@ -214,7 +214,7 @@ export function cancelPoll(
 }
 
 function getGlobal(): Indexable {
-  // eslint-disable-next-line node/no-unsupported-features/es-builtins
+  // eslint-disable-next-line n/no-unsupported-features/es-builtins
   if (typeof globalThis !== 'undefined') return indexable(globalThis);
   if (typeof self !== 'undefined') return indexable(self);
   if (typeof window !== 'undefined') return indexable(window);

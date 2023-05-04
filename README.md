@@ -22,9 +22,9 @@ The [documentation website](https://ember-lifeline.github.io/ember-lifeline/) co
 
 ## Compatibility
 
-* Ember.js v3.16 or above
-* Ember CLI v3.16 or above
-* Node.js v12 or above
+* Ember.js v3.28 or above
+* Ember CLI v3.28 or above
+* Node.js v16 or above
 
 ## Installation
 
