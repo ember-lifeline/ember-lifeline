@@ -5,16 +5,13 @@ module.exports = function (environment) {
     modulePrefix: 'test-app',
     environment,
     rootURL: '/',
-    locationType: 'auto',
+    locationType: 'history',
     historySupportMiddleware: true,
     EmberENV: {
+      EXTEND_PROTOTYPES: false,
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
         // e.g. EMBER_NATIVE_DECORATOR_SUPPORT: true
-      },
-      EXTEND_PROTOTYPES: {
-        // Prevent Ember Data from overriding Date.parse.
-        Date: false,
       },
     },
 
@@ -45,8 +42,6 @@ module.exports = function (environment) {
   }
 
   if (environment === 'production') {
-    // Allow ember-cli-addon-docs to update the rootURL in compiled assets
-    ENV.rootURL = 'ADDON_DOCS_ROOT_URL';
     // here you can enable a production-specific feature
   }
 

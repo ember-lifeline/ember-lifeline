@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-      - uses: volta-cli/action@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: volta-cli/action@v4
         with:
-          node-version: 12.x
+          node-version: 16.x
       - name: install dependencies
         run: yarn install
       - name: lint
@@ -35,11 +35,12 @@ jobs:
     needs: test
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         ember-try-scenario:
-          - ember-lts-3.24
           - ember-lts-3.28
+          - ember-lts-4.4
+          - ember-lts-4.8
           - ember-release
           - ember-beta
           - ember-canary
@@ -47,11 +48,11 @@ jobs:
           - embroider-optimized
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-      - uses: volta-cli/action@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: volta-cli/action@v4
         with:
-          node-version: 12.x
+          node-version: 16.x
       - name: install dependencies
         run: yarn install
       - name: test

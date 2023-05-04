@@ -18,13 +18,13 @@ lifecycles, and the Ember runloop. These tools should provide a simple developer
 experience that allows engineers to focus on the business domain, and think less
 about the weird parts of working in a long-lived app.
 
-The [documentation website](https://ember-lifeline.github.io/ember-lifeline/) contains more examples and API information.
+The [documentation wiki](https://github.com/ember-lifeline/ember-lifeline/wiki) contains more examples and API information.
 
 ## Compatibility
 
-* Ember.js v3.16 or above
-* Ember CLI v3.16 or above
-* Node.js v12 or above
+* Ember.js v3.28 or above
+* Ember CLI v3.28 or above
+* Node.js v16 or above
 
 ## Installation
 
@@ -78,7 +78,7 @@ export default class Example extends Component {
 }
 ```
 
-For more information and examples, please visit the [documentation website](https://ember-lifeline.github.io/ember-lifeline/).
+For more information and examples, please visit the [documentation wiki](https://github.com/ember-lifeline/ember-lifeline/wiki).
 
 ## Contributing
 

@@ -41,7 +41,7 @@ module('ember-lifeline/run-task', function (hooks) {
     let obj = (this.obj = {
       run() {
         hasRun = true;
-        assert.equal(this, obj, 'context is correct');
+        assert.deepEqual(this, obj, 'context is correct');
         assert.ok(true, 'callback was called');
         done();
       },
@@ -94,7 +94,7 @@ module('ember-lifeline/run-task', function (hooks) {
       5
     );
 
-    assert.equal(cancelId, -1, 'Cancel ID is 1-');
+    assert.strictEqual(cancelId, -1, 'Cancel ID is 1-');
 
     window.setTimeout(() => {
       assert.notOk(hasRun, 'callback should not have run');
@@ -136,7 +136,7 @@ module('ember-lifeline/run-task', function (hooks) {
     runTask(
       this.obj,
       () => {
-        assert.equal(
+        assert.strictEqual(
           map.get(this.obj).size,
           0,
           'Set deleted the cancelId after task executed'
@@ -172,8 +172,8 @@ module('ember-lifeline/run-task', function (hooks) {
     let obj = (this.obj = {
       run(name) {
         hasRun = true;
-        assert.equal(this, obj, 'context is correct');
-        assert.equal(name, 'foo', 'passed arguments are correct');
+        assert.deepEqual(this, obj, 'context is correct');
+        assert.strictEqual(name, 'foo', 'passed arguments are correct');
         assert.ok(true, 'callback was called');
       },
     });
@@ -202,7 +202,7 @@ module('ember-lifeline/run-task', function (hooks) {
       });
     });
 
-    assert.equal(cancelId, -1, 'Cancel ID is 1-');
+    assert.strictEqual(cancelId, -1, 'Cancel ID is 1-');
     assert.notOk(hasRun, 'callback should not have run');
   });
 
@@ -232,7 +232,7 @@ module('ember-lifeline/run-task', function (hooks) {
 
     run(() => {
       scheduleTask(this.obj, 'actions', () => {
-        assert.equal(
+        assert.strictEqual(
           map.get(this.obj).size,
           0,
           'Set deleted the cancelId after task executed'
@@ -259,7 +259,7 @@ module('ember-lifeline/run-task', function (hooks) {
       throttleTask(this.obj, 'doStuff', 'c', 5);
     });
 
-    assert.equal(callCount, 1, 'Throttle only ran the method once');
+    assert.strictEqual(callCount, 1, 'Throttle only ran the method once');
     assert.deepEqual(
       callArgs,
       ['a'],
@@ -315,8 +315,8 @@ module('ember-lifeline/run-task', function (hooks) {
       cancelId = throttleTask(this.obj, 'doStuff');
     });
 
-    assert.equal(cancelId, -1, 'Cancel ID is -1');
-    assert.equal(callCount, 0, 'throttled method was not called');
+    assert.strictEqual(cancelId, -1, 'Cancel ID is -1');
+    assert.strictEqual(callCount, 0, 'throttled method was not called');
   });
 
   test('throttleTask passes arguments to method', function (assert) {

@@ -16,7 +16,7 @@ module('ember-lifeline/debounce-task', function (hooks) {
     let obj = (this.obj = {
       doStuff(arg) {
         runCount++;
-        assert.equal(this, obj, 'context is correct');
+        assert.deepEqual(this, obj, 'context is correct');
         runArg = arg;
       },
     });
@@ -25,11 +25,15 @@ module('ember-lifeline/debounce-task', function (hooks) {
     debounceTask(this.obj, 'doStuff', 'arg2', 5);
     debounceTask(this.obj, 'doStuff', 'arg3', 5);
 
-    assert.equal(runCount, 0, 'should not have run');
+    assert.strictEqual(runCount, 0, 'should not have run');
 
     window.setTimeout(() => {
-      assert.equal(runCount, 1, 'should have run only once');
-      assert.equal(runArg, 'arg3', 'should run the task with the last arg');
+      assert.strictEqual(runCount, 1, 'should have run only once');
+      assert.strictEqual(
+        runArg,
+        'arg3',
+        'should run the task with the last arg'
+      );
       done();
     }, 10);
   });
@@ -63,7 +67,7 @@ module('ember-lifeline/debounce-task', function (hooks) {
     debounceTask(this.obj, 'doStuff', 'hello', 'world', 5);
 
     setTimeout(() => {
-      assert.equal(callCount, 1, 'should have run only once');
+      assert.strictEqual(callCount, 1, 'should have run only once');
       assert.deepEqual(calledWithArgs, ['hello', 'world']);
       done();
     }, 10);
@@ -84,10 +88,10 @@ module('ember-lifeline/debounce-task', function (hooks) {
     debounceTask(this.obj, 'doStuff', 5);
     cancelDebounce(this.obj, 'doStuff');
 
-    assert.equal(runCount, 0, 'should not have run');
+    assert.strictEqual(runCount, 0, 'should not have run');
 
     window.setTimeout(() => {
-      assert.equal(runCount, 0, 'should not have run');
+      assert.strictEqual(runCount, 0, 'should not have run');
       done();
     }, 10);
   });

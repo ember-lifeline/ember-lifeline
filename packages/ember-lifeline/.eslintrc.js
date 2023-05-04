@@ -2,10 +2,13 @@ module.exports = {
   root: true,
   parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true,
+    requireConfigFile: false,
+    babelOptions: {
+      plugins: [
+        ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }],
+      ],
     },
   },
   plugins: ['ember', 'prettier'],
@@ -46,14 +49,14 @@ module.exports = {
       ],
       parserOptions: {
         sourceType: 'script',
-        ecmaVersion: 2015,
+        ecmaVersion: 'latest',
       },
       env: {
         browser: false,
         node: true,
       },
-      plugins: ['node'],
-      extends: 'plugin:node/recommended',
+      plugins: ['n'],
+      extends: 'plugin:n/recommended',
     },
     {
       // typescript files
@@ -71,11 +74,6 @@ module.exports = {
       rules: {
         'ember/no-new-mixins': 'off',
       },
-    },
-    {
-      // Test files:
-      files: ['tests/**/*-test.{js,ts}'],
-      extends: ['plugin:qunit/recommended'],
     },
   ],
 };

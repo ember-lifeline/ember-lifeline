@@ -35,7 +35,11 @@ module('ember-lifeline/poll-task', function (hooks) {
       }
     });
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     // ensure that pending pollTask's are not running
     return settled();
@@ -51,7 +55,7 @@ module('ember-lifeline/poll-task', function (hooks) {
         calledTimes++;
 
         if (calledTimes === 5) {
-          assert.equal(this, obj, 'context is correct');
+          assert.deepEqual(this, obj, 'context is correct');
           assert.ok(true, 'polled successfully');
         } else {
           runTask(obj, next, 5);
@@ -61,7 +65,11 @@ module('ember-lifeline/poll-task', function (hooks) {
 
     pollTask(this.obj, 'run');
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     // ensure that pending pollTask's are not running
     return settled();
@@ -89,8 +97,12 @@ module('ember-lifeline/poll-task', function (hooks) {
       token
     );
 
-    assert.equal(token, returnedToken, 'poll task string tokens match');
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(token, returnedToken, 'poll task string tokens match');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     // ensure that pending pollTask's are not running
     return settled();
@@ -112,7 +124,11 @@ module('ember-lifeline/poll-task', function (hooks) {
       runTask(obj, next, 5);
     });
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     // test string form
     this.obj.run = function (next) {
@@ -122,7 +138,11 @@ module('ember-lifeline/poll-task', function (hooks) {
     };
 
     pollTask(this.obj, 'run');
-    assert.equal(calledTimes, 2, 'pollTask executed with method name properly');
+    assert.strictEqual(
+      calledTimes,
+      2,
+      'pollTask executed with method name properly'
+    );
 
     // ensure that pending pollTask's are not running
     return settled();
@@ -144,12 +164,16 @@ module('ember-lifeline/poll-task', function (hooks) {
       runTask(this.obj, next, 5);
     });
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     return settled().then(function () {
       pollTaskFor(token);
 
-      assert.equal(
+      assert.strictEqual(
         calledTimes,
         2,
         'poll task argument was invoked after ticking'
@@ -178,12 +202,16 @@ module('ember-lifeline/poll-task', function (hooks) {
 
     let token = pollTask(this.obj, 'run');
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     return settled().then(function () {
       pollTaskFor(token);
 
-      assert.equal(
+      assert.strictEqual(
         calledTimes,
         2,
         'poll task argument was invoked after ticking'
@@ -208,13 +236,21 @@ module('ember-lifeline/poll-task', function (hooks) {
       }
     });
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     assert.throws(function () {
       pollTaskFor(token);
     }, `You cannot advance pollTask '${token}' when \`next\` has not been called.`);
 
-    assert.equal(calledTimes, 1, 'poll task argument was invoked initially');
+    assert.strictEqual(
+      calledTimes,
+      1,
+      'poll task argument was invoked initially'
+    );
 
     // ensure that pending pollTask's are not running
     return settled();
@@ -263,7 +299,7 @@ module('ember-lifeline/poll-task', function (hooks) {
 
     cancelPoll(this.obj, token);
 
-    assert.equal(
+    assert.strictEqual(
       map.get(this.obj).size,
       0,
       'Set deleted the token after task cancelled'

@@ -37,14 +37,14 @@
     "test": "echo 'Please refer to test-app for addon tests'"
   },
   "dependencies": {
-    "@embroider/addon-shim": "^1.6.0",
-    "ember-destroyable-polyfill": "^2.0.2"
+    "@embroider/addon-shim": "^1.6.0"
   },
   "devDependencies": {
     "@babel/core": "7.16.12",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-typescript": "^7.16.7",
+    "@babel/plugin-proposal-decorators": "^7.21.0",
     "@embroider/addon-dev": "^1.6.0",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-node-resolve": "^13.1.3",
@@ -55,15 +55,15 @@
     "@types/ember__test-helpers": "^1.7.3",
     "@types/qunit": "^2.9.5",
     "@types/rsvp": "^4.0.3",
-    "@typescript-eslint/eslint-plugin": "^3.10.1",
-    "@typescript-eslint/parser": "^3.10.1",
-    "ember-template-lint": "^4.5.0",
-    "eslint": "^7.25.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-ember": "^10.6.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-qunit": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
+    "ember-template-lint": "^5.7.3",
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-ember": "^11.5.0",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-qunit": "^7.3.4",
     "rollup": "^2.67.0",
     "rollup-plugin-ts": "^2.0.5",
     "typescript": "~4.2.4",
@@ -81,7 +81,7 @@
     "favicons": "5.3.0"
   },
   "engines": {
-    "node": "12.* || >= 14"
+    "node": "16.* || >= 18"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
