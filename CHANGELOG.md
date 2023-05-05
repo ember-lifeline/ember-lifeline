@@ -1,3 +1,38 @@
+
+## v7.0.0 (2023-05-05)
+
+#### :boom: Breaking Change
+* `ember-lifeline`, `test-app`
+  * [#1174](https://github.com/ember-lifeline/ember-lifeline/pull/1174) Ember 4 Upgrade ([@elwayman02](https://github.com/elwayman02))
+  * [#1141](https://github.com/ember-lifeline/ember-lifeline/pull/1141) Removed setup-lifeline-validation test util as it is no longer required. ([@tgvrssanthosh](https://github.com/tgvrssanthosh))
+* `ember-lifeline`
+  * [#1117](https://github.com/ember-lifeline/ember-lifeline/pull/1117) Renaming types and defaulting to Ember types ([@scalvert](https://github.com/scalvert))
+
+#### :rocket: Enhancement
+* `ember-lifeline`, `test-app`
+  * [#1140](https://github.com/ember-lifeline/ember-lifeline/pull/1140) Created timer util that returns a scaled-down timer value in test environments. ([@tgvrssanthosh](https://github.com/tgvrssanthosh))
+
+#### :memo: Documentation
+* `ember-lifeline`, `test-app`
+  * [#1119](https://github.com/ember-lifeline/ember-lifeline/pull/1119) Adds missing cancel* docs ([@scalvert](https://github.com/scalvert))
+* `ember-lifeline`
+  * [#1118](https://github.com/ember-lifeline/ember-lifeline/pull/1118) Updates jsdoc strings to represent Octane components ([@scalvert](https://github.com/scalvert))
+
+#### :house: Internal
+* `ember-lifeline`, `test-app`
+  * [#1174](https://github.com/ember-lifeline/ember-lifeline/pull/1174) Ember 4 Upgrade ([@elwayman02](https://github.com/elwayman02))
+* `test-app`
+  * [#1144](https://github.com/ember-lifeline/ember-lifeline/pull/1144) Renamed timer-test file ([@tgvrssanthosh](https://github.com/tgvrssanthosh))
+* `ember-lifeline`
+  * [#1107](https://github.com/ember-lifeline/ember-lifeline/pull/1107) Extracting utils from run-task ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 4
+- Chris Krycho ([@chriskrycho](https://github.com/chriskrycho))
+- Jordan Hawker ([@elwayman02](https://github.com/elwayman02))
+- Santhosh Venkata Rama Siva Thanakala Gani ([@tgvrssanthosh](https://github.com/tgvrssanthosh))
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v7.0.0-beta.3 (2022-02-10)
 
 
