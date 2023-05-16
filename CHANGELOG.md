@@ -1,3 +1,13 @@
+
+## v6.0.3 (2023-05-16)
+
+#### :bug: Bug Fix
+* [#1149](https://github.com/ember-lifeline/ember-lifeline/pull/1149) [Backport] Add missing fields (`for`, `since`) to `deprecate` for Ember 4 support ([@hmajoros](https://github.com/hmajoros))
+
+#### Committers: 1
+- Hank Majoros ([@hmajoros](https://github.com/hmajoros))
+
+
 ## v6.0.2 (2021-05-04)
 
 #### :memo: Documentation
