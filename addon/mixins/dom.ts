@@ -31,6 +31,10 @@ export default Mixin.create({
       {
         id: 'ember-lifeline-deprecated-context-bound-event-listeners-mixin',
         until: '7.0.0',
+        for: 'ember-lifeline',
+        since: {
+          enabled: '6.0.0',
+        },
       }
     );
   },
