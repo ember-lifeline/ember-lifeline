@@ -229,7 +229,7 @@ export function throttleTask(
   let timers: Set<EmberRunTimer> = getTimers(destroyable);
   let cancelId: EmberRunTimer = throttle(
     destroyable as any,
-    taskName,
+    taskName as any as number,
     ...throttleArgs
   );
 
