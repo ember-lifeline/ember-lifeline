@@ -38,6 +38,14 @@
 
 ## v7.0.0-beta.2 (2022-02-07)
 
+
+## v7.0.0-beta.1 (2022-02-06)
+
+#### :boom: Breaking Change
+
+* [#990](https://github.com/ember-lifeline/ember-lifeline/pull/990) Cleanup, deprecation removal, and blueprint updating ([@scalvert](https://github.com/scalvert))
+
+
 ## v6.0.2 (2021-05-04)
 
 #### :memo: Documentation
