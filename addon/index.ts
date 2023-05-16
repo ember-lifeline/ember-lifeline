@@ -16,6 +16,7 @@ export {
 export { debounceTask, cancelDebounce } from './debounce-task';
 export { addEventListener, removeEventListener } from './dom-event-listeners';
 export { registerDisposable, runDisposables } from './utils/disposable';
+export { getTimeoutOrTestFallback } from './utils/get-timeout-or-test-fallback';
 
 export { default as ContextBoundTasksMixin } from './mixins/run';
 export { default as ContextBoundEventListenersMixin } from './mixins/dom';
