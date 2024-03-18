@@ -2748,6 +2748,13 @@
   dependencies:
     "@types/ember__runloop" "^3"
 
+"@types/ember__runloop@^4.0.10":
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/@types/ember__runloop/-/ember__runloop-4.0.10.tgz#7ab893f33128042b61c5712b12500f95d0bb4107"
+  integrity sha512-9MZfOJBXuUP7RqLjovmzy1yY2xKTxVpqHMapqy6QJ8mjAekRmq9IJ+ni2zJ5CWftyb3Lqu3Eks05CL7fnbhcJA==
+  dependencies:
+    "@types/ember" "*"
+
 "@types/ember__service@*":
   version "3.16.1"
   resolved "https://registry.yarnpkg.com/@types/ember__service/-/ember__service-3.16.1.tgz#e8f941ec50ff4a7531487dc60830b4e6c7da6a47"

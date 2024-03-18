@@ -82,9 +82,11 @@ export function getTimers(destroyable: Destroyable): Set<EmberRunTimer> {
  */
 export function cancelTask(
   destroyable: Destroyable,
-  cancelId: EmberRunTimer
-): void | undefined {
-  let timers: Set<EmberRunTimer> = getTimers(<Destroyable>destroyable);
+  cancelId: EmberRunTimer | undefined
+): void {
+  let timers: Set<EmberRunTimer | undefined> = getTimers(
+    <Destroyable>destroyable
+  );
 
   timers.delete(cancelId);
   cancel(cancelId);

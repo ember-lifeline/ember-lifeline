@@ -53,6 +53,7 @@
     "@types/ember-test-helpers": "^1.0.9",
     "@types/ember-testing-helpers": "^0.0.4",
     "@types/ember__test-helpers": "^1.7.3",
+    "@types/ember__runloop": "^4.0.10",
     "@types/qunit": "^2.9.5",
     "@types/rsvp": "^4.0.3",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
