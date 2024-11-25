@@ -10,3 +10,4 @@ export {
 } from './poll-task';
 export { debounceTask, cancelDebounce } from './debounce-task';
 export { getTimeoutOrTestFallback } from './utils/get-timeout-or-test-fallback';
+export * from './types';
