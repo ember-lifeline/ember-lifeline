@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { macroCondition, isTesting } from '@embroider/macros';
 import { TestTimeoutOptions } from '../types';
 
 /**
@@ -13,7 +13,7 @@ export function getTimeoutOrTestFallback(
   timeout: number,
   { timeout: testTimeout, scaling = 100 }: TestTimeoutOptions = { scaling: 100 } // Reducing timer value by 100x in test environment by default
 ): number {
-  if (Ember.testing) {
+  if (macroCondition(isTesting())) {
     return testTimeout !== undefined ? testTimeout : timeout / scaling;
   }
   return timeout;

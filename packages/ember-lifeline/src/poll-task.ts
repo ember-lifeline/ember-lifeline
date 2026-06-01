@@ -1,7 +1,7 @@
-import Ember from 'ember';
 import getTask from './utils/get-task';
 import { MapLike, TaskOrName, Destroyable, Token } from './types';
 import { registerDestructor } from '@ember/destroyable';
+import { isTesting, macroCondition } from '@embroider/macros';
 
 type Indexable = Record<any, unknown>;
 
@@ -41,7 +41,7 @@ function shouldPoll() {
     return _shouldPollOverride();
   }
 
-  return !Ember.testing;
+  return !macroCondition(isTesting());
 }
 
 /**
