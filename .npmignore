@@ -23,7 +23,7 @@
 /ember-cli-build.js
 /testem.js
 /tests/
-/yarn.lock
+/pnpm-lock.yaml
 .gitkeep
 
 # ember-try

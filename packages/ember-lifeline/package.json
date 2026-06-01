@@ -28,12 +28,12 @@
     "./test-support": "./dist/test-support/index.js"
   },
   "scripts": {
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "build": "FORCE_COLOR=1 npm-run-all --aggregate-output --parallel \"build:*\"",
     "build:addon": "rollup --config",
     "lint": "eslint . --ext js,ts --cache",
     "lint:fix": "eslint . --ext js,ts --fix",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "pnpm build",
     "test": "echo 'Please refer to test-app for addon tests'"
   },
   "dependencies": {

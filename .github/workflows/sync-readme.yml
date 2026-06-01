@@ -15,10 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
       - name: "Syncing README"
         run: |
           # Sync the top-level README.md with the one in the addon package
-          yarn docs:readme
+          pnpm docs:readme
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git add ./packages/ember-lifeline/README.md
