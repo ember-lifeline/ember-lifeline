@@ -1,4 +1,3 @@
-import { EmberRunTimer } from '@ember/runloop/types';
 export interface MapLike<K extends object, V> {
   delete(key: K): boolean;
   get(key: K): V;
@@ -12,7 +11,7 @@ export type TaskOrName = Function | string;
 
 export type Token = string | number;
 
-export type Timer = EmberRunTimer | number;
+export type Timer = ReturnType<typeof setTimeout> | number;
 
 export type EmberRunQueues =
   | 'sync'

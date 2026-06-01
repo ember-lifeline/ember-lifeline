@@ -46,9 +46,24 @@ importers:
       '@babel/eslint-parser':
         specifier: ^7.17.0
         version: 7.29.7(@babel/core@7.16.12)(eslint@8.57.1)
+      '@babel/plugin-proposal-async-generator-functions':
+        specifier: ^7.20.7
+        version: 7.20.7(@babel/core@7.16.12)
       '@babel/plugin-proposal-decorators':
         specifier: ^7.21.0
         version: 7.29.7(@babel/core@7.16.12)
+      '@babel/plugin-proposal-json-strings':
+        specifier: ^7.18.6
+        version: 7.18.6(@babel/core@7.16.12)
+      '@babel/plugin-proposal-object-rest-spread':
+        specifier: ^7.20.7
+        version: 7.20.7(@babel/core@7.16.12)
+      '@babel/plugin-proposal-optional-catch-binding':
+        specifier: ^7.18.6
+        version: 7.18.6(@babel/core@7.16.12)
+      '@babel/plugin-proposal-unicode-property-regex':
+        specifier: ^7.18.6
+        version: 7.18.6(@babel/core@7.16.12)
       '@babel/plugin-transform-runtime':
         specifier: ^7.17.0
         version: 7.29.7(@babel/core@7.16.12)
@@ -91,6 +106,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^5.59.2
         version: 5.62.0(eslint@8.57.1)(typescript@4.2.4)
+      ember-source:
+        specifier: ~4.12.0
+        version: 4.12.4(@babel/core@7.16.12)(@glimmer/component@1.1.2(@babel/core@7.16.12))
       ember-template-lint:
         specifier: ^5.7.3
         version: 5.13.0
@@ -305,6 +323,10 @@ packages:
     peerDependencies:
       '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
 
+  '@babel/helper-environment-visitor@7.24.7':
+    resolution: {integrity: sha512-DoiN84+4Gnd0ncbBOM9AZENV4a5ZiL39HYMyZJGZ/AZEykHYdJw0wW3kdcsh9/Kn+BRXHLkkklZ51ecPKmI1CQ==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/helper-globals@7.29.7':
     resolution: {integrity: sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==}
     engines: {node: '>=6.9.0'}
@@ -408,6 +430,13 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0
 
+  '@babel/plugin-proposal-async-generator-functions@7.20.7':
+    resolution: {integrity: sha512-xMbiLsn/8RK7Wq7VeVytytS2L6qE69bXPB10YCmMdDZbKF4okCqY74pI/jJQ/8U0b/F6NrT2+14b8/P9/3AMGA==}
+    engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-async-generator-functions instead.
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
   '@babel/plugin-proposal-class-properties@7.18.6':
     resolution: {integrity: sha512-cumfXOF0+nzZrrN8Rf0t7M+tF6sZc7vhQwYQck9q1/5w2OExlD+b4v4RpMJFaV1Z7WcDRgO6FqvxqxGlwo+RHQ==}
     engines: {node: '>=6.9.0'}
@@ -418,6 +447,27 @@ packages:
   '@babel/plugin-proposal-decorators@7.29.7':
     resolution: {integrity: sha512-EtU0Hi3GvrTqD56xKmZvV/uCXK2ZbwVNPNLAquVItcAZpUhkXwWlo3Fmj0c2LxgSf2I8IDULeAepwNP1OefLXg==}
     engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-proposal-json-strings@7.18.6':
+    resolution: {integrity: sha512-lr1peyn9kOdbYc0xr0OdHTZ5FMqS6Di+H0Fz2I/JwMzGmzJETNeOFq2pBySw6X/KFL5EWDjlJuMsUGRFb8fQgQ==}
+    engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-json-strings instead.
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-proposal-object-rest-spread@7.20.7':
+    resolution: {integrity: sha512-d2S98yCiLxDVmBmE8UjGcfPvNEUbA1U5q5WxaWFUGRzJSVAZqm5W6MbPct0jxnegUZ0niLeNX+IOzEs7wYg9Dg==}
+    engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-proposal-optional-catch-binding@7.18.6':
+    resolution: {integrity: sha512-Q40HEhs9DJQyaZfUjjn6vE8Cv4GmMHCYuMGIWUnlxH6400VGxOuwWsPt4FxXxJkC/5eOzgn0z21M9gMT4MOhbw==}
+    engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-catch-binding instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -438,6 +488,18 @@ packages:
     resolution: {integrity: sha512-0QZ8qP/3RLDVBwBFoWAwCtgcDZJVwA5LUJRZU8x2YFfKNuFq161wK3cuGrALu5yiPu+vzwTAg/sMWVNeWeNyaw==}
     engines: {node: '>=6.9.0'}
     deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-property-in-object instead.
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-proposal-unicode-property-regex@7.18.6':
+    resolution: {integrity: sha512-2BShG/d5yoZyXZfVePH91urL5wTG6ASZU9M4o03lKK8u8UW1y08OMttBSOADTcJrnPMpvDXRG3G8fyLh4ovs8w==}
+    engines: {node: '>=4'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-unicode-property-regex instead.
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-syntax-async-generators@7.8.4':
+    resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -464,9 +526,24 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
+  '@babel/plugin-syntax-json-strings@7.8.3':
+    resolution: {integrity: sha512-lY6kdGpWHvjoe2vk4WrAapEuBR69EMxZl+RoGRhrFGNYVK8mOPAW8VfbT/ZgrFbXlDNiiaxQnAtgVCZ6jv30EA==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
   '@babel/plugin-syntax-jsx@7.29.7':
     resolution: {integrity: sha512-TSu8+mHCoEaaCDEZ0I3+6mvTBYR4PCxQwf2z9/r5Tbztv6NaLR3B9thGTTxX2WGuGHJqRiAbKPeGTJ5XWXVg6A==}
     engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-syntax-object-rest-spread@7.8.3':
+    resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@babel/plugin-syntax-optional-catch-binding@7.8.3':
+    resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -8364,6 +8441,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/helper-environment-visitor@7.24.7':
+    dependencies:
+      '@babel/types': 7.29.7
+
   '@babel/helper-globals@7.29.7': {}
 
   '@babel/helper-member-expression-to-functions@7.29.7':
@@ -8504,6 +8585,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-proposal-async-generator-functions@7.20.7(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-environment-visitor': 7.24.7
+      '@babel/helper-plugin-utils': 7.29.7
+      '@babel/helper-remap-async-to-generator': 7.29.7(@babel/core@7.16.12)
+      '@babel/plugin-syntax-async-generators': 7.8.4(@babel/core@7.16.12)
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/plugin-proposal-class-properties@7.18.6(@babel/core@7.16.12)':
     dependencies:
       '@babel/core': 7.16.12
@@ -8529,6 +8620,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-proposal-json-strings@7.18.6(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.29.7
+      '@babel/plugin-syntax-json-strings': 7.8.3(@babel/core@7.16.12)
+
+  '@babel/plugin-proposal-object-rest-spread@7.20.7(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/compat-data': 7.29.7
+      '@babel/core': 7.16.12
+      '@babel/helper-compilation-targets': 7.29.7
+      '@babel/helper-plugin-utils': 7.29.7
+      '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.16.12)
+      '@babel/plugin-transform-parameters': 7.29.7(@babel/core@7.16.12)
+
+  '@babel/plugin-proposal-optional-catch-binding@7.18.6(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.29.7
+      '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.16.12)
+
   '@babel/plugin-proposal-private-methods@7.18.6(@babel/core@7.16.12)':
     dependencies:
       '@babel/core': 7.16.12
@@ -8551,6 +8663,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-proposal-unicode-property-regex@7.18.6(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-create-regexp-features-plugin': 7.29.7(@babel/core@7.16.12)
+      '@babel/helper-plugin-utils': 7.29.7
+
+  '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.29.7
+
   '@babel/plugin-syntax-decorators@7.29.7(@babel/core@7.16.12)':
     dependencies:
       '@babel/core': 7.16.12
@@ -8571,7 +8694,22 @@ snapshots:
       '@babel/core': 7.16.12
       '@babel/helper-plugin-utils': 7.29.7
 
+  '@babel/plugin-syntax-json-strings@7.8.3(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.29.7
+
   '@babel/plugin-syntax-jsx@7.29.7(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.29.7
+
+  '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.16.12)':
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.29.7
+
+  '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.16.12)':
     dependencies:
       '@babel/core': 7.16.12
       '@babel/helper-plugin-utils': 7.29.7
@@ -11068,7 +11206,7 @@ snapshots:
     dependencies:
       ansi-align: 3.0.1
       camelcase: 7.0.1
-      chalk: 5.2.0
+      chalk: 5.6.2
       cli-boxes: 3.0.0
       string-width: 5.1.2
       type-fest: 2.19.0
@@ -15298,7 +15436,7 @@ snapshots:
 
   log-symbols@5.1.0:
     dependencies:
-      chalk: 5.2.0
+      chalk: 5.6.2
       is-unicode-supported: 1.3.0
 
   lower-case@2.0.2:
@@ -16171,7 +16309,7 @@ snapshots:
       got: 12.6.1
       registry-auth-token: 5.1.1
       registry-url: 6.0.1
-      semver: 7.5.1
+      semver: 7.8.1
 
   pako@1.0.11: {}
 
@@ -17081,7 +17219,7 @@ snapshots:
 
   semver-diff@4.0.0:
     dependencies:
-      semver: 7.5.1
+      semver: 7.8.1
 
   semver@5.7.2: {}
 

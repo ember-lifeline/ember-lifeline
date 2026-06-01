@@ -17,7 +17,7 @@
     "build": "pnpm -r run build",
     "docs:readme": "cp ./README.md ./packages/ember-lifeline/README.md",
     "lint": "pnpm -r run lint",
-    "prepare": "pnpm --filter ember-lifeline run prepare",
+    "prepare": "echo 'Skipping workspace prepare during install'",
     "test": "pnpm -r run test"
   },
   "devDependencies": {
