@@ -1,5 +1,30 @@
 # Changelog
 
+## Release (2026-06-12)
+
+* ember-lifeline 7.1.0 (minor)
+
+#### :rocket: Enhancement
+* `ember-lifeline`
+  * [#1183](https://github.com/ember-lifeline/ember-lifeline/pull/1183) refactor!: Use Embroider macro in favor of Ember barrel file ([@TSenter](https://github.com/TSenter))
+
+#### :bug: Bug Fix
+* `ember-lifeline`
+  * [#1185](https://github.com/ember-lifeline/ember-lifeline/pull/1185) Remove macros ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* [#1175](https://github.com/ember-lifeline/ember-lifeline/pull/1175) Add missing breaking change to changelog ([@elwayman02](https://github.com/elwayman02))
+
+#### :house: Internal
+* `ember-lifeline`
+  * [#1187](https://github.com/ember-lifeline/ember-lifeline/pull/1187) Migrate to release-plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#1186](https://github.com/ember-lifeline/ember-lifeline/pull/1186) Migrate to pnpm ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 3
+- Jordan Hawker ([@elwayman02](https://github.com/elwayman02))
+- Tyler Senter ([@TSenter](https://github.com/TSenter))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 
 ## v7.0.0 (2023-05-05)
 
