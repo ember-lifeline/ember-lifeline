@@ -53,7 +53,9 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          # The release, beta and canary scenarios install ember-cli 6+ and
+          # @embroider/webpack 4+, which require node >= 20.19.
+          node-version: 22.x
           cache: pnpm
       - name: install dependencies
         run: pnpm install --frozen-lockfile
