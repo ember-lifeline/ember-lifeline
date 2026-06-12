@@ -1,0 +1,26 @@
+{
+  "solution": {
+    "ember-lifeline": {
+      "impact": "minor",
+      "oldVersion": "7.0.0",
+      "newVersion": "7.1.0",
+      "tagName": "latest",
+      "constraints": [
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
+        }
+      ],
+      "pkgJSONPath": "./packages/ember-lifeline/package.json"
+    }
+  },
+  "description": "## Release (2026-06-12)\n\n* ember-lifeline 7.1.0 (minor)\n\n#### :rocket: Enhancement\n* `ember-lifeline`\n  * [#1183](https://github.com/ember-lifeline/ember-lifeline/pull/1183) refactor!: Use Embroider macro in favor of Ember barrel file ([@TSenter](https://github.com/TSenter))\n\n#### :bug: Bug Fix\n* `ember-lifeline`\n  * [#1185](https://github.com/ember-lifeline/ember-lifeline/pull/1185) Remove macros ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* [#1175](https://github.com/ember-lifeline/ember-lifeline/pull/1175) Add missing breaking change to changelog ([@elwayman02](https://github.com/elwayman02))\n\n#### :house: Internal\n* `ember-lifeline`\n  * [#1187](https://github.com/ember-lifeline/ember-lifeline/pull/1187) Migrate to release-plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#1186](https://github.com/ember-lifeline/ember-lifeline/pull/1186) Migrate to pnpm ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 3\n- Jordan Hawker ([@elwayman02](https://github.com/elwayman02))\n- Tyler Senter ([@TSenter](https://github.com/TSenter))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+}
