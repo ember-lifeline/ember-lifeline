@@ -28,12 +28,12 @@
     "./test-support": "./dist/test-support/index.js"
   },
   "scripts": {
-    "prepare": "yarn build",
+    "prepare": "pnpm build",
     "build": "FORCE_COLOR=1 npm-run-all --aggregate-output --parallel \"build:*\"",
     "build:addon": "rollup --config",
     "lint": "eslint . --ext js,ts --cache",
     "lint:fix": "eslint . --ext js,ts --fix",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "pnpm build",
     "test": "echo 'Please refer to test-app for addon tests'"
   },
   "dependencies": {
@@ -43,7 +43,12 @@
   "devDependencies": {
     "@babel/core": "7.16.12",
     "@babel/eslint-parser": "^7.17.0",
+    "@babel/plugin-proposal-async-generator-functions": "^7.20.7",
     "@babel/plugin-proposal-decorators": "^7.21.0",
+    "@babel/plugin-proposal-json-strings": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-proposal-optional-catch-binding": "^7.18.6",
+    "@babel/plugin-proposal-unicode-property-regex": "^7.18.6",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-typescript": "^7.16.7",
     "@embroider/addon-dev": "^1.6.0",
@@ -53,7 +58,12 @@
     "@types/ember-qunit": "^5.0.2",
     "@types/ember-test-helpers": "^1.0.9",
     "@types/ember-testing-helpers": "^0.0.4",
+    "@types/ember__debug": "^3",
+    "@types/ember__destroyable": "^3",
+    "@types/ember__runloop": "^3",
+    "@types/ember__service": "^3",
     "@types/ember__test-helpers": "^1.7.3",
+    "@types/node": "^16.11.68",
     "@types/qunit": "^2.9.5",
     "@types/rsvp": "^4.0.3",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
@@ -77,9 +87,6 @@
     "@ember/test-helpers": {
       "optional": true
     }
-  },
-  "resolutions": {
-    "favicons": "5.3.0"
   },
   "engines": {
     "node": "16.* || >= 18"

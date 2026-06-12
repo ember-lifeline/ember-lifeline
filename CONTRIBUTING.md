@@ -4,13 +4,13 @@
 
 - `git clone https://github.com/ember-lifeline/ember-lifeline.git`
 - `cd ember-lifeline`
-- `yarn install`
+- `pnpm install`
 
 ## Linting
 
-- `yarn lint:hbs`
-- `yarn lint:js`
-- `yarn lint:js --fix`
+- `pnpm lint:hbs`
+- `pnpm lint:js`
+- `pnpm lint:js --fix`
 
 ## Running tests
 

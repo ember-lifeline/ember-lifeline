@@ -18,7 +18,7 @@ jobs:
       - name: "Syncing README"
         run: |
           # Sync the top-level README.md with the one in the addon package
-          yarn docs:readme
+          npm run docs:readme
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git add ./packages/ember-lifeline/README.md
