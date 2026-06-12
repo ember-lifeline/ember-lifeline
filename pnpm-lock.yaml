@@ -36,9 +36,6 @@ importers:
       '@embroider/addon-shim':
         specifier: ^1.6.0
         version: 1.10.3
-      '@embroider/macros':
-        specifier: ^1.20.2
-        version: 1.20.4
     devDependencies:
       '@babel/core':
         specifier: 7.16.12
@@ -73,6 +70,9 @@ importers:
       '@embroider/addon-dev':
         specifier: ^1.6.0
         version: 1.8.3(ember-source@4.12.4)(rollup@2.80.0)
+      '@embroider/macros':
+        specifier: ^1.20.2
+        version: 1.20.4
       '@rollup/plugin-babel':
         specifier: ^5.3.1
         version: 5.3.1(@babel/core@7.16.12)(rollup@2.80.0)
