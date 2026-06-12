@@ -15,17 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - uses: volta-cli/action@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 16.x
+          cache: pnpm
       - name: install dependencies
-        run: yarn install
+        run: pnpm install --frozen-lockfile
       - name: lint
-        run: yarn lint
+        run: pnpm lint
       - name: test
-        run: yarn test
+        run: pnpm test
 
   try-scenarios:
     name: ${{ matrix.ember-try-scenario }}
@@ -48,15 +49,18 @@ jobs:
           - embroider-optimized
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - uses: volta-cli/action@v4
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          # The release, beta and canary scenarios install ember-cli 6+ and
+          # @embroider/webpack 4+, which require node >= 20.19.
+          node-version: 22.x
+          cache: pnpm
       - name: install dependencies
-        run: yarn install
+        run: pnpm install --frozen-lockfile
       - name: test
         env:
           EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
-        run: yarn ember try:one $EMBER_TRY_SCENARIO
+        run: pnpm ember try:one $EMBER_TRY_SCENARIO
         working-directory: packages/test-app

@@ -41,7 +41,7 @@ function shouldPoll() {
     return _shouldPollOverride();
   }
 
-  return !macroCondition(isTesting());
+  return macroCondition(isTesting()) ? false : true;
 }
 
 /**

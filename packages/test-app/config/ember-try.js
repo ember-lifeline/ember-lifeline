@@ -3,9 +3,23 @@
 const getChannelURL = require('ember-source-channel-url');
 const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 
+// Recent ember-source releases (5.x+) no longer work with the ember-cli /
+// testing dependencies this app was generated with, so the release, beta and
+// canary scenarios bring their own modern versions of them.
+const emberCurrentDeps = {
+  'ember-cli': '^6.0.0',
+  '@ember/test-helpers': '^5.0.0',
+  'ember-cli-app-version': '^7.0.0',
+  'ember-cli-htmlbars': '^7.0.0',
+  'ember-qunit': '^9.0.0',
+  'ember-resolver': '^13.0.0',
+  'qunit-dom': '^3.0.0',
+  'ember-load-initializers': '^3.0.0',
+};
+
 module.exports = async function () {
   return {
-    useYarn: true,
+    usePnpm: true,
     scenarios: [
       {
         name: 'ember-lts-3.28',
@@ -35,6 +49,7 @@ module.exports = async function () {
         name: 'ember-release',
         npm: {
           devDependencies: {
+            ...emberCurrentDeps,
             'ember-source': await getChannelURL('release'),
           },
         },
@@ -43,6 +58,7 @@ module.exports = async function () {
         name: 'ember-beta',
         npm: {
           devDependencies: {
+            ...emberCurrentDeps,
             'ember-source': await getChannelURL('beta'),
           },
         },
@@ -51,6 +67,7 @@ module.exports = async function () {
         name: 'ember-canary',
         npm: {
           devDependencies: {
+            ...emberCurrentDeps,
             'ember-source': await getChannelURL('canary'),
           },
         },
